@@ -4,7 +4,7 @@
 
 - Itamar Shenhar itamar8910@gmail.com
 
-- King alon Mahmud
+- Alon Melamud alonmem@gmail.com
 
 - Gil Maman gil.maman.5@gmail.com
 
