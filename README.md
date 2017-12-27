@@ -4,9 +4,9 @@
 
 - Itamar Shenhar itamar8910@gmail.com
 
--King alon Mahmud
+- King alon Mahmud
 
--Gil Maman
+- Gil Maman gil.maman.5@gmail.com
 
 - *add yourself to the list
 
