@@ -76,7 +76,7 @@ public class Server extends AbstractServer
 	    		System.out.println("ERR:" + e.getMessage());
 	    		this.sendToAllClients("ERR");
 	    	}
-	    }else if(msgStr.startsWith("get")){
+	    }else if(msgStr.startsWith("get ")){
 	    	System.out.println("got get command");
 	    	String name = msgStr.substring("get ".length());
 	    	int balance = TestDB.getInstance().getBalanceOf(name);
@@ -85,7 +85,13 @@ public class Server extends AbstractServer
 	    	}else{
 	    		this.sendToAllClients("Balance:" + balance);
 	    	}
-	    }else if(msgStr.startsWith("update")){
+	    }else if(msgStr.equals("getAll")) {
+	    	System.out.println("got getAll command");
+	    	String allUsers = TestDB.getInstance().getAll();
+	    	System.out.println(allUsers);
+	    	this.sendToAllClients(allUsers);
+	    }
+	    else if(msgStr.startsWith("update")){
 	    	System.out.println("got update command");
 	    	try{
 	    	//System.out.println(msgStr.indexOf("add ") + "add ".length());

@@ -108,5 +108,24 @@ public class TestDB {
 		return -1;
 	}
 
+	public String getAll() {
+		try {
+			PreparedStatement selectName = conn.prepareStatement("SELECT name, balance FROM test_table WHERE 1;");
+			
+			ResultSet uprs = selectName.executeQuery();
+			String buff = "";
+			while(uprs.next()){
+				buff += uprs.getString("name") + "," + String.valueOf((uprs.getInt("balance"))) + "\n";
+			}
+			System.out.println("success");
+			return buff;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+		
+	}
+
 
 }
