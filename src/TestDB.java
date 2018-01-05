@@ -27,6 +27,7 @@ public class TestDB {
 
 	        try
 	        {
+	        	//plz don't pwn
 	        	Connection conn =
 	        			DriverManager.getConnection("jdbc:mysql://softengproject.cspvcqknb3vj.eu-central-1.rds.amazonaws.com:3306/kea_schema","kea_admin","U_`jK<7JKhV%dBwW");
 
@@ -111,7 +112,7 @@ public class TestDB {
 	public String getAll() {
 		try {
 			PreparedStatement selectName = conn.prepareStatement("SELECT name, balance FROM test_table WHERE 1;");
-			
+
 			ResultSet uprs = selectName.executeQuery();
 			String buff = "";
 			while(uprs.next()){
@@ -124,7 +125,7 @@ public class TestDB {
 			e.printStackTrace();
 		}
 		return "";
-		
+
 	}
 
 
