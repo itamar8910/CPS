@@ -49,7 +49,14 @@ public class TalkToServer implements ChatIF{
 	}
 
 	public void send(String message, StrCallbackIF callback){
-		this.currentCallback = callback;
+		try {
+			this.client.sendToServer(message);
+			this.currentCallback = callback;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

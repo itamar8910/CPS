@@ -7,6 +7,7 @@ import java.util.List;
 import client.Client;
 import common.ControllerIF;
 import common.Params;
+import common.TalkToServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -17,16 +18,18 @@ import javafx.scene.layout.BorderPane;
 
 public class ApplicationMain extends Application {
 	Stage primaryStage;
+	final int DEFAULT_PORT = 6654;
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		List<String> args = getParameters().getRaw();
 		String host = "localhost";
-		int port = 5555;
+		int port = DEFAULT_PORT;
 		if(args.size() >= 2) {
 			host = args.get(0);
 			port = Integer.parseInt(args.get(1));
 		}
+		TalkToServer.getInstance(host, port);
 
 		this.setScene("Welcome.fxml", Params.getEmptyInstance());
 

@@ -36,6 +36,7 @@ public class ClientPhysicalController implements ControllerIF{
     @FXML
     void bOrderClick(ActionEvent event) {
     	System.out.println("bLeaveClick");
+    	main.setScene("clientPhysicalOrderView.fxml", params);
 
     }
 
