@@ -55,7 +55,7 @@ public class ServerDummy extends AbstractServer
     (Object msg, ConnectionToClient client){
 	    System.out.println("dummy server got message:" + msg);
 	    try {
-			client.sendToClient("OK i got ya");
+			client.sendToClient("{}");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

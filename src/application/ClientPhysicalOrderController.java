@@ -30,7 +30,9 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
     @FXML
     void bSumbitClick(ActionEvent event) {
+    	//todo: we need to somehow know in which parking lot we are
     	Params orderParams = Params.getEmptyInstance();
+    	orderParams.addParam("action", "ClientPhysicalOrder");
     	orderParams.addParam("ID", tfID.getText());
     	orderParams.addParam("vehicleID", tfVehicleID.getText());
     	orderParams.addParam("leaveTime", tfLeaveTime.getText());

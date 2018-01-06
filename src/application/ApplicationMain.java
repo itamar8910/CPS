@@ -51,12 +51,12 @@ public class ApplicationMain extends Application {
 
 
 			List<String> args = getParameters().getRaw();
-			String host = "localhost";
-			int port = 5555;
-			if(args.size() >= 2) {
-				host = args.get(0);
-				port = Integer.parseInt(args.get(1));
-			}
+//			String host = "localhost";
+//			int port = 5555;
+//			if(args.size() >= 2) {
+//				host = args.get(0);
+//				port = Integer.parseInt(args.get(1));
+//			}
 			controller.init(this, params);
 
 			//AnchorPane pane = FXMLLoader.load( url );

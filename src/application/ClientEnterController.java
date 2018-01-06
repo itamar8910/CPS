@@ -18,8 +18,10 @@ public class ClientEnterController implements ControllerIF{
     private Params params;
 
     @FXML
-    void bOnlnieClick(ActionEvent event) {
+    void bOnlineClick(ActionEvent event) {
     	System.out.println("bOnlnieClick");
+    	main.setScene("ClientOnlineView.fxml", params);
+
     }
 
     @FXML
