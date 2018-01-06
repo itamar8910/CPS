@@ -24,7 +24,7 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
     @FXML
     private Button bSubmit;
-    
+
     private ApplicationMain main;
     private Params params;
 
@@ -35,6 +35,7 @@ public class ClientPhysicalOrderController implements ControllerIF{
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "ClientPhysicalOrder");
     	orderParams.addParam("ID", tfID.getText());
+    	orderParams.addParam("parkingLot", "TMP_PARKINGLOT");
     	orderParams.addParam("vehicleID", tfVehicleID.getText());
     	orderParams.addParam("leaveTime", tfLeaveTime.getText());
     	orderParams.addParam("email", tfEmail.getText());

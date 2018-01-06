@@ -128,5 +128,59 @@ public class TestDB {
 
 	}
 
+	public boolean isInTable(String table, String colName, String value) {
+		try {
+			PreparedStatement selectName = conn.prepareStatement("SELECT * FROM " + table + " WHERE "+colName+"=?;");
+			selectName.setString(1, value);
+			//PreparedStatement selectName = conn.prepareStatement("SELECT * FROM Users WHERE userID=?;");
+			//selectName.setString(1, "123");
+			ResultSet uprs = selectName.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return true;
+			}
+
+			return false;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public void addUser(String userID, String vehicleID, String email, String type) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("INSERT INTO Users(userID, vehicleID, email, type) VALUES(?,?,?,?)");
+			update.setString(1, userID);
+			update.setString(2, vehicleID);
+			update.setString(3, email);
+			update.setString(4, type);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void addVehicle(String userID, String vehicleID, String parkingLot, long startTime, long endTime) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("INSERT INTO Vehicles(userID, vehicleID, parkingLot, startTime, endTime) VALUES(?,?,?,?)");
+			update.setString(1, userID);
+			update.setString(2, vehicleID);
+			update.setString(3, parkingLot);
+			update.setLong(4, startTime);
+			update.setLong(5, endTime);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 }

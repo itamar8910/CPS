@@ -4,6 +4,10 @@
 
 import java.io.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import common.Params;
 import ocsf.server.*;
 
@@ -47,7 +51,63 @@ public class ServerDummy extends AbstractServer
 
   //Instance methods ************************************************
 
-  /**
+
+  public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
+
+	  JSONArray slots = new JSONArray();
+	  for(int r = 0; r < rows; r++){
+		  for(int h = 0; h < height; h++){
+			  for(int c = 0; c < cols; c++){
+				  JSONObject slotJson = new JSONObject();
+				  try {
+					slotJson.put("row", r);
+					slotJson.put("height", h);
+					slotJson.put("col", c);
+					slotJson.put("enterTime", 0);
+					slotJson.put("leaveTime", 0);
+					slotJson.put("Vid", -1);
+					slots.put(slotJson);
+					//slots.add(slotJson);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			  }
+		  }
+	  }
+
+	  return slots;
+  }
+
+  private void callParkingAlgo(String param, String param2, long startTime, long parseLong) {
+
+  }
+
+  private Params handleClientPhysicalOrder(Params params) {
+	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
+	  if(isInTable){
+		  Params resp = Params.getEmptyInstance();
+		  resp.addParam("status", "BAD");
+		  return resp;
+	  }
+
+	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), "temp");
+
+	  final long startTime = System.currentTimeMillis();
+
+	  TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), System.currentTimeMillis(), Long.parseLong(params.getParam("leaveTime")));
+
+	  callParkingAlgo(params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, Long.parseLong(params.getParam("leaveTime")));
+
+	  Params resp = Params.getEmptyInstance();
+	  resp.addParam("status", "OK");
+	  return resp;
+  }
+
+
+
+
+/**
    * This method handles any messages received from the client.
    *
    * @param msg The message received from the client.
@@ -62,6 +122,10 @@ public class ServerDummy extends AbstractServer
 	    		Params resp = Params.getEmptyInstance();
 	    		resp.addParam("status", "OK");
 	    		resp.addParam("subscriptionID", "123");
+	    		client.sendToClient(resp.toString());
+	    	}
+	    	if(params.getParam("action").equals("ClientPhysicalOrder")){
+	    		Params resp = handleClientPhysicalOrder(params);
 	    		client.sendToClient(resp.toString());
 	    	}
 	    	else if(params.getParam("action").equals("clientLeave")){
@@ -103,7 +167,8 @@ public class ServerDummy extends AbstractServer
 	  }
 
 
-  /**
+
+/**
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.
    */
@@ -134,6 +199,8 @@ public class ServerDummy extends AbstractServer
    */
   public static void main(String[] args)
   {
+
+
     int port = 0; //Port to listen on
 
     try
@@ -145,8 +212,14 @@ public class ServerDummy extends AbstractServer
       port = DEFAULT_PORT; //Set port to 5555
     }
 
-    ServerDummy sv = new ServerDummy(port);
 
+    ServerDummy sv = new ServerDummy(port);
+    TestDB.getInstance(); //  init db
+    Params params = Params.getEmptyInstance();
+    params.addParam("action", "ClientPhysicalOrder");
+    params.addParam("ID", "1243");
+	System.out.println(sv.handleClientPhysicalOrder(params));
+	System.exit(0);
     try
     {
       sv.listen(); //Start listening for connections
