@@ -8,13 +8,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ClientPhysicalLeaveController implements ControllerIF{
+public class ClientContactController implements ControllerIF{
+
+    @FXML
+    private TextArea taComplaint;
 
     @FXML
     private TextField tfID;
@@ -27,33 +31,29 @@ public class ClientPhysicalLeaveController implements ControllerIF{
 
     @FXML
     void bSubmitClick(ActionEvent event) {
-       	Params orderParams = Params.getEmptyInstance();
-    	orderParams.addParam("action", "clientLeave");
+    	Params orderParams = Params.getEmptyInstance();
+
+    	orderParams.addParam("action", "clientContact");
     	orderParams.addParam("ID", tfID.getText());
 
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
-    		System.out.println("ClientPhysicalEnterController got msg from server:" + msg);
-
     		Params respParams = new Params(msg);
-
     		if(respParams.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
-    	  		      @Override public void run() {
-    	  	    		 final Stage dialog = new Stage();
+		  		      @Override public void run() {
+		  	    		 final Stage dialog = new Stage();
 
-    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
-    	  	             dialog.initOwner(main.primaryStage);
-    	  	             VBox dialogVbox = new VBox(20);
-    	  	             dialogVbox.getChildren().add(new Text("Thanks for using CPS, you bill is: " + respParams.getParam("payAmount") + "$"));
-    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
-    	  	             dialog.setScene(dialogScene);
-    	  	             dialog.show();
-    	  	             System.out.println("showed dialog");
-    	  		      }
-	  		    });
-    		}else{
-    			System.out.println("server returned BAD status");
+		  	             dialog.initModality(Modality.APPLICATION_MODAL);
+		  	             dialog.initOwner(main.primaryStage);
+		  	             VBox dialogVbox = new VBox(20);
+		  	             dialogVbox.getChildren().add(new Text("Thanks for contancting us, we'll respond to you within the next 24  hours"));
+		  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+		  	             dialog.setScene(dialogScene);
+		  	             dialog.show();
+		  	             System.out.println("showed dialog");
+		  		      }
+			    });
     		}
     	});
     }

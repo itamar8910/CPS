@@ -63,6 +63,36 @@ public class ServerDummy extends AbstractServer
 	    		resp.addParam("status", "OK");
 	    		resp.addParam("subscriptionID", "123");
 	    		client.sendToClient(resp.toString());
+	    	}
+	    	else if(params.getParam("action").equals("clientLeave")){
+	    		System.out.println("clientLeave");
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+	    		resp.addParam("payAmount", "123142");
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("clientEnter")){
+	    		System.out.println("clientEnter");
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+	    		resp.addParam("needsSubscriptionID", "Yes");
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("clientEnterWithSubscriptionID")){
+	    		System.out.println("clientEnterWithSubscriptionID");
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("clientCancelOrder")){
+	    		System.out.println("clientCancelOrder");
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+	    		resp.addParam("returnAmount", "42155");
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("clientContact")){
+	    		System.out.println("clientContact");
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+	    		client.sendToClient(resp.toString());
 	    	}else{
 	    		client.sendToClient("{}");
 	    	}
