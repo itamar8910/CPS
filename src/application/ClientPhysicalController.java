@@ -25,11 +25,14 @@ public class ClientPhysicalController implements ControllerIF{
     @FXML
     void bEnterClick(ActionEvent event) {
     	System.out.println("bEnterClick");
+    	main.setScene("clientPhysicalEnterView.fxml", params);
+
     }
 
     @FXML
     void bLeaveClick(ActionEvent event) {
     	System.out.println("bLeaveClick");
+    	main.setScene("clientPhysicalLeaveView.fxml", params);
 
     }
 

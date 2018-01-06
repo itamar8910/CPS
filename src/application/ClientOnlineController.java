@@ -30,7 +30,8 @@ public class ClientOnlineController implements ControllerIF{
 
     @FXML
     void bMakeFullSubscriptionClick(ActionEvent event) {
-
+    	System.out.println("bMakeFullSubscriptionClick");
+    	main.setScene("clientFullSubscriptionView.fxml", params);
     }
 
     @FXML

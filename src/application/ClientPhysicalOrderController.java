@@ -24,6 +24,7 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
     @FXML
     private Button bSubmit;
+    
     private ApplicationMain main;
     private Params params;
 

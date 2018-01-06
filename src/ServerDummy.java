@@ -3,6 +3,8 @@
 // license found at www.lloseng.com
 
 import java.io.*;
+
+import common.Params;
 import ocsf.server.*;
 
 /**
@@ -54,8 +56,16 @@ public class ServerDummy extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client){
 	    System.out.println("dummy server got message:" + msg);
+	    Params params = new Params(msg.toString());
 	    try {
-			client.sendToClient("{}");
+	    	if(params.getParam("action").equals("RoutineSubscription")){
+	    		Params resp = Params.getEmptyInstance();
+	    		resp.addParam("status", "OK");
+	    		resp.addParam("subscriptionID", "123");
+	    		client.sendToClient(resp.toString());
+	    	}else{
+	    		client.sendToClient("{}");
+	    	}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
