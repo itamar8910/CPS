@@ -9,6 +9,7 @@
    <children>
       <Button layoutX="80.0" layoutY="36.0" mnemonicParsing="false" onAction="#buttonPress" text="Execute" />
       <TextField fx:id="tf" layoutX="27.0" layoutY="6.0" onAction="#TFEnter" />
-      <ListView fx:id="lv" layoutX="4.0" layoutY="71.0" prefHeight="231.0" prefWidth="231.0" />
+      <ListView fx:id="lv" layoutX="4.0" layoutY="71.0" prefHeight="231.0" prefWidth="113.0" />
+      <ListView fx:id="lv2" layoutX="116.0" layoutY="71.0" prefHeight="231.0" prefWidth="113.0" />
    </children>
 </AnchorPane>

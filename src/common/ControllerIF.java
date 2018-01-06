@@ -1,7 +1,9 @@
 package common;
 
+import application.ApplicationMain;
+
 public interface ControllerIF {
 
-	void init(Params params);
+	void init(ApplicationMain main, Params params);
 
 }

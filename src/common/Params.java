@@ -7,6 +7,10 @@ public class Params {
 
 	private JSONObject data;
 
+	public static Params getEmptyInstance(){
+		return new Params("{}");
+	}
+
 	public Params(String jsonStr){
 		try {
 			data = new JSONObject(jsonStr);

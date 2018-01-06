@@ -19,9 +19,9 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 
 public class ClientController implements ChatIF{
-	
+
 	private Client client;
-	
+
     @FXML
     private TextField tf;
 
@@ -33,13 +33,13 @@ public class ClientController implements ChatIF{
 
     @FXML
     private ListView<String> lv2;
-    
+
     private List<String> usernames, balances;
-    
+
     private String lastRequest = "";
-    
- 
-    
+
+
+
     @FXML
     void buttonPress(ActionEvent event) {
     	System.out.println("press");
@@ -57,54 +57,41 @@ public class ClientController implements ChatIF{
     	//lastRequest = "getAll";
     	//client.handleMessageFromClientUI("getAll");
     }
-    
+
     @FXML
     void TFEnter(ActionEvent event) {
     	System.out.println("tf enter");
     	buttonPress(event);
     }
-    
+
     public void initConnection(String host, int port) {
-    	try 
+    	try
         {
           client= new Client(host, port, this);
-        } 
-        catch(IOException exception) 
+        }
+        catch(IOException exception)
         {
           System.out.println("Error: Can't setup connection!"
                     + " Terminating client.");
           System.exit(1);
         }
     }
-    
-    
+
+
     public void initialize() {
     	System.out.println("initialize");
     	usernames = new ArrayList<String>();
     	balances = new ArrayList<String>();
 
-//    	ObservableList<String> items =FXCollections.observableArrayList (
-//    		    "Single", "Double", "Suite", "Family App");
-//    		lv.setItems(items);
-//    		
-//		ObservableList<String> items2 =FXCollections.observableArrayList (
-//			    "1", "2", "3", "4");
-//			lv2.setItems(items2);
-    	
-
-    	
 		lv.setItems(FXCollections.observableArrayList(usernames));
 		lv2.setItems(FXCollections.observableArrayList(balances));
-//    	bt.setOnAction(e -> {
-//    		System.out.println("action");
-//    	});
-    		
+
     }
 
 	@Override
 	public void display(String message) {
 		// TODO Auto-generated method stub
-		
+
 		System.out.println("got message to display:" + message);
 		System.out.println("last request is:" + lastRequest);
 		if(lastRequest.startsWith("get ") && !message.equals("No such account")) {
@@ -129,18 +116,17 @@ public class ClientController implements ChatIF{
 		}
 		System.out.println(usernames);
 		System.out.println(balances);
-		
+
 		Platform.runLater(new Runnable() {
 		      @Override public void run() {
 		    	  lv.setItems(FXCollections.observableArrayList(usernames));
 		  		lv2.setItems(FXCollections.observableArrayList(balances));
 		      }
 		    });
-		
-		
 
-		
+
+
 	}
-    
+
 
 }
