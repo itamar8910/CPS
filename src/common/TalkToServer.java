@@ -16,7 +16,7 @@ public class TalkToServer implements ChatIF{
 
 	StrCallbackIF currentCallback;
 
-	public static TalkToServer getInstance(String ip, String port){
+	public static TalkToServer getInstance(String ip, int port){
 		if(instance == null){
 			instance = new TalkToServer(ip, port);
 		}
@@ -45,7 +45,7 @@ public class TalkToServer implements ChatIF{
 
 	@Override
 	public void display(String message) {
-
+		currentCallback.handle(message);
 	}
 
 	public void send(String message, StrCallbackIF callback){

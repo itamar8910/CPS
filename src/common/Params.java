@@ -39,4 +39,8 @@ public class Params {
 		}
 	}
 
+	public String toString(){
+		return data.toString();
+	}
+
 }
