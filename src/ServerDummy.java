@@ -14,6 +14,12 @@ import common.Utils;
 import ocsf.server.*;
 
 /*TODOS
+ * ORDER:
+ * - Impl. etner
+ * - Impl. leave
+ * - Impl. cancel
+ * - Impl. parking algo integration
+ * 
  * 	TODO: add a cronjob that executes at midnight and adds all vehicles with subscription to the Vehicles table
 
  */
@@ -151,7 +157,7 @@ public class ServerDummy extends AbstractServer
 	  typeParams.addParam("type", "physicalOrder");
 	  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
 	  typeParams.addParam("startTimeMS", String.valueOf(System.currentTimeMillis()));
-	  typeParams.addParam("leaveTimeMS", String.valueOf(Utils.dateToMillis(params.getParam("leaveTime"))));
+	  typeParams.addParam("leaveTimeMS", String.valueOf(Utils.todayTimeToMillis(params.getParam("leaveTime"))));
 	  final String type = typeParams.toString();
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
@@ -208,8 +214,6 @@ public class ServerDummy extends AbstractServer
 	  resp.addParam("price", String.valueOf(priceToPay));
 	  return resp;
   }
-
-  
   
   private Params handleRoutineSubscription(Params params) {
 	  
@@ -234,6 +238,8 @@ public class ServerDummy extends AbstractServer
 	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
 	  
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
+	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  TestDB.getInstance().updateUserType(params.getParam("ID"), typeParams.toString());
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
@@ -261,6 +267,8 @@ private Params handleFullSubscription(Params params) {
 	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
 	  
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
+	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  TestDB.getInstance().updateUserType(params.getParam("ID"), typeParams.toString());
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));

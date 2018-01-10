@@ -45,6 +45,33 @@ public class Utils {
 		}
 		return -1;
 	}
+	
+	public static long timeToMillis(String timeStr) {
+		String[] tokens = timeStr.split(":");
+		String hours = tokens[0];
+		String minutes = tokens[1];
+		int millisInMinute = 60*1000;
+		return Integer.valueOf(hours) * millisInMinute * 60 + Integer.valueOf(minutes)*millisInMinute;
+	}
+
+
+	public static long todayTimeToMillis(String timeStr) {
+		String[] tokens = timeStr.split(":");
+		String hours = tokens[0];
+		String minutes = tokens[1];
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		date.setHours(Integer.valueOf(hours));
+		date.setMinutes(Integer.valueOf(minutes));
+		date.setSeconds(0);
+
+		System.out.println(date);
+		return date.getTime();
+	}
+	
+	public static void main(String args[]) {
+		System.out.println(todayTimeToMillis("14:15"));
+	}
 
 	
 }

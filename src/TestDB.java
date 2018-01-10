@@ -278,4 +278,19 @@ public class TestDB {
 		return -1;
 	}
 
+	public void updateUserType(String userID, String typeStr) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("UPDATE Users SET type=? WHERE userID=?");
+			update.setString(1, typeStr);
+			update.setString(2, userID);
+
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }
