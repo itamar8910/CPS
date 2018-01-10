@@ -262,4 +262,20 @@ public class TestDB {
 		}
 	}
 
+	public int getIndexIDOfUser(String userID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT ID FROM Users WHERE userID=?");
+			select.setString(1, userID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getInt("id");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
 }

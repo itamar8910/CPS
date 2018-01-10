@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ClientRoutineSubscriptionController implements ControllerIF{
+public class clientRoutineSubscriptionController implements ControllerIF{
 
     @FXML
     private TextField tfID;
@@ -30,7 +30,10 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
 
     @FXML
     private Button bSubmit;
-
+    
+    @FXML
+    private TextField tfEnterTime;
+    
     @FXML
     private TextField tfLeavingTime;
 
@@ -48,7 +51,8 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     	orderParams.addParam("vehicleID", tfVehicleID.getText()); //TODO: handle multiple vehicles
     	orderParams.addParam("parkingLot", tfParkingLot.getText());
     	orderParams.addParam("startDate", tfStartDate.getText());
-    	orderParams.addParam("leavignTime", tfLeavingTime.getText());
+    	orderParams.addParam("startTime", tfEnterTime.getText());
+    	orderParams.addParam("leaveTime", tfLeavingTime.getText());
     	orderParams.addParam("email", tfEmail.getText());
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), msg -> {

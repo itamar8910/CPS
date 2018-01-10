@@ -13,6 +13,11 @@ import common.ParkingAlgo;
 import common.Utils;
 import ocsf.server.*;
 
+/*TODOS
+ * 	TODO: add a cronjob that executes at midnight and adds all vehicles with subscription to the Vehicles table
+
+ */
+
 /**
  * This class overrides some of the methods in the abstract
  * superclass in order to give more functionality to the server.
@@ -142,15 +147,21 @@ public class ServerDummy extends AbstractServer
 		  resp.addParam("status", "BAD");
 		  return resp;
 	  }
+	  Params typeParams = Params.getEmptyInstance();
+	  typeParams.addParam("type", "physicalOrder");
+	  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
+	  typeParams.addParam("startTimeMS", String.valueOf(System.currentTimeMillis()));
+	  typeParams.addParam("leaveTimeMS", String.valueOf(Utils.dateToMillis(params.getParam("leaveTime"))));
+	  final String type = typeParams.toString();
+	  
+	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), "temp");
+	  //final long startTime = System.currentTimeMillis();
+	  //final long leaveTime = Utils.TimeToMillis(params.getParam("leaveTime"));
 
-	  final long startTime = System.currentTimeMillis();
-	  final long leaveTime = Utils.TimeToMillis(params.getParam("leaveTime"));
+	  updateVehiclesForUser(params.getParam("ID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
-	  TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
-
-	  callParkingAlgo("Enter" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  //callParkingAlgo("Enter" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
@@ -169,16 +180,26 @@ public class ServerDummy extends AbstractServer
 		  return resp;
 	  }
 
-	  final String type = "OrderedOneTimeParking";
+	  Params typeParams = Params.getEmptyInstance();
+	  typeParams.addParam("type", "orderedOneTimeParking");
+	  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
+//	  typeParams.addParam("enterDate", params.getParam("enterDate"));
+//	  typeParams.addParam("enterTime", params.getParam("enterTime"));
+	  typeParams.addParam("enterTimeMS", String.valueOf(Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"))));
+//	  typeParams.addParam("leaveDate", params.getParam("leaveDate"));
+//	  typeParams.addParam("leaveTime", params.getParam("leaveTime"));
+	  typeParams.addParam("leaveTimeMS", String.valueOf(Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"))));
+
+	  final String type = typeParams.toString();
 
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  final long startTime = Utils.DateTimeToMillis(params.getParam("enterDate"), params.getParam("enterDate"));
-	  final long leaveTime =Utils.DateTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveDate"));
+	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
+	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
 
-	  TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  updateVehiclesForUser(params.getParam("ID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
-	  callParkingAlgo("Enter" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  double priceToPay = calcParkingPriceUpfront(params.getParam("parkingLot"), type, leaveTime-startTime);
 
@@ -188,8 +209,75 @@ public class ServerDummy extends AbstractServer
 	  return resp;
   }
 
+  
+  
+  private Params handleRoutineSubscription(Params params) {
+	  
+	  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
+	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
+	  if(isInTable){
+		  Params resp = Params.getEmptyInstance();
+		  resp.addParam("status", "BAD");
+		  return resp;
+	  }
+	  
+	  Params typeParams = Params.getEmptyInstance();
+	  typeParams.addParam("type", "routineSubscription");
+	  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
+	  typeParams.addParam("enterTimeHHMM", params.getParam("enterTime"));
+	  typeParams.addParam("leaveTimeHHMM", params.getParam("leaveTime"));
+	  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
+	  final String type = typeParams.toString();
+	  
+	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
+	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
+	  
+	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
+	  Params resp = Params.getEmptyInstance();
+	  resp.addParam("status", "OK");
+	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  return resp;
+	  
+  }
 
+private Params handleFullSubscription(Params params) {
+	  
+	  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
+	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
+	  if(isInTable){
+		  Params resp = Params.getEmptyInstance();
+		  resp.addParam("status", "BAD");
+		  return resp;
+	  }
+	  
+	  Params typeParams = Params.getEmptyInstance();
+	  typeParams.addParam("type", "fullSubscription");
+	  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
+	  final String type = typeParams.toString();
+	  
+	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
+
+	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
+	  
+	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
+	  Params resp = Params.getEmptyInstance();
+	  resp.addParam("status", "OK");
+	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  return resp;
+	  
+  }
+
+private void updateVehiclesForUser(String userID) {
+	//TODO: impl. Adds vehicle to Vehicles Table based on user ID (handles orders, routine subscriptions, full subscription, etc.)
+	//TODO call parking algo if parking is for today
+}
+
+private void updateVehiclesForAllUsersDaily(String param) {
+	//TODO: impl. Adds all vehicles to Vehicles Table based on users (handles orders, routine subscriptions, full subscription, etc.)
+	//TODO: also calls parkingAlgo for all vehicles of today
+	//TODO: call routinely as a cron job. 
+}
 
 
 /**
@@ -204,9 +292,10 @@ public class ServerDummy extends AbstractServer
 	    Params params = new Params(msg.toString());
 	    try {
 	    	if(params.getParam("action").equals("RoutineSubscription")){
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
-	    		resp.addParam("subscriptionID", "123");
+	    		Params resp = handleRoutineSubscription(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("FullSubscription")){
+	    		Params resp = handleFullSubscription(params);
 	    		client.sendToClient(resp.toString());
 	    	}
 	    	else if(params.getParam("action").equals("ClientPhysicalOrder")){ // - V
@@ -254,6 +343,7 @@ public class ServerDummy extends AbstractServer
 			e.printStackTrace();
 		}
 	  }
+
 
 
 
