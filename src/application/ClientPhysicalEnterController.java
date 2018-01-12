@@ -57,7 +57,7 @@ public class ClientPhysicalEnterController implements ControllerIF{
         	  	             bSubmit.setOnAction(event->{
         	  	            	 String subscriptionID = tfSubID.getText();
         	  	            	 System.out.println("got subscription id:" + subscriptionID);
-        	  	              	 Params orderParams = Params.getEmptyInstance();
+//        	  	              	 Params orderParams = Params.getEmptyInstance();
         	  	            	 orderParams.addParam("action", "clientEnterWithSubscriptionID");
         	  	            	 orderParams.addParam("ID", ID);
         	  	            	 orderParams.addParam("subscriptionID", subscriptionID);

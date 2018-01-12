@@ -76,8 +76,11 @@ public class Utils {
 //	}
 
 	public static boolean isInLastMonth(long subscriptionStartUnixtime) {
-		long diff = System.currentTimeMillis();
-		long millisInMonth = 1000 * 60 * 60 * 24 * 30;
+		System.out.println("current time in millis:" + System.currentTimeMillis());
+		long diff = System.currentTimeMillis() - subscriptionStartUnixtime;
+		System.out.println("diff:" + diff);
+		long millisInMonth = 1000l * 60l * 60l * 24l * 30l;
+		System.out.println("millis in month" + millisInMonth);
 		return diff < millisInMonth;
 	}
 

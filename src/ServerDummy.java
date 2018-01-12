@@ -296,6 +296,7 @@ private String updateVehicleEntered(String userID, String vehicleID, String park
 	String currentUnixTime = String.valueOf(System.currentTimeMillis());
 	String expectedLeaveTimeUnix = getExpectedLeaveTimeUnix(subscriptionTypeParams);
 	TestDB.getInstance().updateVehicleStartLeaveTimes(vehicleID, currentUnixTime, expectedLeaveTimeUnix);
+	TestDB.getInstance().updateVehicleIsParking(vehicleID, "true");
 	//TODO: call car parking algo with 'Enter' command
 	return "OK";
 }
@@ -368,15 +369,17 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 		//check if arrived in time
 		//TODO: handle case where user is late 
 		//check if time matches
-		if(!(Utils.isCurrentTimeAfter(subscriptionParams.getParam("enterTimeMS")) && !Utils.isCurrentTimeAfter(subscriptionParams.getParam("leaveTimeMS")))){
+		if((Utils.isCurrentTimeAfter(subscriptionParams.getParam("enterTimeMS")) && !Utils.isCurrentTimeAfter(subscriptionParams.getParam("leaveTimeMS")))){
 			return "Time doesn't match";
 		}
+		return "OK";
 	}else if(subType.equals("routineSubscription") || subType.equals("fullSubscription")) {
 		//check subscription id
 		if(!subscriptionID.equals(subscriptionParams.getParam("subscriptionID"))) {
 			return "Not same subscriptionID";
 		}
 		long subscriptionStartUnixtime = Long.valueOf(subscriptionParams.getParam("subscriptionStartMS"));
+		System.out.println("subscription time ms:" + subscriptionStartUnixtime);
 		if(!Utils.isInLastMonth(subscriptionStartUnixtime)) {
 			//subscription expired
 			return "Subscription expired";
@@ -433,14 +436,12 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 	    		resp.addParam("status", "OK");
 	    		resp.addParam("payAmount", "123142");
 	    		client.sendToClient(resp.toString());
-	    	}else if(params.getParam("action").equals("clientEnter")){
+	    	}else if(params.getParam("action").equals("clientEnter")){ // -V
 	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());	    	
 	    	}else if(params.getParam("action").equals("clientEnterWithSubscriptionID")){
 	    		System.out.println("clientEnterWithSubscriptionID");
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
-
+	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientCancelOrder")){
 	    		System.out.println("clientCancelOrder");

@@ -360,4 +360,20 @@ public class TestDB {
 		}
 	}
 
+	public void updateVehicleIsParking(String vehicleID, String val) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("UPDATE Vehicles SET isInParking=? WHERE vehicleID=?");
+			update.setString(1, val);
+			update.setString(2, vehicleID);
+
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 }
