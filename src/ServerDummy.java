@@ -4,6 +4,7 @@
 
 import java.awt.Window.Type;
 import java.io.*;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,9 +176,16 @@ public class ServerDummy extends AbstractServer
 	  return resp;
   }
 
-  private double calcParkingPriceUpfront(String param, String type, long parkingTimeInMillis) {
-		return 100; //TODO: implement
-	}
+  private double calcPriceUpfrontForOneTimeOrder(String parkingLot, Params subscriptionParams) {
+		System.out.println("calcPriceUpfrontForOneTimeOrder");
+		List<Integer> prices = TestDB.getInstance().getPrices(parkingLot);
+		long startTime = Long.valueOf(subscriptionParams.getParam("enterTimeMS"));
+		long leaveTime = Long.valueOf(subscriptionParams.getParam("leaveTimeMS"));
+		long diff = leaveTime - startTime;
+		System.out.println("diff:" + diff);
+		double numHours = (diff / 1000.0 / 60.0 / 60.0);
+		return numHours * prices.get(1);
+  }
 
   private Params handleClientOneTimeOrder(Params params){
 	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
@@ -201,15 +209,15 @@ public class ServerDummy extends AbstractServer
 
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
-	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
+//	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
+//	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
 
 	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
-	  double priceToPay = calcParkingPriceUpfront(params.getParam("parkingLot"), type, leaveTime-startTime);
-
+	  double priceToPay = calcPriceUpfrontForOneTimeOrder(params.getParam("parkingLot"), typeParams);
+	  addToUserMoney(params.getParam("ID"), (int)priceToPay);
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("price", String.valueOf(priceToPay));
@@ -244,9 +252,39 @@ public class ServerDummy extends AbstractServer
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  double price = calcSubscriptionPrice(params.getParam("parkingLot"), typeParams);
+	  System.out.println("price:" + price);
+	  addToUserMoney(params.getParam("ID"), price);
+	  resp.addParam("price", String.valueOf(price));
+	  
 	  return resp;
 	  
   }
+
+private double calcSubscriptionPrice(String parkingLot, Params subscriptionParams) {
+	List<Integer> prices = TestDB.getInstance().getPrices(parkingLot);
+
+	if(subscriptionParams.getParam("type").equals("routineSubscription")) {
+//		long enterTimeUnix = Long.valueOf(subscriptionParams.getParam("enterTimeHHMM"));
+//		long leaveTimeUnix = Long.valueOf(subscriptionParams.getParam("enterTimeHHMM"));
+//		long diff = leaveTimeUnix - enterTimeUnix; 
+//		//TODO: update users money value in DB
+//		//TODO: support multiple vehicles
+//		double numHours = (int)(diff / 1000.0 / 60.0 / 60.0);
+//		return (int)(numHours * prices.get(2) * prices.get(1));
+		//TODO: update users money value in DB
+		//TODO: support multiple vehicles
+		System.out.println("calcing routine sub price");
+		System.out.println(prices.get(2) + "," + prices.get(1));
+		return (prices.get(2) * prices.get(1));
+	}else if(subscriptionParams.getParam("type").equals("fullSubscription")) {
+		prices = TestDB.getInstance().getPrices("Default");
+
+		return (prices.get(4) * prices.get(1));
+	}
+	return 0;
+}
+
 
 private Params handleFullSubscription(Params params) {
 	  
@@ -273,6 +311,10 @@ private Params handleFullSubscription(Params params) {
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
+	  double price = calcSubscriptionPrice("", typeParams);
+	  System.out.println("price:" + price);
+	  addToUserMoney(params.getParam("ID"), price);
+	  resp.addParam("price", String.valueOf(price));
 	  return resp;
 	  
   }
@@ -286,6 +328,14 @@ private void handleCallParkingAlgoForUser(String userID, String parkingLot) {
 	//TODO: also calls parkingAlgo for all vehicles of today
 	//TODO: call routinely as a cron job. 
 
+}
+
+private void addToUserMoney(String userID, double amount) {
+	TestDB.getInstance().addToUserMoney(userID, (int)(amount));
+}
+
+private List<Integer> getPrices(String parkingLot){
+	return TestDB.getInstance().getPrices(parkingLot);
 }
 
 private String updateVehicleEntered(String userID, String vehicleID, String parkingLot, Params subscriptionTypeParams) {
@@ -344,6 +394,10 @@ private Params handleClientEnter(Params params) {
 	if(canEnter.equals("OK")) {
 		//add car to vehicles table
 		updateVehicleEntered(userID, vehicleID, parkingLot, subscriptionParams);
+//		int price = 0;
+//		if(subscriptionParams.getParam("tpye").equals("orderedOneTimeParking")) {
+//			price = calcPriceUpfrontForOneTimeOrder(subscriptionParams);
+//		}
 		return Params.getEmptyInstance().addParam("status", "OK").addParam("needsSubscriptionID", "No");
 	}else {
 		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", canEnter);
@@ -360,6 +414,7 @@ private boolean needsSubscriptionID(String type) {
 private String canEnterParking(String userID, String parkingLot, String subscriptionID, Params subscriptionParams) {
 	String subType = subscriptionParams.getParam("type");
 	if(subType.equals("physicalOrder")) {
+		//TODO: check if parkingLot is full
 		return "OK";
 	}else if(subType.equals("orderedOneTimeParking")) {
 		//check if same parking lot
@@ -404,6 +459,46 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 	}
 
 
+
+private Params handleClientLeave(Params params) {
+	String vehicleID = params.getParam("vehicleID");
+	String parkingLot = params.getParam("parkingLot");
+	boolean isInTable = TestDB.getInstance().isInTable("Vehicles", "vehicleID", vehicleID);
+	if(!isInTable) {
+		Params resp = Params.getEmptyInstance();
+		resp.addParam("status", "BAD");
+		return resp;
+	}
+	String userID = TestDB.getInstance().getUserIdFromVehicleID(vehicleID);
+	String subscriptionParamsStr = TestDB.getInstance().getUserSubscriptionTypeStr(userID);
+	Params subscriptionParams = new Params(subscriptionParamsStr);
+	double priceToPay = calcPriceToPay(parkingLot, vehicleID, subscriptionParams);
+	return Params.getEmptyInstance().addParam("status", "OK").addParam("payAmount", String.valueOf(priceToPay));
+
+}
+
+
+private double calcPriceToPay(String parkingLot, String vehicleID, Params subscriptionParams) {
+	List<Integer> prices = TestDB.getInstance().getPrices(parkingLot);
+	if(subscriptionParams.getParam("type").equals("physicalOrder")) {
+		System.out.println("inside pay for single order");
+		long startParkTimeUnix = TestDB.getInstance().getVehicleStartParkTime(vehicleID);
+		long deltaTimeUnix = System.currentTimeMillis() - startParkTimeUnix;
+		System.out.println("deltaTime is:" + deltaTimeUnix);
+		double numHours = (deltaTimeUnix / 1000.0 / 60.0 / 60.0);
+		System.out.println("num hours:" + numHours);
+		return (numHours * prices.get(0));
+	}else if(subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
+		long plannedLeaveTimeUnix = Long.valueOf(subscriptionParams.getParam("leaveTimeMS"));
+		long deltaTimeUnix = System.currentTimeMillis() - plannedLeaveTimeUnix;
+		double numHours = (deltaTimeUnix / 1000.0 / 60.0 / 60.0);
+		return (numHours * prices.get(1));
+	}
+	
+	return 0;
+}
+
+
 /**
    * This method handles any messages received from the client.
    *
@@ -431,11 +526,13 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 	    		client.sendToClient(resp.toString());
 	    	}
 	    	else if(params.getParam("action").equals("clientLeave")){
-	    		System.out.println("clientLeave");
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
-	    		resp.addParam("payAmount", "123142");
-	    		client.sendToClient(resp.toString());
+	    		Params resp = handleClientLeave(params);
+	    		client.sendToClient(resp.toString());	
+//	    		System.out.println("clientLeave");
+//	    		Params resp = Params.getEmptyInstance();
+//	    		resp.addParam("status", "OK");
+//	    		resp.addParam("payAmount", "123142");
+//	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientEnter")){ // -V
 	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());	    	
@@ -462,7 +559,6 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 			e.printStackTrace();
 		}
 	  }
-
 
 
 

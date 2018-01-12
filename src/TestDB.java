@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -374,6 +376,61 @@ public class TestDB {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public void addToUserMoney(String userID, int amount) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("UPDATE Users SET money=money+? WHERE userID=?");
+			update.setInt(1, amount);
+			update.setString(2, userID);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public List<Integer> getPrices(String parkingLot) {
+		List<Integer> prices = new ArrayList<Integer>();
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT price FROM ParkingFacility WHERE name=?");
+			select.setString(1, parkingLot);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				String priceListStr = uprs.getString("price");
+				JSONArray priceList = new JSONArray(priceListStr);
+				for(int i = 0; i < priceList.length(); i++) {
+					prices.add(priceList.getInt(i));
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return prices;
+	}
+
+	public long getVehicleStartParkTime(String vehicleID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT startTime FROM Vehicles WHERE vehicleID=?");
+			select.setString(1, vehicleID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				String timeStr = uprs.getString("startTime");
+				return Long.valueOf(timeStr);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0l;
 	}
 
 }

@@ -76,7 +76,7 @@ public class ClientOneTimeOrderController implements ControllerIF{
     	  	             dialog.initModality(Modality.APPLICATION_MODAL);
     	  	             dialog.initOwner(main.primaryStage);
     	  	             VBox dialogVbox = new VBox(20);
-    	  	             dialogVbox.getChildren().add(new Text("Please pay X money"));
+    	  	             dialogVbox.getChildren().add(new Text("Please pay " + respParams.getParam("price")));
     	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
     	  	             dialog.setScene(dialogScene);
     	  	             dialog.show();

@@ -69,6 +69,8 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     	  	             dialog.initOwner(main.primaryStage);
     	  	             VBox dialogVbox = new VBox(20);
     	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
+    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
+
     	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
     	  	             dialog.setScene(dialogScene);
     	  	             dialog.show();
