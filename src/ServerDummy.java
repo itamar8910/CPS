@@ -296,6 +296,10 @@ private Params handleFullSubscription(Params params) {
 		  return resp;
 	  }
 	  
+	  //TODO: handle max park time is 14 days
+	  //TODO: can't park more than subscription unless the subscription is renewed
+	  //TODO: system reminds user a week before subscription is over
+	  
 	  Params typeParams = Params.getEmptyInstance();
 	  typeParams.addParam("type", "fullSubscription");
 	  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
@@ -443,6 +447,10 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 			//check if same parking lot
 			if(!parkingLot.equals(subscriptionParams.getParam("parkingLot"))) {
 				return "Not same parking lot";
+			}
+			//check if not in weekend
+			if(Utils.isCurrentlyWeekend()) {
+				return "Cannot park with routine subscription in weekends!";
 			}
 			//check if time matches
 			if(!Utils.isCurrentHourBetween(subscriptionParams.getParam("enterTimeHHMM"),subscriptionParams.getParam("leaveTimeHHMM"))) {

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -79,7 +80,7 @@ public class Utils {
 		System.out.println("current time in millis:" + System.currentTimeMillis());
 		long diff = System.currentTimeMillis() - subscriptionStartUnixtime;
 		System.out.println("diff:" + diff);
-		long millisInMonth = 1000l * 60l * 60l * 24l * 30l;
+		long millisInMonth = 1000l * 60l * 60l * 24l * 28l;
 		System.out.println("millis in month" + millisInMonth);
 		return diff < millisInMonth;
 	}
@@ -92,6 +93,13 @@ public class Utils {
 
 	public static boolean isCurrentTimeAfter(String unixTime) {
 		return System.currentTimeMillis() > Long.valueOf(unixTime);
+	}
+
+	public static boolean isCurrentlyWeekend() {
+		Date currentDate = new Date();
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        return calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY && calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY;
 	}
 
 	
