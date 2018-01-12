@@ -30,17 +30,22 @@ public class Params {
 		return "";
 	}
 
-	public void addParam(String p, String val){
+	public Params addParam(String p, String val){
 		try {
 			data.put(p, val);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return this;
 	}
 
 	public String toString(){
 		return data.toString();
+	}
+
+	public boolean hasParam(String string) {
+		return data.has(string);
 	}
 
 }

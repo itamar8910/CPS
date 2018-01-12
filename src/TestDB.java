@@ -169,10 +169,10 @@ public class TestDB {
 
 	}
 
-	public void addVehicle(String userID, String vehicleID, String parkingLot, long startTime, long endTime) {
+	public void addVehicle(String userID, String vehicleID, String parkingLot, long startTime, long endTime, boolean isInParking) {
 		PreparedStatement update;
 		try {
-			update = conn.prepareStatement("INSERT INTO Vehicles(userID, vehicleID, parkingLot, startTime, endTime) VALUES(?,?,?,?,?)");
+			update = conn.prepareStatement("INSERT INTO Vehicles(userID, vehicleID, parkingLot, startTime, endTime, isInParking) VALUES(?,?,?,?,?,?)");
 			update.setString(1, userID);
 			update.setString(2, vehicleID);
 			update.setString(3, parkingLot);
@@ -180,6 +180,7 @@ public class TestDB {
 			System.out.println("endTime" + endTime);
 			update.setLong(4, startTime);
 			update.setLong(5, endTime);
+			update.setString(6, String.valueOf(isInParking));
 			update.executeUpdate();
 			System.out.println("success");
 		} catch (SQLException e) {
@@ -284,6 +285,72 @@ public class TestDB {
 			update = conn.prepareStatement("UPDATE Users SET type=? WHERE userID=?");
 			update.setString(1, typeStr);
 			update.setString(2, userID);
+
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public String getUserVehicleID(String userID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT vehicleID FROM Users WHERE userID=?");
+			select.setString(1, userID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			//TODO: support multiple vehicles
+			if(uprs.next()){
+				return uprs.getString("vehicleID");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+		
+	}
+
+	public String getUserIdFromVehicleID(String vehicleID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT userID FROM Vehicles WHERE vehicleID=?");
+			select.setString(1, vehicleID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("userID");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public String getUserSubscriptionTypeStr(String userID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT type FROM Users WHERE userID=?");
+			select.setString(1, userID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("type");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public void updateVehicleStartLeaveTimes(String vehicleID, String startTimeUnix, String leaveTimeUnix) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("UPDATE Vehicles SET startTime=?, endTime=? WHERE vehicleID=?");
+			update.setString(1, startTimeUnix);
+			update.setString(2, leaveTimeUnix);
+			update.setString(3, vehicleID);
 
 			update.executeUpdate();
 			System.out.println("success");

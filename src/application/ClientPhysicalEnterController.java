@@ -20,6 +20,9 @@ public class ClientPhysicalEnterController implements ControllerIF{
     private TextField tfID;
 
     @FXML
+    private TextField tfParkingLot;
+    
+    @FXML
     private Button bSubmit;
 
     private ApplicationMain main;
@@ -30,7 +33,8 @@ public class ClientPhysicalEnterController implements ControllerIF{
        	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "clientEnter");
     	final String ID = tfID.getText();
-    	orderParams.addParam("ID", tfID.getText());
+    	orderParams.addParam("vehicleID", tfID.getText());
+    	orderParams.addParam("parkingLot", tfParkingLot.getText());
 
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), msg -> {

@@ -35,6 +35,7 @@ public class ClientContactController implements ControllerIF{
 
     	orderParams.addParam("action", "clientContact");
     	orderParams.addParam("ID", tfID.getText());
+    	orderParams.addParam("text", taComplaint.getText());
 
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), msg -> {

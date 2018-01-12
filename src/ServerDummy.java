@@ -2,6 +2,7 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com
 
+import java.awt.Window.Type;
 import java.io.*;
 
 import org.json.JSONArray;
@@ -165,7 +166,7 @@ public class ServerDummy extends AbstractServer
 	  //final long startTime = System.currentTimeMillis();
 	  //final long leaveTime = Utils.TimeToMillis(params.getParam("leaveTime"));
 
-	  updateVehiclesForUser(params.getParam("ID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  //callParkingAlgo("Enter" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
@@ -203,7 +204,7 @@ public class ServerDummy extends AbstractServer
 	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
 	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
 
-	  updateVehiclesForUser(params.getParam("ID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
@@ -235,7 +236,7 @@ public class ServerDummy extends AbstractServer
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
+	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot")); // adds vehicle to db if in the same day
 	  
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
 	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
@@ -264,7 +265,7 @@ private Params handleFullSubscription(Params params) {
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  updateVehiclesForUser(params.getParam("ID")); // adds vehicle to db if in the same day
+	  handleCallParkingAlgoForUser(params.getParam("ID"), ""); // adds vehicle to db if in the same day
 	  
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
 	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
@@ -276,16 +277,128 @@ private Params handleFullSubscription(Params params) {
 	  
   }
 
-private void updateVehiclesForUser(String userID) {
-	//TODO: impl. Adds vehicle to Vehicles Table based on user ID (handles orders, routine subscriptions, full subscription, etc.)
-	//TODO call parking algo if parking is for today
-}
-
-private void updateVehiclesForAllUsersDaily(String param) {
-	//TODO: impl. Adds all vehicles to Vehicles Table based on users (handles orders, routine subscriptions, full subscription, etc.)
+private void handleCallParkingAlgoForUser(String userID, String parkingLot) {
+	//first inserts vehicles to Vehicles table
+	//TODO: support multiple vehicles
+	String vehicleID = TestDB.getInstance().getUserVehicleID(userID);
+	TestDB.getInstance().addVehicle(userID, vehicleID, parkingLot, 0, 0, false);
+	
 	//TODO: also calls parkingAlgo for all vehicles of today
 	//TODO: call routinely as a cron job. 
+
 }
+
+private String updateVehicleEntered(String userID, String vehicleID, String parkingLot, Params subscriptionTypeParams) {
+	boolean isInTable = TestDB.getInstance().isInTable("Vehicles", "vehicleID", vehicleID);
+	if(!isInTable) {
+		return "VehicleID is not in Vehicles table";
+	}
+	String currentUnixTime = String.valueOf(System.currentTimeMillis());
+	String expectedLeaveTimeUnix = getExpectedLeaveTimeUnix(subscriptionTypeParams);
+	TestDB.getInstance().updateVehicleStartLeaveTimes(vehicleID, currentUnixTime, expectedLeaveTimeUnix);
+	//TODO: call car parking algo with 'Enter' command
+	return "OK";
+}
+
+//private void updateVehiclesForAllUsersDaily(String param) {
+//	//TODO: impl. Adds all vehicles to Vehicles Table based on users (handles orders, routine subscriptions, full subscription, etc.)
+//}
+
+
+
+
+private String getExpectedLeaveTimeUnix(Params subscriptionParams) {
+	String subType = subscriptionParams.getParam("type");
+	if(subType.equals("physicalOrder")) {
+		return subscriptionParams.getParam("leaveTimeMS");
+	}else if(subType.equals("orderedOneTimeParking")) {
+		return subscriptionParams.getParam("leaveTimeMS");
+	}else if(subType.equals("routineSubscription")) {
+		return String.valueOf(Utils.todayTimeToMillis(subscriptionParams.getParam("leaveTimeHHMM")));
+	}else if(subType.equals("fullSubscription")) {
+		return "0";
+	}
+	return "0";
+	
+}
+
+
+private Params handleClientEnter(Params params) {
+	String vehicleID = params.getParam("vehicleID");
+	String parkingLot = params.getParam("parkingLot");
+	boolean isInTable = TestDB.getInstance().isInTable("Vehicles", "vehicleID", vehicleID);
+	if(!isInTable) {
+		Params resp = Params.getEmptyInstance();
+		resp.addParam("status", "BAD");
+		return resp;
+	}
+	String userID = TestDB.getInstance().getUserIdFromVehicleID(vehicleID);
+	String subscriptionParamsStr = TestDB.getInstance().getUserSubscriptionTypeStr(userID);
+	Params subscriptionParams = new Params(subscriptionParamsStr);
+	if(needsSubscriptionID(subscriptionParams.getParam("type")) && !params.hasParam("subscriptionID")) {
+		return Params.getEmptyInstance().addParam("status", "OK").addParam("needsSubscriptionID", "Yes");
+	}
+	String subscriptionID = needsSubscriptionID(subscriptionParams.getParam("type")) ? params.getParam("subscriptionID") : "";
+	String canEnter = canEnterParking(userID, parkingLot, subscriptionID, subscriptionParams);
+	if(canEnter.equals("OK")) {
+		//add car to vehicles table
+		updateVehicleEntered(userID, vehicleID, parkingLot, subscriptionParams);
+		return Params.getEmptyInstance().addParam("status", "OK").addParam("needsSubscriptionID", "No");
+	}else {
+		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", canEnter);
+	}
+}
+
+
+
+private boolean needsSubscriptionID(String type) {
+	return (type.equals("routineSubscription") || type.equals("fullSubscription"));
+}
+
+
+private String canEnterParking(String userID, String parkingLot, String subscriptionID, Params subscriptionParams) {
+	String subType = subscriptionParams.getParam("type");
+	if(subType.equals("physicalOrder")) {
+		return "OK";
+	}else if(subType.equals("orderedOneTimeParking")) {
+		//check if same parking lot
+		if(!parkingLot.equals(subscriptionParams.getParam("parkingLot"))) {
+			return "Not same parking lot";
+		}
+		//check if arrived in time
+		//TODO: handle case where user is late 
+		//check if time matches
+		if(!(Utils.isCurrentTimeAfter(subscriptionParams.getParam("enterTimeMS")) && !Utils.isCurrentTimeAfter(subscriptionParams.getParam("leaveTimeMS")))){
+			return "Time doesn't match";
+		}
+	}else if(subType.equals("routineSubscription") || subType.equals("fullSubscription")) {
+		//check subscription id
+		if(!subscriptionID.equals(subscriptionParams.getParam("subscriptionID"))) {
+			return "Not same subscriptionID";
+		}
+		long subscriptionStartUnixtime = Long.valueOf(subscriptionParams.getParam("subscriptionStartMS"));
+		if(!Utils.isInLastMonth(subscriptionStartUnixtime)) {
+			//subscription expired
+			return "Subscription expired";
+		}
+		if(subType.equals("routineSubscription")) {
+			//check if same parking lot
+			if(!parkingLot.equals(subscriptionParams.getParam("parkingLot"))) {
+				return "Not same parking lot";
+			}
+			//check if time matches
+			if(!Utils.isCurrentHourBetween(subscriptionParams.getParam("enterTimeHHMM"),subscriptionParams.getParam("leaveTimeHHMM"))) {
+				return "Current hour not included in your subscription";
+			}
+			return "OK";
+		}else { // full subscription
+			return "OK";
+		}
+		}
+
+	return "Invalid subscription type";
+
+	}
 
 
 /**
@@ -299,10 +412,10 @@ private void updateVehiclesForAllUsersDaily(String param) {
 	    System.out.println("dummy server got message:" + msg);
 	    Params params = new Params(msg.toString());
 	    try {
-	    	if(params.getParam("action").equals("RoutineSubscription")){
+	    	if(params.getParam("action").equals("RoutineSubscription")){ // -V
 	    		Params resp = handleRoutineSubscription(params);
 	    		client.sendToClient(resp.toString());
-	    	}else if(params.getParam("action").equals("FullSubscription")){
+	    	}else if(params.getParam("action").equals("FullSubscription")){// -V
 	    		Params resp = handleFullSubscription(params);
 	    		client.sendToClient(resp.toString());
 	    	}
@@ -321,11 +434,8 @@ private void updateVehiclesForAllUsersDaily(String param) {
 	    		resp.addParam("payAmount", "123142");
 	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientEnter")){
-	    		System.out.println("clientEnter");
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
-	    		resp.addParam("needsSubscriptionID", "Yes");
-	    		client.sendToClient(resp.toString());
+	    		Params resp = handleClientEnter(params);
+	    		client.sendToClient(resp.toString());	    	
 	    	}else if(params.getParam("action").equals("clientEnterWithSubscriptionID")){
 	    		System.out.println("clientEnterWithSubscriptionID");
 	    		Params resp = Params.getEmptyInstance();

@@ -59,7 +59,7 @@ public class Utils {
 		String[] tokens = timeStr.split(":");
 		String hours = tokens[0];
 		String minutes = tokens[1];
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		//DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		date.setHours(Integer.valueOf(hours));
 		date.setMinutes(Integer.valueOf(minutes));
@@ -69,8 +69,26 @@ public class Utils {
 		return date.getTime();
 	}
 	
-	public static void main(String args[]) {
-		System.out.println(todayTimeToMillis("14:15"));
+	
+	
+//	public static void main(String args[]) {
+//		System.out.println(todayTimeToMillis("14:15"));
+//	}
+
+	public static boolean isInLastMonth(long subscriptionStartUnixtime) {
+		long diff = System.currentTimeMillis();
+		long millisInMonth = 1000 * 60 * 60 * 24 * 30;
+		return diff < millisInMonth;
+	}
+
+	public static boolean isCurrentHourBetween(String h1HHMM, String h2HHMM) {
+		Date currentDate = new Date();
+		String currentHHMM = String.valueOf(currentDate.getHours()) + ":" + String.valueOf(currentDate.getMinutes());
+		return timeToMillis(h1HHMM) <= timeToMillis(currentHHMM) && timeToMillis(currentHHMM) < timeToMillis(h2HHMM);
+	}
+
+	public static boolean isCurrentTimeAfter(String unixTime) {
+		return System.currentTimeMillis() > Long.valueOf(unixTime);
 	}
 
 	
