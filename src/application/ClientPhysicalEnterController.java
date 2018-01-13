@@ -28,6 +28,7 @@ public class ClientPhysicalEnterController implements ControllerIF{
     private ApplicationMain main;
     private Params params;
 
+    
     @FXML
     void bSubmitClick(ActionEvent event) {
        	Params orderParams = Params.getEmptyInstance();

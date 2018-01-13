@@ -2,21 +2,25 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com
 
-import java.awt.Window.Type;
-import java.io.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import algorithm.Algorithm;
 import common.Params;
-import common.ParkingAlgo;
+import common.User;
 import common.Utils;
-import ocsf.server.*;
+import ocsf.server.AbstractServer;
+import ocsf.server.ConnectionToClient;
 
 /*TODOS
- * - Impl. cancel
  * - Impl. parking algo integration
  * 
  * 	TODO: add a cronjob that executes at midnight and adds all vehicles with subscription to the Vehicles table
@@ -54,8 +58,87 @@ public class ServerDummy extends AbstractServer
   public ServerDummy(int port)
   {
     super(port);
-    System.out.println("Tables:");
-    TestDB.getInstance().printAllTables();
+    //System.out.println("Tables:");
+    //TestDB.getInstance().printAllTables();
+    final boolean DO_CONJOBS = false; //TODO: remember to change this before submitting :)
+    if(DO_CONJOBS) { 
+	    new Thread(()-> {
+	    	while(true) {
+		    	System.out.println("CRON JOB 1 MIN");
+		    	
+		    	//do logic
+		    	//check for all orders if are late
+		    	List<User> allUsers = TestDB.getInstance().getAllUsers();
+		    	System.out.println("Printing all users:");
+		    	for(User user : allUsers) {
+		    		if(user.getSubscriptionParams().getParam("type").equals("orderedOneTimeParking")) {
+		    			long orderTimeUnix = Long.valueOf(user.getSubscriptionParams().getParam("enterTimeMS"));
+		    			// if customer is late and this is the first minute shes is late in
+		    			if(System.currentTimeMillis() > orderTimeUnix && System.currentTimeMillis() < orderTimeUnix + 60*1000) {
+		    				//update stats
+		    				addToStatistics(TestDB.getInstance().getVehicleParkingLot(user.getVehicleID()), 1, 0, 0, 0);
+		    				//notify via email
+		    				sendEmailToCostumerForBeginLate(user.getEmail(), "Hello, You are late for your order");
+		    			}
+		    		}
+		    	}
+		    	System.out.println("END");
+		    	try {	    		
+		    		//sleep till next minute
+		    		Calendar c = Calendar.getInstance();
+		    		c.setTimeInMillis(System.currentTimeMillis());
+		    		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE) + 1);
+					System.out.println("calendar millis:" + c.getTimeInMillis());
+		    		System.out.println("current millis :" + System.currentTimeMillis());
+					long diff = c.getTimeInMillis() - System.currentTimeMillis();
+		    		System.out.println("sleeping untill next minute for:" + diff);
+					Thread.sleep(diff);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}
+	    	
+	    }).start();
+	    new Thread(()-> {
+	    	while(true) {
+	    		
+	    		try {	    		
+		    		//sleep till next day
+		    		Calendar c = Calendar.getInstance();
+		    		c.setTimeInMillis(System.currentTimeMillis());
+		    		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE)+1, 0,0);
+					System.out.println("calendar millis:" + c.getTimeInMillis());
+		    		System.out.println("current millis :" + System.currentTimeMillis());
+					long diff = c.getTimeInMillis() - System.currentTimeMillis();
+		    		System.out.println("sleeping untill next day for:" + diff);
+					Thread.sleep(diff);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    		
+	    		System.out.println("CRON JOB START OF DAY");
+	    		
+	    		
+	    		//do logic
+	    		List<User> allUsers = TestDB.getInstance().getAllUsers();
+		    	System.out.println("Printing all users:");
+		    	for(User user : allUsers) {
+		    		Params subscriptionParams = user.getSubscriptionParams();
+		    		if(subscriptionParams.equals("routineSubscription") || subscriptionParams.equals("fullSubscription")) {
+		    			handleCallParkingAlgoOrderForSubscription(user.getUserID(), user.getVehicleID(), TestDB.getInstance().getVehicleParkingLot(user.getVehicleID()), subscriptionParams);
+		    		}	
+		    	}
+		    	
+	    		/*
+	    		 * for each user that's a subscriber
+	    		 * call: handleCallParkingAlgoOrderForSubscription
+	    		 */
+	    		
+	    	}
+	    }).start();
+    }
     //TestDB.getInstance().addRow("itamar", 100);
     //TestDB.getInstance().getBalanceOf("itamar");
   }
@@ -64,7 +147,16 @@ public class ServerDummy extends AbstractServer
   //Instance methods ************************************************
 
 
-  public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
+  private void sendEmailToCostumerForBeginLate(String email, String string) {
+	// TODO: impl.
+	//sends email
+	  
+	//if response is she's still interested, charge additional 20%.
+	
+}
+
+
+public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
 
 	  JSONArray slots = new JSONArray();
 	  for(int r = 0; r < rows; r++){
@@ -94,57 +186,191 @@ public class ServerDummy extends AbstractServer
 
 
 
-  private void callParkingAlgo(String op, String vehicleID, String parkingLot, long startTime, long leaveTime) {
-	  try{
+//  private void callParkingAlgo(String op, String vehicleID, String parkingLot, long startTime, long leaveTime) {
+//	  try{
+//	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
+//	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+//	  String dataStr = "";
+//
+//	  for(int i = 0; i < data.length(); i++){
+//		  JSONObject carJson = data.getJSONObject(i);
+//		  dataStr += carJson.getString("row") + ", " + carJson.getString("height") + ", " + carJson.getString("col") + ", " + carJson.getString("status") + ", "
+//				  + carJson.getString("enterTime") + ", " + carJson.getString("leaveTime") + ", " + carJson.getString("Vid") + "\n";
+//	  }
+//
+//	  String opStr = "";
+//	  if(op.equals("Reserve")){
+//		  opStr = "Reserve " + startTime + ", " + leaveTime + ", " + vehicleID;
+//	  } else if(op.equals("Enter")){
+//		  opStr = "Enter " + startTime + ", " + leaveTime + ", " + vehicleID;
+//	  }else if(op.equals("Leave")){
+//		  opStr = "Leave " + vehicleID;
+//	  }
+//
+//	  String newData = ParkingAlgo.doParking(dataStr, width, opStr);
+//	  JSONArray newDataJson = new JSONArray();
+//
+//	  for(String line : newData.split("\n")){
+//		  String[] lineData = line.split(",");
+//		  JSONObject slotJson = new JSONObject();
+//		  try {
+//			slotJson.put("row", lineData[0]);
+//			slotJson.put("height", lineData[1]);
+//			slotJson.put("col", lineData[2]);
+//			slotJson.put("status", lineData[3]);
+//			slotJson.put("enterTime", lineData[4]);
+//			slotJson.put("leaveTime", lineData[5]);
+//			slotJson.put("Vid", lineData[6]);
+//			newDataJson.put(slotJson);
+//			//slots.add(slotJson);
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	  }
+//	  System.out.println("calling updateParkingLotData");
+//	  TestDB.getInstance().updateParkingLotData(parkingLot, newDataJson.toString());
+//	  System.out.println("called updateParkingLotData");
+//
+//	  }catch(Exception e){
+//		  e.printStackTrace();
+//	  }
+//  }
+  
+  private void callParkingAlgoEnter(String parkingLot, String vehicleID, long leaveTime) {
 	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
 	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
-	  String dataStr = "";
+	  JSONArray start;
+	try {
+		start = new JSONArray(data.toString());
+		Algorithm alg = new Algorithm(start, width);
+		//TODO: integrate insertion with status (in this case 'order')
+		alg.insertCar(vehicleID, leaveTime);
+		//TODO: handle parking lot is full
+		JSONArray result = alg.generateDBJsonArray();
+		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 
-	  for(int i = 0; i < data.length(); i++){
-		  JSONObject carJson = data.getJSONObject(i);
-		  dataStr += carJson.getString("row") + ", " + carJson.getString("height") + ", " + carJson.getString("col") + ", " + carJson.getString("status") + ", "
-				  + carJson.getString("enterTime") + ", " + carJson.getString("leaveTime") + ", " + carJson.getString("Vid") + "\n";
-	  }
-
-	  String opStr = "";
-	  if(op.equals("Reserve")){
-		  opStr = "Reserve " + startTime + ", " + leaveTime + ", " + vehicleID;
-	  } else if(op.equals("Enter")){
-		  opStr = "Enter " + startTime + ", " + leaveTime + ", " + vehicleID;
-	  }else if(op.equals("Leave")){
-		  opStr = "Leave " + vehicleID;
-	  }
-
-	  String newData = ParkingAlgo.doParking(dataStr, width, opStr);
-	  JSONArray newDataJson = new JSONArray();
-
-	  for(String line : newData.split("\n")){
-		  String[] lineData = line.split(",");
-		  JSONObject slotJson = new JSONObject();
-		  try {
-			slotJson.put("row", lineData[0]);
-			slotJson.put("height", lineData[1]);
-			slotJson.put("col", lineData[2]);
-			slotJson.put("status", lineData[3]);
-			slotJson.put("enterTime", lineData[4]);
-			slotJson.put("leaveTime", lineData[5]);
-			slotJson.put("Vid", lineData[6]);
-			newDataJson.put(slotJson);
-			//slots.add(slotJson);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	  }
-	  System.out.println("calling updateParkingLotData");
-	  TestDB.getInstance().updateParkingLotData(parkingLot, newDataJson.toString());
-	  System.out.println("called updateParkingLotData");
-
-	  }catch(Exception e){
-		  e.printStackTrace();
-	  }
   }
+  
+ private void callParkingAlgoOrder(String parkingLot, String vehicleID, long leaveTime) {
+	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
+	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+	  JSONArray start;
+	try {
+		start = new JSONArray(data.toString());
+		Algorithm alg = new Algorithm(start, width);
+		//TODO: integrate insertion with status (in this case 'enter')
+		alg.insertCar(vehicleID, leaveTime);
+		//TODO: handle parking lot is full
+		JSONArray result = alg.generateDBJsonArray();
+		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+ }
+ 
+ private void callParkingAlgoLeave(String parkingLot, String vehicleID) {
+	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
+	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+	  JSONArray start;
+	try {
+		start = new JSONArray(data.toString());
+		Algorithm alg = new Algorithm(start, width);
+		//TODO: integrate insertion with status (in this case 'leave')
+		alg.ejectCar(vehicleID);
+		//TODO: handle parking lot is full
+		JSONArray result = alg.generateDBJsonArray();
+		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+ }
 
+ private void initParkingLotData(String parkingLotName) {
+	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLotName);
+	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+	  JSONArray start;
+	try {
+		start = new JSONArray(data.toString());
+		Algorithm alg = new Algorithm(start, width);
+		JSONArray result = alg.generateDBJsonArray();
+		TestDB.getInstance().updateParkingLotData(parkingLotName, result.toString());
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+}
+ }
+ 
+ private static class ThreeIndices implements Comparable{
+	 int i,j,k;
+	 String data;
+	 public ThreeIndices(int ii, int jj, int kk, String data) {
+		 i = ii;
+		 j = jj;
+		 k = kk;
+		 this.data = data;
+	 }
+	@Override
+	public int compareTo(Object o) {
+		if((o instanceof ThreeIndices)) {
+			ThreeIndices other = (ThreeIndices)o;
+			if(this.i != other.i) {
+				return this.i - other.i;
+			}else if(this.j != other.j){
+				return this.j - other.j;
+			}else if(this.k != other.k) {
+				return this.k - other.k;
+			}else {
+				return 0;
+			}
+		}
+		return 0;
+	}
+	 
+ }
+ 
+ private String generateParkinglotDataForPDF(String parkingLotName) {
+	 try {
+		 JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		 List<ThreeIndices> statuses = new ArrayList<ThreeIndices>();
+		 for(int i = 0; i < data.length(); i++) {
+			 JSONObject spotData = data.getJSONObject(i);
+			 statuses.add(new ThreeIndices(spotData.getInt("depth"),spotData.getInt("height"),spotData.getInt("col"),String.valueOf((char)spotData.getInt("status"))));
+		 }
+		 Collections.sort(statuses);
+		 String dataForPDF = "";
+		 int index = 0;
+		 for(ThreeIndices status : statuses) {
+			 dataForPDF += String.valueOf(index++) + status.data; 
+		 }
+		 return dataForPDF;
+		 
+	 }catch(JSONException e) {
+		 e.printStackTrace();
+	 }
+	 return "";
+	
+ }
+ 
+ private void addToStatistics(String parkingLotName, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
+	 int parkingLotID = TestDB.getInstance().getParkingLotIDByName(parkingLotName);
+	 Calendar current = Calendar.getInstance();
+	 current.set(Calendar.HOUR_OF_DAY, 0);
+	 current.set(Calendar.MINUTE, 0);
+	 current.set(Calendar.SECOND, 0);
+	 current.set(Calendar.MILLISECOND, 0);
+	 long todayUnixTime = current.getTimeInMillis();
+	 TestDB.getInstance().initStatsIfDoesntExists(parkingLotID, todayUnixTime);
+	 TestDB.getInstance().addToDailyStats(parkingLotID, todayUnixTime, lateDelta, cancelDelta, arrivedDelta, numDisabledDelta);
+	 
+ }
+ 
   private Params handleClientPhysicalOrder(Params params) {
 	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 	  if(isInTable){
@@ -161,16 +387,23 @@ public class ServerDummy extends AbstractServer
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  //final long startTime = System.currentTimeMillis();
-	  //final long leaveTime = Utils.TimeToMillis(params.getParam("leaveTime"));
-
-	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
-
-	  //callParkingAlgo("Enter" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
-
-	  Params resp = Params.getEmptyInstance();
-	  resp.addParam("status", "OK");
-	  return resp;
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  //TODO: handle if parking lot is full
+	  //callParkingAlgoEnter(params.getParam("parkingLot"), params.getParam("vehicleID"), Utils.todayTimeToMillis(params.getParam("leaveTime")));
+	  
+	  // automatically calls handleClientEnter for physical order
+	  Params enterInpParams = Params.getEmptyInstance();
+	  enterInpParams.addParam("action", "clientEnter");
+	  enterInpParams.addParam("vehicleID", params.getParam("vehicleID"));
+	  enterInpParams.addParam("parkingLot", params.getParam("parkingLot"));
+	  Params enterRespParams = handleClientEnter(enterInpParams);
+	  if(enterRespParams.getParam("status").equals("BAD")) {
+		  return enterRespParams;
+	  }else {
+		  Params resp = Params.getEmptyInstance();
+		  resp.addParam("status", "OK");
+		  return resp;
+	  }
   }
 
   private double calcPriceUpfrontForOneTimeOrder(String parkingLot, Params subscriptionParams) {
@@ -185,6 +418,7 @@ public class ServerDummy extends AbstractServer
   }
 
   private Params handleClientOneTimeOrder(Params params){
+	  //TODO: automatically call Enter when there is a physical order
 	  boolean isInTable = TestDB.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 	  if(isInTable){
 		  Params resp = Params.getEmptyInstance();
@@ -209,8 +443,8 @@ public class ServerDummy extends AbstractServer
 //	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
 //	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
 
-	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
-
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  callParkingAlgoOrder(params.getParam("parkingLot"), params.getParam("vehicleID"), Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")));
 	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  double priceToPay = calcPriceUpfrontForOneTimeOrder(params.getParam("parkingLot"), typeParams);
@@ -241,7 +475,10 @@ public class ServerDummy extends AbstractServer
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  handleCallParkingAlgoForUser(params.getParam("ID"), params.getParam("parkingLot")); // adds vehicle to db if in the same day
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot")); // adds vehicle to db if in the same day
+	  
+	  handleCallParkingAlgoOrderForSubscription(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), typeParams);
+
 	  
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
 	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
@@ -257,6 +494,29 @@ public class ServerDummy extends AbstractServer
 	  return resp;
 	  
   }
+
+private void handleCallParkingAlgoOrderForSubscription(String userID, String vehicleID, String parkingLot, Params subscriptionParams) {
+	if(!(subscriptionParams.equals("routineSubscription") || subscriptionParams.equals("fullSubscription"))) {
+		System.out.println("ERR: called handleCallParkingAlgoOrderForSubscription with subscriptionType that are not of a subscription");
+		return;
+	}
+	long subscriptionStartTimeMS = Long.valueOf(subscriptionParams.getParam("subscriptionStartMS"));
+	//if subscription is valid
+	if(System.currentTimeMillis() > subscriptionStartTimeMS && Utils.isInLastMonth(subscriptionStartTimeMS)) {
+		//call parking algo for ordering a parking spot
+		String endTimeHour = (subscriptionParams.equals("routineSubscription") ? subscriptionParams.getParam("leaveTimeHHMM") : "23:59");
+		if(parkingLot.equals("**ANY**")) { // if is full subscription, need to order in all parking lots
+			List<String> allParkingLots = TestDB.getInstance().getAllParkingLotNames();
+			for(String aParkingLot : allParkingLots) {
+				callParkingAlgoOrder(aParkingLot, vehicleID, Utils.timeToMillis(endTimeHour));
+			}
+		}else { // if is routine subscription order only for specific parking lot
+			callParkingAlgoOrder(parkingLot, vehicleID, Utils.timeToMillis(endTimeHour));			
+		}
+	}
+	
+}
+
 
 private double calcSubscriptionPrice(String parkingLot, Params subscriptionParams) {
 	List<Integer> prices = TestDB.getInstance().getPrices(parkingLot);
@@ -304,8 +564,9 @@ private Params handleFullSubscription(Params params) {
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  handleCallParkingAlgoForUser(params.getParam("ID"), ""); // adds vehicle to db if in the same day
-	  
+	  handleAddVehicleToDB(params.getParam("ID"), ""); // adds vehicle to db if in the same day
+	  handleCallParkingAlgoOrderForSubscription(params.getParam("ID"), params.getParam("vehicleID"), "**ANY**", typeParams);
+
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
 	  typeParams.addParam("subscriptionID", String.valueOf(subscriptionID));
 	  TestDB.getInstance().updateUserType(params.getParam("ID"), typeParams.toString());
@@ -320,7 +581,13 @@ private Params handleFullSubscription(Params params) {
 	  
   }
 
-private void handleCallParkingAlgoForUser(String userID, String parkingLot) {
+/**
+ * 
+ * @param userID
+ * @param parkingLot
+ * @param command: Order or Enter
+ */
+private void handleAddVehicleToDB(String userID, String parkingLot) {
 	//first inserts vehicles to Vehicles table
 	//TODO: support multiple vehicles
 	String vehicleID = TestDB.getInstance().getUserVehicleID(userID);
@@ -395,16 +662,38 @@ private Params handleClientEnter(Params params) {
 	if(canEnter.equals("OK")) {
 		//add car to vehicles table
 		updateVehicleEntered(userID, vehicleID, parkingLot, subscriptionParams);
+		long leaveTime = getVehicleExpectedLeaveTime(userID, vehicleID, subscriptionParams);
+		callParkingAlgoEnter(parkingLot, vehicleID, leaveTime);
 //		int price = 0;
 //		if(subscriptionParams.getParam("tpye").equals("orderedOneTimeParking")) {
 //			price = calcPriceUpfrontForOneTimeOrder(subscriptionParams);
 //		}
+		if(subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
+			//update stats
+			addToStatistics(parkingLot, 0, 0, 1, 0);
+		}
 		return Params.getEmptyInstance().addParam("status", "OK").addParam("needsSubscriptionID", "No");
 	}else {
 		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", canEnter);
 	}
 }
 
+
+
+private long getVehicleExpectedLeaveTime(String userID, String vehicleID, Params subscriptionParams) {
+	if(subscriptionParams.getParam("type").equals("physicalOrder")) {
+		return Long.valueOf(subscriptionParams.getParam("startTimeMS"));
+	}else if(subscriptionParams.getParam("type").equals("orderedOneTimeParking")) { //TODO: impl. for other types
+		return Long.valueOf(subscriptionParams.getParam("leaveTimeMS"));
+	}else if(subscriptionParams.getParam("type").equals("routineSubscription")) {
+		return Long.valueOf(subscriptionParams.getParam("leaveTimeHHMM"));
+	}else if(subscriptionParams.getParam("type").equals("fullSubscription")) {
+		return Utils.timeToMillis("23:59");
+	}else {
+		System.out.println("ERR: getVehicleExpectedLeaveTime with unexpected subscription type");
+	}
+	return 0l;
+}
 
 
 private boolean needsSubscriptionID(String type) {
@@ -471,13 +760,25 @@ private Params handleClientLeave(Params params) {
 	boolean isInTable = TestDB.getInstance().isInTable("Vehicles", "vehicleID", vehicleID);
 	if(!isInTable) {
 		Params resp = Params.getEmptyInstance();
-		resp.addParam("status", "BAD");
+		resp.addParam("status", "BAD").addParam("message", "Vehicle not in parking");
 		return resp;
 	}
+	boolean isVehicleInParking = TestDB.getInstance().getIsVehicleInParking(vehicleID);
+	if(!isVehicleInParking) {
+		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Vehicle is not currently parked");
+	}
+	TestDB.getInstance().updateVehicleIsParking(vehicleID, "false");
 	String userID = TestDB.getInstance().getUserIdFromVehicleID(vehicleID);
 	String subscriptionParamsStr = TestDB.getInstance().getUserSubscriptionTypeStr(userID);
 	Params subscriptionParams = new Params(subscriptionParamsStr);
 	double priceToPay = calcPriceToPay(parkingLot, vehicleID, subscriptionParams);
+	// remove from Users table if is physicalOrder or OneTimeOrder	
+	if(subscriptionParams.getParam("type").equals("physicalOrder") || subscriptionParams.getParam("type").equals("orderedOneTimeParking")){
+		TestDB.getInstance().removeUser(userID);		
+	}
+	//from vehicle from vehicles table
+	TestDB.getInstance().removeVehicle(vehicleID);
+	//returns response to user;
 	return Params.getEmptyInstance().addParam("status", "OK").addParam("payAmount", String.valueOf(priceToPay));
 
 }
@@ -514,6 +815,7 @@ private Params handleClientCancelOrder(Params params) {
 	if (!subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
 		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Your Order/subscription type cannot be canceled");
 	}
+	addToStatistics(parkingLot, 0, 1, 0, 0);
 	double priceToPay = -1;
 	double hoursDiff = Utils.getHoursDiff(subscriptionParams.getParam("enterTimeMS"));
 	System.out.println("hours diff is:" + hoursDiff);
@@ -641,6 +943,10 @@ private Params handleClientCancelOrder(Params params) {
 
     ServerDummy sv = new ServerDummy(port);
     TestDB.getInstance(); //  init db
+//    sv.addToStatistics("A", 1, 2, 3, 4);
+//    System.exit(0);
+//    System.out.println(sv.generateParkinglotDataForPDF("A"));
+//    System.exit(0);
 //    TestDB.getInstance().addParkingLot("A", sv.generateEmptyParkingLotDataJson(3, 4, 5).toString(), 5);
 //	System.exit(0);
 //    Params params = Params.getEmptyInstance();

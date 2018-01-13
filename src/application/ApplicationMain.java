@@ -21,7 +21,7 @@ import javafx.scene.layout.BorderPane;
 
 public class ApplicationMain extends Application {
 	Stage primaryStage;
-	final int DEFAULT_PORT = 6654;
+	final int DEFAULT_PORT = 6654;//55560;
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;

@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import com.mysql.jdbc.DatabaseMetaData;
 
+import common.User;
+
 public class TestDB {
 
 	private static TestDB instance;
@@ -191,7 +193,7 @@ public class TestDB {
 		}
 	}
 
-	public int getParkingLotWidth(String parkingLotName){
+	public int getParkingLotWidthOld(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT width FROM ParkingLots WHERE name=?");
 			select.setString(1, parkingLotName);
@@ -208,8 +210,26 @@ public class TestDB {
 		}
 		return -1;
 	}
+	
+	public int getParkingLotWidth(String parkingLotName){
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT dimension FROM ParkingFacility WHERE name=?");
+			select.setString(1, parkingLotName);
 
-	public JSONArray getParkingLotJsonData(String parkingLotName){
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getInt("dimension");
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public JSONArray getParkingLotJsonDataOld(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT data FROM ParkingLots WHERE name=?");
 			select.setString(1, parkingLotName);
@@ -233,6 +253,30 @@ public class TestDB {
 		return null;
 	}
 
+	public JSONArray getParkingLotJsonData(String parkingLotName){
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT data FROM ParkingFacility WHERE name=?");
+			select.setString(1, parkingLotName);
+
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
+				return new JSONArray(uprs.getString("data"));
+			}
+			System.out.println("getParkingLotJsonData got rempty result set");
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("exceotion at getParkingLotJsonData");
+		return null;
+	}
+	
 	public void addParkingLot(String name, String data, int width){
 		PreparedStatement update;
 		try {
@@ -249,7 +293,7 @@ public class TestDB {
 		}
 	}
 
-	public void updateParkingLotData(String name, String data){
+	public void updateParkingLotDataOld(String name, String data){
 		System.out.println("updateParkingLotData with:" + data);
 		PreparedStatement update;
 		try {
@@ -265,6 +309,22 @@ public class TestDB {
 		}
 	}
 
+	public void updateParkingLotData(String name, String data){
+		System.out.println("updateParkingLotData with:" + data);
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("UPDATE ParkingFacility SET data=? WHERE name=?");
+			update.setString(1, data);
+			update.setString(2, name);
+
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public int getIndexIDOfUser(String userID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT ID FROM Users WHERE userID=?");
@@ -463,6 +523,150 @@ public class TestDB {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public void removeUser(String userID) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("DELETE FROM Users WHERE userID=?");
+			update.setString(1, userID);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void removeVehicle(String vehicleID) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("DELETE FROM Vehicles WHERE vehicleID=?");
+			update.setString(1, vehicleID);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public List<User> getAllUsers() {
+		ArrayList<User> users = new ArrayList<User>();
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT * FROM Users WHERE 1");
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			while(uprs.next()){
+				users.add(new User(uprs.getString("userID"), uprs.getString("vehicleID"), uprs.getString("email"), uprs.getString("type"), uprs.getDouble("money")));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return users;
+	}
+
+	public List<String> getAllParkingLotNames() {
+		List<String> parkingLots = new ArrayList<String>();
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT name FROM ParkingFacility WHERE 1");
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			while(uprs.next()){
+				parkingLots.add(uprs.getString("name"));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return parkingLots;
+	}
+
+	public boolean getIsVehicleInParking(String vehicleID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT isInParking FROM Vehicles WHERE vehicleID=?");
+			select.setString(1, vehicleID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("isInParking").equals("true");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public int getParkingLotIDByName(String parkingLotName) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT id FROM ParkingFacility WHERE name=?");
+			select.setString(1, parkingLotName);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getInt("id");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public void initStatsIfDoesntExists(int parkingLotID, long todayUnixTime) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT id FROM dailyStats WHERE date=? AND facID=?");
+			select.setString(1, String.valueOf(todayUnixTime));
+			select.setString(2, String.valueOf(parkingLotID));
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			boolean exists = false;
+			if(uprs.next()){
+				exists = true;
+			}
+			System.out.println("exists in stats table:" + exists);
+			if(!exists) {
+				//insert to stats table if doesn't exists
+				PreparedStatement update;
+				try {
+					update = conn.prepareStatement("INSERT INTO dailyStats(date, facID) VALUES(?,?)");
+					update.setString(1, String.valueOf(todayUnixTime));
+					update.setString(2, String.valueOf(parkingLotID));
+					
+
+					update.executeUpdate();
+					System.out.println("success-inserted");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void addToDailyStats(int parkingLotID, long todayUnixTime, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
+		try {
+			PreparedStatement updateStats = conn.prepareStatement("UPDATE dailyStats SET lateForParking=lateForParking+?, cancelOrders=cancelOrders+?, orderByType=orderByType+?, numLotsDisabled=numLotsDisabled+?  WHERE facID=? AND date=?");
+			
+			updateStats.setInt(1, lateDelta);
+			updateStats.setInt(2, cancelDelta);
+			updateStats.setInt(3, arrivedDelta);
+			updateStats.setInt(4, numDisabledDelta);
+			updateStats.setInt(5, parkingLotID);
+			updateStats.setString(6, String.valueOf(todayUnixTime));
+			updateStats.executeUpdate();
+			System.out.println("success");
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

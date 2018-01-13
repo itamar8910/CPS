@@ -28,6 +28,7 @@ public class ClientPhysicalLeaveController implements ControllerIF{
     private ApplicationMain main;
     private Params params;
 
+    
     @FXML
     void bSubmitClick(ActionEvent event) {
        	Params orderParams = Params.getEmptyInstance();
@@ -57,6 +58,22 @@ public class ClientPhysicalLeaveController implements ControllerIF{
 	  		    });
     		}else{
     			System.out.println("server returned BAD status");
+    			Platform.runLater(new Runnable() {
+  	  		      @Override public void run() {
+  	  	    		 final Stage dialog = new Stage();
+  	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+  	  	             dialog.initOwner(main.primaryStage);
+  	  	             VBox dialogVbox = new VBox(20);
+  	  	             dialogVbox.getChildren().add(new Text("Sorry, your request could not be granted"));
+  	  	             if(respParams.hasParam("message")) {
+  	  	  	             dialogVbox.getChildren().add(new Text("Reason:" + respParams.getParam("message")));
+  	  	             }
+  	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+  	  	             dialog.setScene(dialogScene);
+  	  	             dialog.show();
+  	  	             System.out.println("showed dialog");
+  	  		      }
+	  		    	});
     		}
     	});
     }
