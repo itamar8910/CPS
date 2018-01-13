@@ -16,9 +16,6 @@ import common.Utils;
 import ocsf.server.*;
 
 /*TODOS
- * ORDER:
- * - Impl. etner
- * - Impl. leave
  * - Impl. cancel
  * - Impl. parking algo integration
  * 
@@ -217,7 +214,7 @@ public class ServerDummy extends AbstractServer
 	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  double priceToPay = calcPriceUpfrontForOneTimeOrder(params.getParam("parkingLot"), typeParams);
-	  addToUserMoney(params.getParam("ID"), (int)priceToPay);
+	  addToUserMoney(params.getParam("ID"), -priceToPay);
 	  Params resp = Params.getEmptyInstance();
 	  resp.addParam("status", "OK");
 	  resp.addParam("price", String.valueOf(priceToPay));
@@ -254,7 +251,7 @@ public class ServerDummy extends AbstractServer
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
 	  double price = calcSubscriptionPrice(params.getParam("parkingLot"), typeParams);
 	  System.out.println("price:" + price);
-	  addToUserMoney(params.getParam("ID"), price);
+	  addToUserMoney(params.getParam("ID"), -price);
 	  resp.addParam("price", String.valueOf(price));
 	  
 	  return resp;
@@ -317,7 +314,7 @@ private Params handleFullSubscription(Params params) {
 	  resp.addParam("subscriptionID", String.valueOf(subscriptionID));
 	  double price = calcSubscriptionPrice("", typeParams);
 	  System.out.println("price:" + price);
-	  addToUserMoney(params.getParam("ID"), price);
+	  addToUserMoney(params.getParam("ID"), -price);
 	  resp.addParam("price", String.valueOf(price));
 	  return resp;
 	  
@@ -335,7 +332,7 @@ private void handleCallParkingAlgoForUser(String userID, String parkingLot) {
 }
 
 private void addToUserMoney(String userID, double amount) {
-	TestDB.getInstance().addToUserMoney(userID, (int)(amount));
+	TestDB.getInstance().addToUserMoney(userID, (amount));
 }
 
 private List<Integer> getPrices(String parkingLot){
@@ -497,13 +494,43 @@ private double calcPriceToPay(String parkingLot, String vehicleID, Params subscr
 		System.out.println("num hours:" + numHours);
 		return (numHours * prices.get(0));
 	}else if(subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
+		// handle if client stayed parking more than she ordered
 		long plannedLeaveTimeUnix = Long.valueOf(subscriptionParams.getParam("leaveTimeMS"));
 		long deltaTimeUnix = System.currentTimeMillis() - plannedLeaveTimeUnix;
 		double numHours = (deltaTimeUnix / 1000.0 / 60.0 / 60.0);
-		return (numHours * prices.get(1));
+		final double LATE_TO_EXIT_PRICE_FACTOR = 2;
+		return (numHours * prices.get(1) * LATE_TO_EXIT_PRICE_FACTOR);
 	}
 	
 	return 0;
+}
+
+
+private Params handleClientCancelOrder(Params params) {
+	String vehicleID = params.getParam("vehicleID");
+	String userID = TestDB.getInstance().getUserIDByVehicleID(vehicleID);
+	String parkingLot = TestDB.getInstance().getVehicleParkingLot(vehicleID);
+	Params subscriptionParams = new Params(TestDB.getInstance().getUserSubscriptionTypeStr(userID));
+	if (!subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
+		return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Your Order/subscription type cannot be canceled");
+	}
+	double priceToPay = -1;
+	double hoursDiff = Utils.getHoursDiff(subscriptionParams.getParam("enterTimeMS"));
+	System.out.println("hours diff is:" + hoursDiff);
+	double originalPrice = calcPriceUpfrontForOneTimeOrder(parkingLot, subscriptionParams);
+	addToUserMoney(userID, originalPrice); // first refund to user his original payment
+	//calculate how much use has to pay
+	if(hoursDiff > 3.0) {
+		priceToPay = originalPrice * 0.1;
+	}else if(hoursDiff > 1.0) {
+		priceToPay = originalPrice * 0.5;
+	}else {
+		priceToPay = originalPrice;
+	}
+		
+	addToUserMoney(userID, -priceToPay); // user has to pay the fine for canceling
+	return Params.getEmptyInstance().addParam("status", "OK").addParam("returnAmount", String.valueOf(originalPrice - priceToPay));
+
 }
 
 
@@ -533,27 +560,23 @@ private double calcPriceToPay(String parkingLot, String vehicleID, Params subscr
 	    		Params resp = handleClientOneTimeOrder(params);
 	    		client.sendToClient(resp.toString());
 	    	}
-	    	else if(params.getParam("action").equals("clientLeave")){
+	    	else if(params.getParam("action").equals("clientLeave")){ // -V
 	    		Params resp = handleClientLeave(params);
 	    		client.sendToClient(resp.toString());	
-//	    		System.out.println("clientLeave");
-//	    		Params resp = Params.getEmptyInstance();
-//	    		resp.addParam("status", "OK");
-//	    		resp.addParam("payAmount", "123142");
-//	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientEnter")){ // -V
 	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());	    	
-	    	}else if(params.getParam("action").equals("clientEnterWithSubscriptionID")){
+	    	}else if(params.getParam("action").equals("clientEnterWithSubscriptionID")){ // -V
 	    		System.out.println("clientEnterWithSubscriptionID");
 	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientCancelOrder")){
 	    		System.out.println("clientCancelOrder");
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
-	    		resp.addParam("returnAmount", "42155");
+	    		Params resp = handleClientCancelOrder(params);
 	    		client.sendToClient(resp.toString());
+	    		resp.addParam("status", "OK");
+//	    		resp.addParam("returnAmount", "42155");
+//	    		client.sendToClient(resp.toString());
 	    	}else if(params.getParam("action").equals("clientContact")){
 	    		System.out.println("clientContact");
 	    		Params resp = Params.getEmptyInstance();
@@ -567,6 +590,7 @@ private double calcPriceToPay(String parkingLot, String vehicleID, Params subscr
 			e.printStackTrace();
 		}
 	  }
+
 
 
 

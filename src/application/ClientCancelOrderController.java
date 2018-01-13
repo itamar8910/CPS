@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 public class ClientCancelOrderController implements ControllerIF{
 
     @FXML
-    private TextField tfID;
+    private TextField tfVehicleID;
 
     @FXML
     private Button bSubmit;
@@ -30,7 +30,7 @@ public class ClientCancelOrderController implements ControllerIF{
     	Params orderParams = Params.getEmptyInstance();
 
     	orderParams.addParam("action", "clientCancelOrder");
-    	orderParams.addParam("ID", tfID.getText());
+    	orderParams.addParam("vehicleID", tfVehicleID.getText());
 
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), msg -> {

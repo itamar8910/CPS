@@ -378,11 +378,11 @@ public class TestDB {
 		
 	}
 
-	public void addToUserMoney(String userID, int amount) {
+	public void addToUserMoney(String userID, double amount) {
 		PreparedStatement update;
 		try {
 			update = conn.prepareStatement("UPDATE Users SET money=money+? WHERE userID=?");
-			update.setInt(1, amount);
+			update.setDouble(1, amount);
 			update.setString(2, userID);
 			update.executeUpdate();
 			System.out.println("success");
@@ -431,6 +431,38 @@ public class TestDB {
 			e.printStackTrace();
 		}
 		return 0l;
+	}
+
+	public String getUserIDByVehicleID(String vehicleID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT userID FROM Vehicles WHERE vehicleID=?");
+			select.setString(1, vehicleID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("userID");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public String getVehicleParkingLot(String vehicleID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT parkingLot FROM Vehicles WHERE vehicleID=?");
+			select.setString(1, vehicleID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("parkingLot");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 }

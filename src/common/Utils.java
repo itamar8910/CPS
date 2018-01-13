@@ -102,5 +102,10 @@ public class Utils {
         return calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY && calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY;
 	}
 
+	public static double getHoursDiff(String unixTime) {
+		long diff = -(System.currentTimeMillis() - Long.valueOf(unixTime));
+		return diff / 1000.0 / 60.0 / 60.0;
+	}
+
 	
 }
