@@ -461,7 +461,7 @@ public class Algorithm{
 	
 	public static void main(String args[]) {
 		Algorithm alg = new Algorithm(4);
-		//alg.insertCar(new Car("abc",2l,1l), 2l);
+		alg.insertCar(new Car("abc",2l,1l), 2l);
 		System.out.println(alg.generateStatusString());
 		System.out.println(alg.generateDBString());
 	}

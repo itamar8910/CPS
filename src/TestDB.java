@@ -616,6 +616,22 @@ public class TestDB {
 		return 0;
 	}
 
+	public String getParkingLotNameByID(int parkingLotID) {
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT name FROM ParkingFacility WHERE id=?");
+			select.setInt(1, parkingLotID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			if(uprs.next()){
+				return uprs.getString("name");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	public void initStatsIfDoesntExists(int parkingLotID, long todayUnixTime) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT id FROM dailyStats WHERE date=? AND facID=?");

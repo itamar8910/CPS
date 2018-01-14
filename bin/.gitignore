@@ -1,8 +1,8 @@
-/Server.class
-/ServerDummy.class
-/TestDB.class
+/algorithm/
 /application/
 /client/
 /common/
-/algorithm/
+/Server.class
 /ServerDummy$ThreeIndices.class
+/ServerDummy.class
+/TestDB.class

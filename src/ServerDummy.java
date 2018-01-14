@@ -6,13 +6,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import algorithm.Algorithm;
 import algorithm.Car;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.Test;
 
 import common.Params;
 import common.User;
@@ -23,8 +29,9 @@ import ocsf.server.ConnectionToClient;
 /*TODOS
  * - Impl. parking algo integration
  * 
- * 	TODO: add a cronjob that executes at midnight and adds all vehicles with subscription to the Vehicles table
-
+ * - TODO: add to cronjob: alret to user when his subscription is about to be over ONE WEEK BEFORE
+ * - TODO: remove user & if his subscription time is over in CRONJOB
+ * - TODO: user "Follows" his order status (do some shity progress screen)
  */
 
 /**
@@ -126,7 +133,7 @@ public class ServerDummy extends AbstractServer
 		    	System.out.println("Printing all users:");
 		    	for(User user : allUsers) {
 		    		Params subscriptionParams = user.getSubscriptionParams();
-		    		if(subscriptionParams.equals("routineSubscription") || subscriptionParams.equals("fullSubscription")) {
+		    		if(subscriptionParams.getParam("type").equals("routineSubscription") || subscriptionParams.getParam("type").equals("fullSubscription")) {
 		    			handleCallParkingAlgoOrderForSubscription(user.getUserID(), user.getVehicleID(), TestDB.getInstance().getVehicleParkingLot(user.getVehicleID()), subscriptionParams);
 		    		}	
 		    	}
@@ -320,7 +327,7 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 		Algorithm alg = new Algorithm(width);
 		JSONObject result = new JSONObject();
 		result.put("parkingData", new JSONArray(alg.generateDBString()));
-		result.put("statsuData", new JSONArray(alg.generateStatusString()));
+		result.put("statusData", new JSONArray(alg.generateStatusString()));
 		TestDB.getInstance().updateParkingLotData(parkingLotName, result.toString());
 		//TestDB.getInstance().updateParkingLotData(parkingLotName, result.toString());
 	} catch (JSONException e) {
@@ -875,6 +882,160 @@ private Params handleGetParkingSlotStatus(Params params) {
 	return resp;
 }
 
+private Params handleGNumOfSubscribers(Params params) {
+	int parkingLotID = Integer.valueOf(params.getParam("facID"));
+	String parkingLotName = TestDB.getInstance().getParkingLotNameByID(parkingLotID);
+	List<User> users = TestDB.getInstance().getAllUsers();
+	int count = 0;
+	for(User user : users) {
+		if(!TestDB.getInstance().getVehicleParkingLot(user.getVehicleID()).equals(parkingLotName)) {
+			continue;
+		}
+		if(user.getSubscriptionParams().getParam("type").equals("routineSubscription") || user.getSubscriptionParams().getParam("type").equals("fullSubscription")) {
+			count++;
+		}
+	}
+	return Params.getEmptyInstance().addParam("status", "OK").addParam("num", String.valueOf(count));
+}
+
+private Params handleGNumOfSubscribersWithMoreThanOneCar(Params params) {
+	int parkingLotID = Integer.valueOf(params.getParam("facID"));
+	String parkingLotName = TestDB.getInstance().getParkingLotNameByID(parkingLotID);
+	List<User> users = TestDB.getInstance().getAllUsers();
+	Map<String, List<String>> userToVehicle = new HashMap<String,List<String>>();
+	int count = 0;
+	for(User user : users) {
+		if(!TestDB.getInstance().getVehicleParkingLot(user.getVehicleID()).equals(parkingLotName)) {
+			continue;
+		}
+		if(user.getSubscriptionParams().getParam("type").equals("routineSubscription") || user.getSubscriptionParams().getParam("type").equals("fullSubscription")) {
+			if(!userToVehicle.containsKey(user.getUserID())){
+				userToVehicle.put(user.getUserID(), new ArrayList<String>());
+			}
+			if(userToVehicle.get(user.getUserID()).size() > 0){
+				if(!userToVehicle.get(user.getUserID()).contains(user.getVehicleID())){
+					count += 1;
+				}
+			}
+			userToVehicle.get(user.getUserID()).add(user.getUserID());
+		}
+	}
+	return Params.getEmptyInstance().addParam("status", "OK").addParam("num", String.valueOf(count));
+}
+
+private Params getSubscriptionStats(Params params) {
+	Params respNumSubs = handleGNumOfSubscribers(params);
+	Params resNumsSubsMoreThanOneVehicle = handleGNumOfSubscribersWithMoreThanOneCar(params);
+	return Params.getEmptyInstance().addParam("monthly", respNumSubs.getParam("num")).addParam("monthlyWithMoreCars", resNumsSubsMoreThanOneVehicle.getParam("num"));
+
+}
+
+private Params toggleDisableSpot(Params params) {
+	//status:true/false. floor, position, name
+	try {
+		//int facID = Integer.parseInt(params.getParam("faceID"));
+		int floor = Integer.parseInt(params.getParam("floor"));
+		int position = Integer.parseInt(params.getParam("position"));
+		String parkingLotName = params.getParam("name");
+		String value = params.getParam("status"); //true/false
+				
+		int numCols = TestDB.getInstance().getParkingLotWidth(parkingLotName);
+		JSONObject parkingData = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		JSONArray statusData = new JSONArray(parkingData.getString("statusData"));
+		int i = floor;
+		int j = position / numCols;
+		int k = position % numCols;
+		JSONArray newStatusData = new JSONArray();
+		for(int index = 0; index < statusData.length(); index++) {
+			JSONObject spotStatus = statusData.getJSONObject(index);
+			if(spotStatus.getInt("i") == i && spotStatus.getInt("j") == j && spotStatus.getInt("k") == k) {
+				spotStatus.put("status", (value=="true") ? 'i' : spotStatus.get("status"));
+			}
+			newStatusData.put(spotStatus);
+		}
+		parkingData.put("statusData", newStatusData.toString());
+		TestDB.getInstance().updateParkingLotData(parkingLotName, parkingData.toString());
+		return Params.getEmptyInstance().addParam("status", "OK");
+		
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return Params.getEmptyInstance().addParam("status", "BAD");
+}
+
+
+private Params reserveSpot(Params params) {
+	//"floor" , "position":1D, name
+	
+	try {
+		//int facID = Integer.parseInt(params.getParam("faceID"));
+		int floor = Integer.parseInt(params.getParam("floor"));
+		int position = Integer.parseInt(params.getParam("position"));
+		String parkingLotName = params.getParam("name");
+		int numCols = TestDB.getInstance().getParkingLotWidth(parkingLotName);
+		JSONObject parkingData = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		JSONArray statusData = new JSONArray(parkingData.getString("statusData"));
+		int i = floor;
+		int j = position / numCols;
+		int k = position % numCols;
+		JSONArray newStatusData = new JSONArray();
+		for(int index = 0; index < statusData.length(); index++) {
+			JSONObject spotStatus = statusData.getJSONObject(index);
+			if(spotStatus.getInt("i") == i && spotStatus.getInt("j") == j && spotStatus.getInt("k") == k) {
+				spotStatus.put("status", 's');
+			}
+			newStatusData.put(spotStatus);
+		}
+		parkingData.put("statusData", newStatusData.toString());
+		TestDB.getInstance().updateParkingLotData(parkingLotName, parkingData.toString());
+		return Params.getEmptyInstance().addParam("status", "OK");
+		
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return Params.getEmptyInstance().addParam("status", "BAD");
+}
+
+
+
+private Params getSpotStatus(Params params) {
+
+	try {
+		//int facID = Integer.parseInt(params.getParam("faceID"));
+		int floor = Integer.parseInt(params.getParam("floor"));
+		int position = Integer.parseInt(params.getParam("position"));
+		String parkingLotName = params.getParam("name");
+		int numCols = TestDB.getInstance().getParkingLotWidth(parkingLotName);
+		JSONObject parkingData = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		JSONArray statusData = new JSONArray(parkingData.getString("statusData"));
+		int i = floor;
+		int j = position / numCols;
+		int k = position % numCols;
+		JSONArray newStatusData = new JSONArray();
+		for(int index = 0; index < statusData.length(); index++) {
+			JSONObject spotStatus = statusData.getJSONObject(index);
+			if(spotStatus.getInt("i") == i && spotStatus.getInt("j") == j && spotStatus.getInt("k") == k) {
+				return Params.getEmptyInstance().addParam("status", "OK")
+						.addParam("status", spotStatus.getString("status"))
+						.addParam("isDisabled", String.valueOf(spotStatus.getString("status").equals("i")))
+						.addParam("isReserved", String.valueOf(spotStatus.getString("status").equals("s")));
+			}
+			newStatusData.put(spotStatus);
+		}
+		parkingData.put("statusData", newStatusData.toString());
+		TestDB.getInstance().updateParkingLotData(parkingLotName, parkingData.toString());
+		return Params.getEmptyInstance().addParam("status", "OK");
+		
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return Params.getEmptyInstance().addParam("status", "BAD");
+}
+
+
 /**
    * This method handles any messages received from the client.
    *
@@ -927,6 +1088,30 @@ private Params handleGetParkingSlotStatus(Params params) {
 	    		System.out.println("getParkingSlotStatus");
 	    		Params resp = handleGetParkingSlotStatus(params);
 	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getNumOfSubscribers")) {
+	    		System.out.println("getNumOfSubscribers");
+	    		Params resp = handleGNumOfSubscribers(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getNumOfSubscribersWithMoreThanOneCar")) {
+	    		System.out.println("getNumOfSubscribersWithMoreThanOneCar");
+	    		Params resp = handleGNumOfSubscribersWithMoreThanOneCar(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getSubscriptionStats")) {
+	    		System.out.println("getSubscriptionStats");
+	    		Params resp = getSubscriptionStats(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("reserveSpot")) {
+	    		System.out.println("reserveSpot");
+	    		Params resp = reserveSpot(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("spotDisabled")) {
+	    		System.out.println("sportDisabled");
+	    		Params resp = toggleDisableSpot(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getSpotStatus")) {
+	    		System.out.println("getSpotStatus");
+	    		Params resp = getSpotStatus(params);
+	    		client.sendToClient(resp.toString());
 	    	}
 	    	else{
 	    		client.sendToClient("{}");
@@ -935,9 +1120,9 @@ private Params handleGetParkingSlotStatus(Params params) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	  }
+  }
 
-
+  
 
 
 /**
@@ -987,7 +1172,7 @@ private Params handleGetParkingSlotStatus(Params params) {
 
     ServerDummy sv = new ServerDummy(port);
     TestDB.getInstance(); //  init db
-//    sv.initParkingLotData("A");
+//    sv.initParkingLotData("misgavParking");
 //    System.exit(0);
 //    sv.addToStatistics("A", 1, 2, 3, 4);
 //    System.exit(0);
