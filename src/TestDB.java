@@ -253,7 +253,7 @@ public class TestDB {
 		return null;
 	}
 
-	public JSONArray getParkingLotJsonData(String parkingLotName){
+	public JSONObject getParkingLotJsonData(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT data FROM ParkingFacility WHERE name=?");
 			select.setString(1, parkingLotName);
@@ -262,7 +262,7 @@ public class TestDB {
 			System.out.println("success");
 			if(uprs.next()){
 				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
-				return new JSONArray(uprs.getString("data"));
+				return new JSONObject(uprs.getString("data"));
 			}
 			System.out.println("getParkingLotJsonData got rempty result set");
 

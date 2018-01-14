@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import algorithm.Algorithm;
+import algorithm.Car;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import algorithm.Algorithm;
 import common.Params;
 import common.User;
 import common.Utils;
@@ -237,17 +237,24 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 //	  }
 //  }
   
+	final boolean CALL_ALGO = false;
+
   private void callParkingAlgoEnter(String parkingLot, String vehicleID, long leaveTime) {
+	  if(!CALL_ALGO) {
+		  return;
+	  }
 	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
-	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+	  JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
 	  JSONArray start;
 	try {
-		start = new JSONArray(data.toString());
-		Algorithm alg = new Algorithm(start, width);
+		start = data.getJSONArray("parkingData");
+		Algorithm alg = new Algorithm(width, data.getJSONArray("parkingData").toString(), data.getJSONArray("statusData").toString());
 		//TODO: integrate insertion with status (in this case 'order')
-		alg.insertCar(vehicleID, leaveTime);
+		alg.insertCar(new Car(vehicleID, leaveTime, System.currentTimeMillis()), leaveTime);
 		//TODO: handle parking lot is full
-		JSONArray result = alg.generateDBJsonArray();
+		JSONObject result = new JSONObject();
+		result.put("parkingData", new JSONArray(alg.generateDBString()));
+		result.put("statsuData", new JSONArray(alg.generateStatusString()));
 		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
@@ -256,17 +263,22 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 
   }
   
- private void callParkingAlgoOrder(String parkingLot, String vehicleID, long leaveTime) {
-	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
-	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+ private void callParkingAlgoOrder(String parkingLot, String vehicleID, long entryTime, long leaveTime) {
+	 if(!CALL_ALGO) {
+		  return;
+	  } 
+	 final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
+	  JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
 	  JSONArray start;
 	try {
-		start = new JSONArray(data.toString());
-		Algorithm alg = new Algorithm(start, width);
-		//TODO: integrate insertion with status (in this case 'enter')
-		alg.insertCar(vehicleID, leaveTime);
+		start = data.getJSONArray("parkingData");
+		Algorithm alg = new Algorithm(width, data.getJSONArray("parkingData").toString(), data.getJSONArray("statusData").toString());
+		//TODO: integrate insertion with status (in this case 'order')
+		alg.insertOrderedCar(new Car(vehicleID, leaveTime, entryTime), entryTime, leaveTime);
 		//TODO: handle parking lot is full
-		JSONArray result = alg.generateDBJsonArray();
+		JSONObject result = new JSONObject();
+		result.put("parkingData", new JSONArray(alg.generateDBString()));
+		result.put("statsuData", new JSONArray(alg.generateStatusString()));
 		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
@@ -275,16 +287,22 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
  }
  
  private void callParkingAlgoLeave(String parkingLot, String vehicleID) {
-	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
-	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
+	 if(!CALL_ALGO) {
+		  return;
+	  } 
+	 final int width = TestDB.getInstance().getParkingLotWidth(parkingLot);
+	  JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLot);
 	  JSONArray start;
 	try {
-		start = new JSONArray(data.toString());
-		Algorithm alg = new Algorithm(start, width);
-		//TODO: integrate insertion with status (in this case 'leave')
-		alg.ejectCar(vehicleID);
+		start = data.getJSONArray("parkingData");
+		Algorithm alg = new Algorithm(width, data.getJSONArray("parkingData").toString(), data.getJSONArray("statusData").toString());
+		//TODO: integrate insertion with status (in this case 'order')
+		alg.ejectCar(new Car(vehicleID, System.currentTimeMillis(), System.currentTimeMillis()));
+		//alg.insertOrderedCar(new Car(vehicleID, leaveTime, entryTime), entryTime, leaveTime);
 		//TODO: handle parking lot is full
-		JSONArray result = alg.generateDBJsonArray();
+		JSONObject result = new JSONObject();
+		result.put("parkingData", new JSONArray(alg.generateDBString()));
+		result.put("statsuData", new JSONArray(alg.generateStatusString()));
 		TestDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
@@ -294,13 +312,17 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 
  private void initParkingLotData(String parkingLotName) {
 	  final int width = TestDB.getInstance().getParkingLotWidth(parkingLotName);
-	  JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
-	  JSONArray start;
+	  //JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+	  //JSONArray start;
 	try {
-		start = new JSONArray(data.toString());
-		Algorithm alg = new Algorithm(start, width);
-		JSONArray result = alg.generateDBJsonArray();
+		
+	
+		Algorithm alg = new Algorithm(width);
+		JSONObject result = new JSONObject();
+		result.put("parkingData", new JSONArray(alg.generateDBString()));
+		result.put("statsuData", new JSONArray(alg.generateStatusString()));
 		TestDB.getInstance().updateParkingLotData(parkingLotName, result.toString());
+		//TestDB.getInstance().updateParkingLotData(parkingLotName, result.toString());
 	} catch (JSONException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -337,11 +359,12 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
  
  private String generateParkinglotDataForPDF(String parkingLotName) {
 	 try {
-		 JSONArray data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		 JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+		 JSONArray statusesJsonArr = data.getJSONArray("parkingStatus");
 		 List<ThreeIndices> statuses = new ArrayList<ThreeIndices>();
 		 for(int i = 0; i < data.length(); i++) {
-			 JSONObject spotData = data.getJSONObject(i);
-			 statuses.add(new ThreeIndices(spotData.getInt("depth"),spotData.getInt("height"),spotData.getInt("col"),String.valueOf((char)spotData.getInt("status"))));
+			 JSONObject spotData = statusesJsonArr.getJSONObject(i);
+			 statuses.add(new ThreeIndices(spotData.getInt("i"),spotData.getInt("j"),spotData.getInt("k"),String.valueOf((char)spotData.getInt("status"))));
 		 }
 		 Collections.sort(statuses);
 		 String dataForPDF = "";
@@ -387,7 +410,7 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"), params.getParam("vehicleID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 	  //TODO: handle if parking lot is full
 	  //callParkingAlgoEnter(params.getParam("parkingLot"), params.getParam("vehicleID"), Utils.todayTimeToMillis(params.getParam("leaveTime")));
 	  
@@ -443,8 +466,8 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 //	  final long startTime = Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime"));
 //	  final long leaveTime =Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime"));
 
-	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
-	  callParkingAlgoOrder(params.getParam("parkingLot"), params.getParam("vehicleID"), Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")));
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"), params.getParam("vehicleID"));//TestDB.getInstance().addVehicle(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
+	  callParkingAlgoOrder(params.getParam("parkingLot"), params.getParam("vehicleID"), Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime")),Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")) );
 	  //callParkingAlgo("Ordered" , params.getParam("vehicleID"), params.getParam("parkingLot"), startTime, leaveTime);
 
 	  double priceToPay = calcPriceUpfrontForOneTimeOrder(params.getParam("parkingLot"), typeParams);
@@ -475,7 +498,7 @@ public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols)
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot")); // adds vehicle to db if in the same day
+	  handleAddVehicleToDB(params.getParam("ID"), params.getParam("parkingLot"), params.getParam("vehicleID")); // adds vehicle to db if in the same day
 	  
 	  handleCallParkingAlgoOrderForSubscription(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("parkingLot"), typeParams);
 
@@ -505,13 +528,14 @@ private void handleCallParkingAlgoOrderForSubscription(String userID, String veh
 	if(System.currentTimeMillis() > subscriptionStartTimeMS && Utils.isInLastMonth(subscriptionStartTimeMS)) {
 		//call parking algo for ordering a parking spot
 		String endTimeHour = (subscriptionParams.equals("routineSubscription") ? subscriptionParams.getParam("leaveTimeHHMM") : "23:59");
+		String startTimeHour = (subscriptionParams.equals("routineSubscription") ? subscriptionParams.getParam("enterTimeHHMM") : "00:01");
 		if(parkingLot.equals("**ANY**")) { // if is full subscription, need to order in all parking lots
 			List<String> allParkingLots = TestDB.getInstance().getAllParkingLotNames();
 			for(String aParkingLot : allParkingLots) {
-				callParkingAlgoOrder(aParkingLot, vehicleID, Utils.timeToMillis(endTimeHour));
+				callParkingAlgoOrder(aParkingLot, vehicleID, Utils.timeToMillis(startTimeHour),Utils.timeToMillis(endTimeHour));
 			}
 		}else { // if is routine subscription order only for specific parking lot
-			callParkingAlgoOrder(parkingLot, vehicleID, Utils.timeToMillis(endTimeHour));			
+			callParkingAlgoOrder(parkingLot, vehicleID, Utils.timeToMillis(startTimeHour), Utils.timeToMillis(endTimeHour));			
 		}
 	}
 	
@@ -564,7 +588,7 @@ private Params handleFullSubscription(Params params) {
 	  
 	  TestDB.getInstance().addUser(params.getParam("ID"), params.getParam("vehicleID"), params.getParam("email"), type);
 
-	  handleAddVehicleToDB(params.getParam("ID"), ""); // adds vehicle to db if in the same day
+	  handleAddVehicleToDB(params.getParam("ID"), "", params.getParam("vehicleID")); // adds vehicle to db if in the same day
 	  handleCallParkingAlgoOrderForSubscription(params.getParam("ID"), params.getParam("vehicleID"), "**ANY**", typeParams);
 
 	  int subscriptionID = TestDB.getInstance().getIndexIDOfUser(params.getParam("ID"));
@@ -587,10 +611,10 @@ private Params handleFullSubscription(Params params) {
  * @param parkingLot
  * @param command: Order or Enter
  */
-private void handleAddVehicleToDB(String userID, String parkingLot) {
+private void handleAddVehicleToDB(String userID, String parkingLot, String vehicleID) {
 	//first inserts vehicles to Vehicles table
 	//TODO: support multiple vehicles
-	String vehicleID = TestDB.getInstance().getUserVehicleID(userID);
+	//String vehicleID = TestDB.getInstance().getUserVehicleID(userID);
 	TestDB.getInstance().addVehicle(userID, vehicleID, parkingLot, 0, 0, false);
 	
 	//TODO: also calls parkingAlgo for all vehicles of today
@@ -752,8 +776,6 @@ private String canEnterParking(String userID, String parkingLot, String subscrip
 
 	}
 
-
-
 private Params handleClientLeave(Params params) {
 	String vehicleID = params.getParam("vehicleID");
 	String parkingLot = params.getParam("parkingLot");
@@ -778,6 +800,7 @@ private Params handleClientLeave(Params params) {
 	}
 	//from vehicle from vehicles table
 	TestDB.getInstance().removeVehicle(vehicleID);
+	callParkingAlgoLeave(parkingLot, vehicleID);
 	//returns response to user;
 	return Params.getEmptyInstance().addParam("status", "OK").addParam("payAmount", String.valueOf(priceToPay));
 
@@ -836,6 +859,22 @@ private Params handleClientCancelOrder(Params params) {
 }
 
 
+
+
+private Params handleGetParkingSlotStatus(Params params) {
+	String parkingLotName = params.getParam("name");
+	JSONObject data = TestDB.getInstance().getParkingLotJsonData(parkingLotName);
+	Params resp = Params.getEmptyInstance();
+	resp.addParam("status", "OK");
+	try {
+		resp.addParam("array", data.getJSONArray("statusData").toString());
+	} catch (JSONException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return resp;
+}
+
 /**
    * This method handles any messages received from the client.
    *
@@ -872,19 +911,24 @@ private Params handleClientCancelOrder(Params params) {
 	    		System.out.println("clientEnterWithSubscriptionID");
 	    		Params resp = handleClientEnter(params);
 	    		client.sendToClient(resp.toString());
-	    	}else if(params.getParam("action").equals("clientCancelOrder")){
+	    	}else if(params.getParam("action").equals("clientCancelOrder")){ // -V
 	    		System.out.println("clientCancelOrder");
 	    		Params resp = handleClientCancelOrder(params);
 	    		client.sendToClient(resp.toString());
-	    		resp.addParam("status", "OK");
+	    		//resp.addParam("status", "OK");
 //	    		resp.addParam("returnAmount", "42155");
 //	    		client.sendToClient(resp.toString());
-	    	}else if(params.getParam("action").equals("clientContact")){
-	    		System.out.println("clientContact");
-	    		Params resp = Params.getEmptyInstance();
-	    		resp.addParam("status", "OK");
+	    	}else if(params.getParam("action").equals("clientContact")){ // - In Gil's code
+//	    		System.out.println("clientContact");
+//	    		Params resp = Params.getEmptyInstance();
+//	    		resp.addParam("status", "OK");
+//	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getParkingSlotStatus")) {
+	    		System.out.println("getParkingSlotStatus");
+	    		Params resp = handleGetParkingSlotStatus(params);
 	    		client.sendToClient(resp.toString());
-	    	}else{
+	    	}
+	    	else{
 	    		client.sendToClient("{}");
 	    	}
 		} catch (IOException e) {
@@ -943,6 +987,8 @@ private Params handleClientCancelOrder(Params params) {
 
     ServerDummy sv = new ServerDummy(port);
     TestDB.getInstance(); //  init db
+//    sv.initParkingLotData("A");
+//    System.exit(0);
 //    sv.addToStatistics("A", 1, 2, 3, 4);
 //    System.exit(0);
 //    System.out.println(sv.generateParkinglotDataForPDF("A"));
