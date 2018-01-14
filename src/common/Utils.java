@@ -11,6 +11,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 public class Utils {
 
 	/**
@@ -105,6 +112,39 @@ public class Utils {
 	public static double getHoursDiff(String unixTime) {
 		long diff = -(System.currentTimeMillis() - Long.valueOf(unixTime));
 		return diff / 1000.0 / 60.0 / 60.0;
+	}
+
+	public static boolean getIsFull(String parkingLotName, Stage mainStage) {
+		Params params = Params.getEmptyInstance().addParam("action", "isParkingLotFull").addParam("name", parkingLotName);
+		final boolean[] res = new boolean[1];
+		TalkToServer.getInstance().sendAndWait(params.toString(), msg -> {
+			Params resp = new Params(msg);
+			System.out.println("clientIsFull got resp:" + resp);
+			if(resp.getParam("isFull").equals("yes")) {
+				res[0] = true;
+				Platform.runLater(new Runnable() {
+  	  		      @Override public void run() {
+  	  	    		 final Stage dialog = new Stage();
+  	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+  	  	             dialog.initOwner(mainStage);
+  	  	             VBox dialogVbox = new VBox(20);
+  	  	             dialogVbox.getChildren().add(new Text("Parking lot is full, please go to:" + resp.getParam("alternative")));
+  	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+  	  	             dialog.setScene(dialogScene);
+  	  	             dialog.show();
+  	  	             System.out.println("showed dialog");
+  	  		      }
+	  		    	});
+			}else {
+				res[0] = false;
+			}
+		});
+		return res[0];
+	}
+
+	public static int getNumDaysAgo(long subscriptionStartUnix) {
+		long diffUnix = System.currentTimeMillis() - subscriptionStartUnix;
+		return (int)(diffUnix / 1000.0 / 60.0 / 60.0 / 24.0);
 	}
 
 	

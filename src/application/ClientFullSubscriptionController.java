@@ -3,6 +3,7 @@ package application;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;
+import common.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,6 +37,13 @@ public class ClientFullSubscriptionController implements ControllerIF{
 
     @FXML
     void bSumbitClick(ActionEvent event) {
+    	
+
+//    	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
+//    	if(isFull){
+//    		return;
+//    	}
+    	
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "FullSubscription");
     	orderParams.addParam("ID", tfID.getText());

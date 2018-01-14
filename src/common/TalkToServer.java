@@ -13,7 +13,7 @@ public class TalkToServer implements ChatIF{
 	private static TalkToServer instance;
 
 	private Client client;
-
+	boolean wait;
 	StrCallbackIF currentCallback;
 
 	public static TalkToServer getInstance(String ip, int port){
@@ -46,6 +46,7 @@ public class TalkToServer implements ChatIF{
 	@Override
 	public void display(String message) {
 		currentCallback.handle(message);
+		wait = false;
 	}
 
 	public void send(String message, StrCallbackIF callback){
@@ -58,6 +59,21 @@ public class TalkToServer implements ChatIF{
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void sendAndWait(String message, StrCallbackIF callback){
+		wait = true;
+		try {
+			this.client.sendToServer(message);
+			this.currentCallback = callback;
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while(wait) {
+			System.out.println("waiting in sendAndWait");
+		}
 	}
 
 

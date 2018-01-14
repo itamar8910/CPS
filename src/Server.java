@@ -37,7 +37,7 @@ public class Server extends AbstractServer
   {
     super(port);
     System.out.println("Tables:");
-    TestDB.getInstance().printAllTables();
+    ItamarDB.getInstance().printAllTables();
     //TestDB.getInstance().addRow("itamar", 100);
     //TestDB.getInstance().getBalanceOf("itamar");
   }
@@ -66,7 +66,7 @@ public class Server extends AbstractServer
 	    	int num = Integer.valueOf(msgStr.substring(msgStr.indexOf(name) + name.length() + 1));
 	    	System.out.println(name);
 	    	System.out.println(num);
-	    	boolean success = TestDB.getInstance().addRow(name, num);
+	    	boolean success = ItamarDB.getInstance().addRow(name, num);
 	    	if(success){
 	    		this.sendToAllClients("Added");
 	    	}else{
@@ -79,7 +79,7 @@ public class Server extends AbstractServer
 	    }else if(msgStr.startsWith("get ")){
 	    	System.out.println("got get command");
 	    	String name = msgStr.substring("get ".length());
-	    	int balance = TestDB.getInstance().getBalanceOf(name);
+	    	int balance = ItamarDB.getInstance().getBalanceOf(name);
 	    	if(balance == -1){
 	    		this.sendToAllClients("No such account");
 	    	}else{
@@ -87,7 +87,7 @@ public class Server extends AbstractServer
 	    	}
 	    }else if(msgStr.equals("getAll")) {
 	    	System.out.println("got getAll command");
-	    	String allUsers = TestDB.getInstance().getAll();
+	    	String allUsers = ItamarDB.getInstance().getAll();
 	    	System.out.println(allUsers);
 	    	this.sendToAllClients(allUsers);
 	    }
@@ -100,7 +100,7 @@ public class Server extends AbstractServer
 	    	int num = Integer.valueOf(msgStr.substring(msgStr.indexOf(name) + name.length() + 1));
 	    	System.out.println(name);
 	    	System.out.println(num);
-	    	TestDB.getInstance().updateRow(name, num);
+	    	ItamarDB.getInstance().updateRow(name, num);
 	    	this.sendToAllClients("Updated");
 	    	}catch(Exception e){
 	    		System.out.println("ERR:" + e.getMessage());

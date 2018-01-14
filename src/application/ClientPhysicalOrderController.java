@@ -3,6 +3,7 @@ package application;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;
+import common.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,7 +41,19 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
     @FXML
     void bSumbitClick(ActionEvent event) {
-    	//todo: we need to somehow know in which parking lot we are
+    	
+    	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
+    	if(isFull){
+    		return;
+    	}
+    	
+    	
+    	System.out.println("isFull:" + isFull);
+    	if(true) {
+    		return;
+    	}
+    	
+    	
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "ClientPhysicalOrder");
     	orderParams.addParam("ID", tfID.getText());
@@ -85,6 +98,8 @@ public class ClientPhysicalOrderController implements ControllerIF{
     }
 
     
+	
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;

@@ -3,6 +3,7 @@ package application;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;
+import common.Utils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -52,6 +53,13 @@ public class ClientOneTimeOrderController implements ControllerIF{
 
     @FXML
     void bSumbitClick(ActionEvent event) {
+    	
+
+    	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
+    	if(isFull){
+    		return;
+    	}
+    	
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "clientOneTimeOrder");
     	orderParams.addParam("ID", tfID.getText());

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,19 +14,20 @@ import org.json.JSONObject;
 
 import com.mysql.jdbc.DatabaseMetaData;
 
+import common.Params;
 import common.User;
 
-public class TestDB {
+public class ItamarDB {
 
-	private static TestDB instance;
+	private static ItamarDB instance;
 
 	private Connection conn;
 
-	public TestDB(Connection conn){
+	public ItamarDB(Connection conn){
 		this.conn = conn;
 	}
 
-	public static TestDB getInstance(){ // implements the singleton design pattern
+	public static ItamarDB getInstance(){ // implements the singleton design pattern
 		if(instance == null){
 			try
 			{
@@ -41,7 +43,7 @@ public class TestDB {
 
 	            System.out.println("SQL connection succeed");
 
-	            instance = new TestDB(conn);
+	            instance = new ItamarDB(conn);
 
 	        }catch(SQLException e){
 	        	System.out.println(e.getMessage());
@@ -665,7 +667,86 @@ public class TestDB {
 		}
 		
 	}
-
+	/**
+	 * 
+	 * @param data: facName,
+	 * @return
+	 */
+	public String canBeInParking(Params data) {
+        System.out.println("canBeInParking : " + data.toString());
+       
+        Params resData = Params.getEmptyInstance();
+        JSONArray returnData = new JSONArray();
+ 
+        try {
+            //check if full
+            PreparedStatement reqData = conn.prepareStatement("SELECT id,isFull FROM ParkingFacility WHERE name =?;");
+            reqData.setString(1,data.getParam("facName"));
+            ResultSet results = reqData.executeQuery();
+           
+            //get result
+            while (results.next()) {
+                //if not full
+                if (results.getString("isFull").equals("0")) {
+                    resData.addParam("status", "OK");
+                    resData.addParam("isFull", "0");
+                    resData.addParam("alternative", "-1");
+                    return resData.toString();
+                //if full
+                } else {
+                    resData.addParam("status", "OK");
+                    resData.addParam("isFull", "1");
+                    resData.addParam("alternative",getRandomParking(data.getParam("facName")) );
+                    return resData.toString();
+                }
+       
+               
+            }
+               
+ 
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+ 
+        //if failed
+        resData.addParam("status", "BAD");
+        resData.addParam("isFull", "-1");
+        resData.addParam("alternative", "-1");
+        return resData.toString();
+    }
+	
+	  public String getRandomParking(String excludeName) {
+	       
+	        ArrayList<String> allParkingNames = new ArrayList<String>();
+	        //check if full
+	        PreparedStatement reqData;
+	        try {
+	            reqData = conn.prepareStatement("SELECT name FROM ParkingFacility WHERE isFull=0");
+	            ResultSet results = reqData.executeQuery();
+	            //get result
+	            while (results.next()) {
+	                //if current
+	                if (excludeName == results.getString("name"))
+	                    continue;
+	               
+	                allParkingNames.add(results.getString("name"));
+	            }
+	           
+	            Random random = new Random();
+	            int randIndex = random.nextInt(allParkingNames.size());
+	           
+	            return allParkingNames.get(randIndex);
+	           
+	        } catch (SQLException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	       
+	       
+	        return "";
+	    }
+	
 	public void addToDailyStats(int parkingLotID, long todayUnixTime, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
 		try {
 			PreparedStatement updateStats = conn.prepareStatement("UPDATE dailyStats SET lateForParking=lateForParking+?, cancelOrders=cancelOrders+?, orderByType=orderByType+?, numLotsDisabled=numLotsDisabled+?  WHERE facID=? AND date=?");
