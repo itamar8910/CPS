@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientOnlineController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientOnlineController">
    <children>
       <Button fx:id="bOneTimeOrder" layoutX="31.0" layoutY="97.0" mnemonicParsing="false" onAction="#bOneTimeOrderClick" text="One-time Order" />
       <Button fx:id="bMakeRoutineSubscription" layoutX="31.0" layoutY="140.0" mnemonicParsing="false" onAction="#bMakeRoutineSubscriptionClick" text="Make Routine Subscription" />
       <Button fx:id="bMakeFullSubscription" layoutX="31.0" layoutY="188.0" mnemonicParsing="false" onAction="#bMakeFullSubscriptionClick" text="Make Full Subscription" />
       <Button fx:id="bContactUs" layoutX="31.0" layoutY="289.0" mnemonicParsing="false" onAction="#bContactUsClick" text="Contact Us" />
       <Button fx:id="bCancelOrder" layoutX="31.0" layoutY="237.0" mnemonicParsing="false" onAction="#bCancelOrderClick" text="Cancel Order" />
+      <Button fx:id="bFollowOrder" layoutX="29.0" layoutY="330.0" mnemonicParsing="false" onAction="#bFollowOrderClick" text="Follow Order" />
    </children>
 </AnchorPane>

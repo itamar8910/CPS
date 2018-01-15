@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import client.Client;
 
@@ -14,8 +16,9 @@ public class TalkToServer implements ChatIF{
 
 	private Client client;
 	boolean wait;
-	StrCallbackIF currentCallback;
-
+	//StrCallbackIF currentCallback;
+	Queue<StrCallbackIF> callbacks;
+	
 	public static TalkToServer getInstance(String ip, int port){
 		if(instance == null){
 			instance = new TalkToServer(ip, port);
@@ -31,6 +34,7 @@ public class TalkToServer implements ChatIF{
 	}
 
 	private TalkToServer(String ip, int port){
+		callbacks = new LinkedList<StrCallbackIF>();
 		try
         {
           client = new Client(ip, port, this);
@@ -45,15 +49,16 @@ public class TalkToServer implements ChatIF{
 
 	@Override
 	public void display(String message) {
-		currentCallback.handle(message);
+		
+		callbacks.poll().handle(message);
 		wait = false;
 	}
 
 	public void send(String message, StrCallbackIF callback){
 		try {
 			this.client.sendToServer(message);
-			this.currentCallback = callback;
-
+			//this.currentCallback = callback;
+			callbacks.add(callback);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,7 +70,7 @@ public class TalkToServer implements ChatIF{
 		wait = true;
 		try {
 			this.client.sendToServer(message);
-			this.currentCallback = callback;
+			callbacks.add(callback);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

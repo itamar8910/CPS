@@ -147,5 +147,11 @@ public class Utils {
 		return (int)(diffUnix / 1000.0 / 60.0 / 60.0 / 24.0);
 	}
 
+	public static String unixTimeToHour(long vehicleStartParkTime) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(vehicleStartParkTime);
+		return c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE);
+	}
+
 	
 }

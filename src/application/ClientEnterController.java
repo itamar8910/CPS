@@ -28,7 +28,7 @@ public class ClientEnterController implements ControllerIF{
     void bPhysicalClick(ActionEvent event) {
     	System.out.println("bPhysicalClick");
     	main.setScene("ClientPhysicalView.fxml", params);
-
+    	
     }
 
 	@Override

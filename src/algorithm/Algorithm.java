@@ -16,11 +16,10 @@ public class Algorithm{
 	private int spotsInRow; // as an input from server. possible value: 4,5,6,7,8
 	private ArrayListCar[][][] park; // each spot has a list of all the cars belong to the spot
 	private char[][][] statusPark; // real time 3-dimensions array that has status for each spot
-	// e - EMPTY, f - FULL, i - INVALID, s - SAVE
+	// e - EMPTY, f - FULL, i - INVALID, s - SAVE, o - ordered
 	
 	Algorithm(){ // CONSTRUCTOR
-		// spotsInRow = 4 as an initial value
-		this.spotsInRow = 4;
+		this.spotsInRow = 4; // spotsInRow = 4 as an initial value
 		int i, j, k;
 		statusPark = new char[3][3][4];
 		park = new ArrayListCar[3][3][4];
@@ -47,9 +46,9 @@ public class Algorithm{
 	}
 	
 	public Algorithm(int numSpotsInRow, String db, String si){ // 3rd CONSTRUCTOR
-		spotsInRow = numSpotsInRow;
-		park = generateParkFromString(db);
-		statusPark = generateStatusPark(si);
+		this.spotsInRow = numSpotsInRow;
+		this.park = generateParkFromString(db);
+		this.statusPark = generateStatusPark(si);
 		int i, j, k;
 		for (i = 0; i < 3; i++)
 			for (j = 0; j < 3; j++)
@@ -111,17 +110,18 @@ public class Algorithm{
 	
 	// function checks whether specific spot is empty in real time
 		private boolean isEmptySpotRealTime(int i, int j, int k){
-			int z;
+			if (statusPark[i][j][k] == 's' || statusPark[i][j][k] == 'i')
+				return false;
 			long realTime = System.currentTimeMillis();
-			for (z = 0; z < park[i][j][k].size(); z++){
-				if (realTime <= park[i][j][k].get(z).getExitTime() && realTime >= park[i][j][k].get(z).getEntryTime())
+			for (int z = 0; z < park[i][j][k].size(); z++){
+				if (realTime <= park[i][j][k].get(z).getExitTime() &&
+						realTime >= park[i][j][k].get(z).getEntryTime())
 					return false;
 			}
 			return true;
 		}
 
 		private boolean isEmptyButOrderedRealTime(int i, int j, int k){
-			long realTime = System.currentTimeMillis();
 			if (!park[i][j][k].isEmpty() && isEmptySpotRealTime(i, j, k) == true)
 				return true;
 			return false;
@@ -147,33 +147,25 @@ public class Algorithm{
 		}
 		
 		// the function tries to find an empty interval with the given parameters
-		private boolean checkAvailablePark(long entryTime, long exitTime){
-			int i, j, k;
-			boolean st;
-			
-			for (i = 0; i < 3; i++){
-				for (j = 0; j < 3; j++){
-					for (k = 0; k < spotsInRow; k++){
-						if (statusPark[i][j][k] != 'i' && statusPark[i][j][k] != 's'){
-							st = checkAvailableSpot(entryTime, exitTime, park[i][j][k]);
-							if (st)
-								return true;
-						}
-					}
-				}
-			}
+		private boolean checkAvailablePark(long entryTime, long exitTime){			
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					for (int k = 0; k < spotsInRow; k++)
+						if ((statusPark[i][j][k] == 's' || statusPark[i][j][k] == 'i') &&
+								checkAvailableSpot(entryTime, exitTime, park[i][j][k]))
+							return true;
 			return false;
 		}
 		
 		private int[] locateCarSpot(String carID){
-			int i, j, k;
+			int i, j, k, z;
 			int[] a = {-1, -1, -1}; // an array holds the coordinates of the car
 			
 			for (i = 0; i < 3; i++){
 				for (j = 0; j < 3; j++){
 					for (k = 0; k < this.spotsInRow; k++){
-						int z;
 						for(z = 0; z < park[i][j][k].size(); z++){
+							System.out.println("**");
 							if (park[i][j][k].get(z).getCarID().equals(carID)){
 								a[0] = i; a[1] = j; a[2] = k;
 								return a;
@@ -188,11 +180,10 @@ public class Algorithm{
 		// get the cars out of the park from a specific depth
 		// al is a list which keeps the ejected cars
 		private void ejectInDepth(ArrayList<Car> al, int i, int j, int k){
-			int t, z;
-			for (t = 0; t < i; t++){
+			for (int t = 0; t < i; t++){
 				if (statusPark[t][j][k] != 'i' && statusPark[t][j][k] != 's'){
 					statusPark[t][j][k] = 'e';
-					for (z = park[t][j][k].size() - 1; z >= 0; z--){
+					for (int z = park[t][j][k].size() - 1; z >= 0; z--){
 						al.add(park[t][j][k].get(z));
 						park[t][j][k].remove(z);
 					}
@@ -203,11 +194,10 @@ public class Algorithm{
 		// get the cars out of the park from a specific floor
 		// al is a list which keeps the ejected cars
 		private void ejectInFloor(ArrayList<Car> al, int i, int j, int k){
-			int t, z;
-			for (t = 0; t < j; t++){
+			for (int t = 0; t < j; t++){
 				if (statusPark[i][t][k] != 'i' && statusPark[i][t][k] != 's'){
 					statusPark[i][t][k] = 'e';
-					for (z = park[i][t][k].size() - 1; z >= 0; z--){
+					for (int z = park[i][t][k].size() - 1; z >= 0; z--){
 						al.add(park[i][t][k].get(z));
 						park[i][t][k].remove(z);
 					}
@@ -262,6 +252,7 @@ public class Algorithm{
 			else{
 				int[] a = locateOptimalPosition(entryTime, exitTime);
 				park[a[0]][a[1]][a[2]].add(car);
+				
 				if(isEmptyButOrderedRealTime(a[0], a[1], a[2]))
 					statusPark[a[0]][a[1]][a[2]] = 'o';
 			}
@@ -282,29 +273,33 @@ public class Algorithm{
 				list.add(car);
 				Collections.sort(list);
 				
-				while (!list.isEmpty()){
+				while (!list.isEmpty()){ // as long as we need to re-insert the ejected car
 					int t = 0;
-					while (t != a[1] + 1){
-						if (statusPark[a[0]][t][a[2]] != 's' && statusPark[a[0]][t][a[2]] != 'i'){
+					while (t < a[1]){
+						if (statusPark[0][t][a[2]] != 's' && statusPark[0][t][a[2]] != 'i'){
+							park[0][t][a[2]].add(list.get(0));
+							
 							while (list.get(0).getEntryTime() >=
-									park[a[0]][t][a[2]].get(park[a[0]][t][a[2]].size() - 1).getExitTime()){
+									park[0][t][a[2]].get(park[0][t][a[2]].size() - 1).getExitTime()){
 								
-										park[a[0]][t][a[2]].add(list.get(0));
+										park[0][t][a[2]].add(list.get(0));
 										list.remove(0);
 										
 									}
-							if (!isEmptySpotRealTime(a[0], t, a[2]))
-								statusPark[a[0]][t][a[2]] = 'f';
+							if (!isEmptySpotRealTime(0, t, a[2]))
+								statusPark[0][t][a[2]] = 'f';
 							
-							if (isEmptyButOrderedRealTime(a[0], t, a[2]))
+							if (isEmptyButOrderedRealTime(0, t, a[2]))
 								statusPark[a[0]][t][a[2]] = 'o';
 						}
 						t++;
 					}
 					
 					t = 0;
-					while (t != a[0] + 1){
+					while (t <= a[0]){
 						if (statusPark[t][a[1]][a[2]] != 's' && statusPark[t][a[1]][a[2]] != 'i'){
+							park[t][a[1]][a[2]].add(list.get(0));
+							
 							while (list.get(0).getEntryTime() >=
 									park[t][a[1]][a[2]].get(park[t][a[1]][a[2]].size() - 1).getExitTime()){
 								
@@ -339,30 +334,33 @@ public class Algorithm{
 			}
 			Collections.sort(list);
 			
-			while (!list.isEmpty()){
+			while (!list.isEmpty()){ // as long as we need to re-insert the ejected car
 				int t = 0;
-				while (t != a[1] + 1){
-					if (statusPark[a[0]][t][a[2]] != 's' && statusPark[a[0]][t][a[2]] != 'i'){
+				while (t < a[1]){
+					if (statusPark[0][t][a[2]] != 's' && statusPark[0][t][a[2]] != 'i'){
+						park[0][t][a[2]].add(list.get(0));
+						
 						while (list.get(0).getEntryTime() >=
-								park[a[0]][t][a[2]].get(park[a[0]][t][a[2]].size() - 1).getExitTime()){
+								park[0][t][a[2]].get(park[0][t][a[2]].size() - 1).getExitTime()){
 							
-									park[a[0]][t][a[2]].add(list.get(0));
+									park[0][t][a[2]].add(list.get(0));
 									list.remove(0);
 									
 								}
+						if (!isEmptySpotRealTime(0, t, a[2]))
+							statusPark[0][t][a[2]] = 'f';
 						
-						if (!isEmptySpotRealTime(a[0], t, a[2]))
-							statusPark[a[0]][t][a[2]] = 'f';
-
-						if (isEmptyButOrderedRealTime(a[0], t, a[2]))
+						if (isEmptyButOrderedRealTime(0, t, a[2]))
 							statusPark[a[0]][t][a[2]] = 'o';
 					}
 					t++;
 				}
 				
 				t = 0;
-				while (t != a[0] + 1){
+				while (t <= a[0]){
 					if (statusPark[t][a[1]][a[2]] != 's' && statusPark[t][a[1]][a[2]] != 'i'){
+						park[t][a[1]][a[2]].add(list.get(0));
+						
 						while (list.get(0).getEntryTime() >=
 								park[t][a[1]][a[2]].get(park[t][a[1]][a[2]].size() - 1).getExitTime()){
 							
@@ -370,6 +368,7 @@ public class Algorithm{
 									list.remove(0);
 									
 								}
+						
 						if (!isEmptySpotRealTime(t, a[1], a[2]))
 							statusPark[t][a[1]][a[2]] = 'f';
 
@@ -460,10 +459,11 @@ public class Algorithm{
 	
 	
 	public static void main(String args[]) {
-		Algorithm alg = new Algorithm(4);
-		alg.insertCar(new Car("abc",2l,1l), 2l);
-		System.out.println(alg.generateStatusString());
-		System.out.println(alg.generateDBString());
+		 Algorithm alg = new Algorithm(4);
+		 alg.insertCar(new Car("Afsa",2l,1l), 2l);
+		 System.out.println(alg.locateCarSpot("Afas")[0]);
+		 System.out.println(alg.generateStatusString());
+		 System.out.println(alg.generateDBString());
 	}
 	
 }

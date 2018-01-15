@@ -21,6 +21,9 @@ public class ClientOnlineController implements ControllerIF{
     private Button bCancelOrder;
 
     @FXML
+    private Button bFollowOrder;
+    
+    @FXML
     private Button bContactUs;
 
     private ApplicationMain main;
@@ -50,6 +53,13 @@ public class ClientOnlineController implements ControllerIF{
     	main.setScene("clientRoutineSubscriptionView.fxml", params);
     }
 
+    @FXML
+    void bFollowOrderClick(ActionEvent event) {
+     	System.out.println("bFollowOrderClick");
+    	main.setScene("ClientFollowOrderView.fxml", params);
+
+    }
+    
     @FXML
     void bOneTimeOrderClick(ActionEvent event) {
     	System.out.println("bOneTimeOrderClick");

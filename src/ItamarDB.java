@@ -239,7 +239,7 @@ public class ItamarDB {
 			ResultSet uprs = select.executeQuery();
 			System.out.println("success");
 			if(uprs.next()){
-				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
+				//System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
 				return new JSONArray(uprs.getString("data"));
 			}
 			System.out.println("getParkingLotJsonData got rempty result set");
@@ -263,7 +263,7 @@ public class ItamarDB {
 			ResultSet uprs = select.executeQuery();
 			System.out.println("success");
 			if(uprs.next()){
-				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
+				//System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
 				return new JSONObject(uprs.getString("data"));
 			}
 			System.out.println("getParkingLotJsonData got rempty result set");
@@ -747,6 +747,7 @@ public class ItamarDB {
 	        return "";
 	    }
 	
+
 	public void addToDailyStats(int parkingLotID, long todayUnixTime, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
 		try {
 			PreparedStatement updateStats = conn.prepareStatement("UPDATE dailyStats SET lateForParking=lateForParking+?, cancelOrders=cancelOrders+?, orderByType=orderByType+?, numLotsDisabled=numLotsDisabled+?  WHERE facID=? AND date=?");
@@ -764,6 +765,46 @@ public class ItamarDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public int[] getVehicleParkingSpot(String vehicleID, String parkingLot) {
+		JSONObject data = getParkingLotJsonData(parkingLot);
+		try {
+			JSONArray parkingData = data.getJSONArray("parkingData");
+			for(int index = 0; index < parkingData.length(); index++) {
+				JSONObject spotJson = parkingData.getJSONObject(index);
+				int i = spotJson.getInt("i");
+				int j = spotJson.getInt("j");
+				int k = spotJson.getInt("k");
+				String carID = spotJson.getString("carID");
+				if(carID.equals(vehicleID)) {
+					return new int[] {i, j, k};
+				}
+				
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new int[] {-1,-1,-1};
+	}
+
+	public List<String> getAllVehiclesOfUser(String userID) {
+		List<String> vehicleIDs = new ArrayList<String>();
+		try {
+			PreparedStatement select = conn.prepareStatement("SELECT vehicleID FROM Vehicles WHERE userID=?");
+			select.setString(1, userID);
+	
+			ResultSet uprs = select.executeQuery();
+			System.out.println("success");
+			//TODO: support multiple vehicles
+			while(uprs.next()){
+				vehicleIDs.add(uprs.getString("vehicleID"));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return vehicleIDs;
 	}
 
 }

@@ -4,6 +4,7 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,8 +29,6 @@ import ocsf.server.ConnectionToClient;
 
 /*TODOS
  * - Impl. parking algo integration
- * - TODO: user "Follows" his order status (do some shitty progress screen)
- * - TODO: PROBABLY NOT OUR RESPOSIBILTY update isFull column is parking table (probably is algo responsibility to tell it's full)
  */
 
 
@@ -42,7 +41,7 @@ public class ServerDummy extends AbstractServer
    */
   final public static int DEFAULT_PORT = 6654;
 
-
+  
 
   //Constructors ****************************************************
 
@@ -266,7 +265,7 @@ public class ServerDummy extends AbstractServer
 			//TODO: handle parking lot is full
 			JSONObject result = new JSONObject();
 			result.put("parkingData", new JSONArray(alg.generateDBString()));
-			result.put("statsuData", new JSONArray(alg.generateStatusString()));
+			result.put("statusData", new JSONArray(alg.generateStatusString()));
 			ItamarDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -290,7 +289,7 @@ public class ServerDummy extends AbstractServer
 			//TODO: handle parking lot is full
 			JSONObject result = new JSONObject();
 			result.put("parkingData", new JSONArray(alg.generateDBString()));
-			result.put("statsuData", new JSONArray(alg.generateStatusString()));
+			result.put("statusData", new JSONArray(alg.generateStatusString()));
 			ItamarDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -314,7 +313,7 @@ public class ServerDummy extends AbstractServer
 			//TODO: handle parking lot is full
 			JSONObject result = new JSONObject();
 			result.put("parkingData", new JSONArray(alg.generateDBString()));
-			result.put("statsuData", new JSONArray(alg.generateStatusString()));
+			result.put("statusData", new JSONArray(alg.generateStatusString()));
 			ItamarDB.getInstance().updateParkingLotData(parkingLot, result.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -372,11 +371,11 @@ public class ServerDummy extends AbstractServer
 	 private String generateParkinglotDataForPDF(String parkingLotName) {
 		 try {
 			 JSONObject data = ItamarDB.getInstance().getParkingLotJsonData(parkingLotName);
-			 JSONArray statusesJsonArr = data.getJSONArray("parkingStatus");
+			 JSONArray statusesJsonArr = data.getJSONArray("parkingData");
 			 List<ThreeIndices> statuses = new ArrayList<ThreeIndices>();
-			 for(int i = 0; i < data.length(); i++) {
+			 for(int i = 0; i < statusesJsonArr.length(); i++) {
 				 JSONObject spotData = statusesJsonArr.getJSONObject(i);
-				 statuses.add(new ThreeIndices(spotData.getInt("i"),spotData.getInt("j"),spotData.getInt("k"),String.valueOf((char)spotData.getInt("status"))));
+				 statuses.add(new ThreeIndices(spotData.getInt("i"),spotData.getInt("j"),spotData.getInt("k"),String.valueOf(spotData.getString("status"))));
 			 }
 			 Collections.sort(statuses);
 			 String dataForPDF = "";
@@ -1070,6 +1069,34 @@ private Params isParkingLotFull(Params params) {
 	return Params.getEmptyInstance().addParam("isFull", fullResp.getParam("isFull").equals("1") ? "yes" : "false").addParam("alternative", fullResp.getParam("alternative"));
 }
 
+
+private Params getVehicleStatus(Params params) {
+	String vehicleID = params.getParam("vehicleID");
+	boolean isParked = ItamarDB.getInstance().getIsVehicleInParking(vehicleID);
+	if(!isParked) {
+		return Params.getEmptyInstance().addParam("status", "OK").addParam("isParked", "false");
+	}
+	Params resp = Params.getEmptyInstance().addParam("isParked", "true");
+	String parkingLot = ItamarDB.getInstance().getVehicleParkingLot(vehicleID);
+	resp.addParam("parkingLot", parkingLot);
+	resp.addParam("startTime", Utils.unixTimeToHour(ItamarDB.getInstance().getVehicleStartParkTime(vehicleID)));
+	int[] spot = ItamarDB.getInstance().getVehicleParkingSpot(vehicleID, parkingLot);
+	resp.addParam("parkingSpot", Arrays.toString(spot));
+	resp.addParam("status", "OK");
+	return resp;
+}
+
+
+private Params getVehiclesOfUser(Params params) {
+	String userID = params.getParam("userID");
+	List<String> vehiclesIDs = ItamarDB.getInstance().getAllVehiclesOfUser(userID);
+	JSONArray vehiclesJsonArr = new JSONArray();
+	for(String vID : vehiclesIDs) {
+		vehiclesJsonArr.put(vID);
+	}
+	return Params.getEmptyInstance().addParam("status", "OK").addParam("vehiclesArr", vehiclesJsonArr.toString());
+}
+
 /**
    * This method handles any messages received from the client.
    *
@@ -1154,6 +1181,14 @@ private Params isParkingLotFull(Params params) {
 	    	}else if(params.getParam("action").equals("isParkingLotFull")) {
 	    		System.out.println("isParkingLotFull");
 	    		Params resp = isParkingLotFull(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getVehicleStatus")) {
+	    		System.out.println("getVehicleStatus");
+	    		Params resp = getVehicleStatus(params);
+	    		client.sendToClient(resp.toString());
+	    	}else if(params.getParam("action").equals("getAllVehiclesOfUser")) {
+	    		System.out.println("getAllVehiclesOfUser");
+	    		Params resp = getVehiclesOfUser(params);
 	    		client.sendToClient(resp.toString());
 	    	}
 	    	else{
