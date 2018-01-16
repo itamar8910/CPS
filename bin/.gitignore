@@ -1,9 +1,4 @@
-/algorithm/
-/application/
-/client/
+/allonscosomo/
+/application_itamar/
 /common/
-/Server.class
-/ServerDummy$ThreeIndices.class
-/ServerDummy.class
-/TestDB.class
-/ItamarDB.class
+/application/

@@ -1,6 +1,6 @@
 package common;
 
-import application.ApplicationMain;
+import application_itamar.ApplicationMain;
 
 public interface ControllerIF {
 

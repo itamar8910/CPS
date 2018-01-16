@@ -261,7 +261,7 @@ public class ServerDummy extends AbstractServer
 			start = data.getJSONArray("parkingData");
 			Algorithm alg = new Algorithm(width, data.getJSONArray("parkingData").toString(), data.getJSONArray("statusData").toString());
 			//TODO: integrate insertion with status (in this case 'order')
-			alg.insertCar(new Car(vehicleID, leaveTime, System.currentTimeMillis()), leaveTime);
+			alg.insertCar(new Car(vehicleID, leaveTime, System.currentTimeMillis()));
 			//TODO: handle parking lot is full
 			JSONObject result = new JSONObject();
 			result.put("parkingData", new JSONArray(alg.generateDBString()));
@@ -285,7 +285,7 @@ public class ServerDummy extends AbstractServer
 			start = data.getJSONArray("parkingData");
 			Algorithm alg = new Algorithm(width, data.getJSONArray("parkingData").toString(), data.getJSONArray("statusData").toString());
 			//TODO: integrate insertion with status (in this case 'order')
-			alg.insertOrderedCar(new Car(vehicleID, leaveTime, entryTime), entryTime, leaveTime);
+			alg.insertOrderedCar(new Car(vehicleID, leaveTime, entryTime));
 			//TODO: handle parking lot is full
 			JSONObject result = new JSONObject();
 			result.put("parkingData", new JSONArray(alg.generateDBString()));

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.GMController">
+  <!-- TODO Add Nodes -->
+  <children>
+    <Text layoutX="172.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rate Chnage Requests" />
+    <ListView fx:id="tableReq" layoutX="123.0" layoutY="164.0" prefHeight="200.0" prefWidth="410.0" />
+    <Button fx:id="acceptButton" layoutX="109.0" layoutY="400.0" mnemonicParsing="false" onAction="#acceptClicked" text="Accept" />
+    <Button id="denyButton" fx:id="rejectButton" layoutX="450.0" layoutY="400.0" mnemonicParsing="false" onAction="#rejectClicked" text="Reject" />
+    <Button fx:id="refreshButton" layoutX="270.0" layoutY="400.0" mnemonicParsing="false" onAction="#refreshClicked" text="Refresh" />
+  </children>
+</AnchorPane>
