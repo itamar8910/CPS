@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import application_itamar.ApplicationMain;
+
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;

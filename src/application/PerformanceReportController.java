@@ -2,7 +2,6 @@ package application;
 
 import org.json.JSONArray;
 
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;
 

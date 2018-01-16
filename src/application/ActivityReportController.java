@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;;
 

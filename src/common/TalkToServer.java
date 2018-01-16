@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import client.Client;
-
 public class TalkToServer implements ChatIF{
 
 

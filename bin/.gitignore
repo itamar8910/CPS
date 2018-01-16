@@ -2,3 +2,10 @@
 /application_itamar/
 /common/
 /application/
+/client/
+/server/
+/DBHandler.class
+/algorithm/
+/backEndLogic$ThreeIndices.class
+/backEndLogic.class
+/pojos/

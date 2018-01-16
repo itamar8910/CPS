@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;

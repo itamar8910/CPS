@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pojos.Car;
+
 public class Algorithm{
 	
 	private static class ArrayListCar extends ArrayList<Car>{

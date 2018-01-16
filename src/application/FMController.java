@@ -3,7 +3,6 @@ package application;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;

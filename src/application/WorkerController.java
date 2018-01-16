@@ -4,7 +4,6 @@ import java.net.URL;
 import javafx.application.Platform;
 import java.util.ResourceBundle;
 
-import application_itamar.ApplicationMain;
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;
