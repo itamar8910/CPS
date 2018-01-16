@@ -8,8 +8,6 @@ import ocsf.client.*;
 
 import java.io.*;
 
-import application_itamar.*;
-
 /**
  * This class overrides some of the methods defined in the abstract
  * superclass in order to give more functionality to the client.
