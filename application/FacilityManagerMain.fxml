@@ -14,5 +14,7 @@
     <Button id="ordersReportButton" fx:id="complainsReportButton" layoutX="177.0" layoutY="198.0" mnemonicParsing="false" onAction="#complainsReportClicked" text="Complains Report" />
     <Button id="ordersReportButton" fx:id="parkingDownReport" layoutX="150.0" layoutY="275.0" mnemonicParsing="false" onAction="#parikingReportClicked" text="Parkings down Report" />
     <Button id="ordersReportButton" fx:id="RateChangeButton" layoutX="154.0" layoutY="350.0" mnemonicParsing="false" onAction="#RateChangeClicked" text="Request Rate Chnage" />
+    <Text fx:id="parkingNameText" layoutX="39.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+    <Button fx:id="perfReportButton" layoutX="162.0" layoutY="413.0" mnemonicParsing="false" text="Performance Report" />
   </children>
 </AnchorPane>
