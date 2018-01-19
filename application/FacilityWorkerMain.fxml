@@ -14,5 +14,6 @@
     <Button fx:id="facilityFullButton" layoutX="265.0" layoutY="330.0" mnemonicParsing="false" onAction="#facilityFullClicked" text="" />
     <Button fx:id="facilityDownButton" layoutX="265.0" layoutY="260.0" mnemonicParsing="false" onAction="#facilityDownClicked" text="" />
     <Button fx:id="initFacilityButton" layoutX="265.0" layoutY="190.0" mnemonicParsing="false" onAction="#initFacilityClicked" prefWidth="110.0" text="Initisialize Facility" />
+      <Button fx:id="logoutButton" layoutX="572.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutPressed" text="Logout" />
   </children>
 </AnchorPane>

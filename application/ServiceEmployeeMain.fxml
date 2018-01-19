@@ -19,5 +19,6 @@
     <Button id="refundButton" fx:id="selectParkingButton" layoutX="430.0" layoutY="357.5" mnemonicParsing="false" onAction="#selectClicked" prefWidth="100.0" text="Select Parking" />
     <Button fx:id="refreshButton" layoutX="210.0" layoutY="417.5" mnemonicParsing="false" onAction="#refreshClicked" prefWidth="60.0" text="Refresh" />
     <TextField id="refundAmmount" fx:id="refundAmount" layoutX="50.0" layoutY="350.0" prefHeight="40.0" prefWidth="150.0" />
+      <Button fx:id="logoutButton" layoutX="572.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutPressed" text="Logout" />
   </children>
 </AnchorPane>

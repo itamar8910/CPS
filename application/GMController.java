@@ -41,6 +41,9 @@ public class GMController implements ControllerIF{
     private Button acceptButton;
 
     @FXML
+    private Button backButton;
+
+    @FXML
     private Button refreshButton;
 
     @FXML
@@ -48,7 +51,11 @@ public class GMController implements ControllerIF{
 
     @FXML
     private ListView<String> tableReq;
-
+    
+    @FXML
+    void backPressed(ActionEvent event) {
+    	main.setScene("bigManagerOptions.fxml", params);
+    }
 
     @FXML
     void acceptClicked(ActionEvent event) throws JSONException { 
@@ -175,6 +182,7 @@ public class GMController implements ControllerIF{
         assert refreshButton != null : "fx:id=\"refreshButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         assert rejectButton != null : "fx:id=\"rejectButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         assert tableReq != null : "fx:id=\"tableReq\" was not injected: check your FXML file 'FacilityManager.fxml'.";
+        assert backButton != null : "fx:id=\"backButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         refreshClicked(null);
     }
     

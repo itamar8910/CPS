@@ -31,6 +31,9 @@ public class FMController implements ControllerIF{
     private TextField newRate;
 
     @FXML
+    private Button backButton;
+
+    @FXML
     private Button rateRequestButton;
 
     @FXML
@@ -38,6 +41,11 @@ public class FMController implements ControllerIF{
     
     @FXML
     private Text deniedText;
+    
+    @FXML
+    void backPressed(ActionEvent event) {
+    	main.setScene("FacilityManagerMain.fxml", params);
+    }
     
     @FXML
     private ComboBox<String> dropDown;
@@ -98,6 +106,7 @@ public class FMController implements ControllerIF{
         assert grantedText != null : "fx:id=\"grantedText\" was not injected: check your FXML file 'SniffManager.fxml'.";
         assert newRate != null : "fx:id=\"newRate\" was not injected: check your FXML file 'SniffManager.fxml'.";
         assert rateRequestButton != null : "fx:id=\"rateRequestButton\" was not injected: check your FXML file 'SniffManager.fxml'.";
+        assert backButton != null : "fx:id=\"backButton\" was not injected: check your FXML file 'SniffManager.fxml'.";
         dropDown.getItems().clear();
     	dropDown.getItems().addAll("One Time Parking","Ordered One Time Parking","Routine Subscription - One Vehicle","Full Subscription","Routine Subscription");
     }

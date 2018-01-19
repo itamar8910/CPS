@@ -9,7 +9,7 @@
 <AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.bigManagerController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="33.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="WHAT THE FUCK DO U WANT TO DO" />
+    <Text layoutX="95.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Parking Manager" />
     <Button id="ordersButton" fx:id="activityButton" layoutX="70.0" layoutY="140.0" mnemonicParsing="false" onAction="#activityClicked" prefWidth="140.0" text="Activity Report" />
     <Button fx:id="performanceButton" layoutX="70.0" layoutY="220.0" mnemonicParsing="false" onAction="#performanceClicked" prefWidth="140.0" text="Performance Report" />
     <Button fx:id="currentStateButton" layoutX="70.0" layoutY="300.0" mnemonicParsing="false" onAction="#currentStateClicked" prefWidth="140.0" text="Current State Report" />
@@ -22,5 +22,6 @@
     <TextField fx:id="year" layoutX="540.0" layoutY="340.0" prefWidth="70.0" />
     <Text layoutX="433.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Days Back:" />
     <TextField id="day" fx:id="daysBack" layoutX="500.0" layoutY="390.0" prefWidth="60.0" />
+    <Button fx:id="logOutButton" layoutX="574.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutPressed" text="Logout" />
   </children>
 </AnchorPane>

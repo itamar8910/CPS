@@ -53,6 +53,9 @@ public class handleParkingController implements ControllerIF{
     private Text currentFloorText;
     
     @FXML
+    private Button backButton;
+    
+    @FXML
     private Button floorDownButton;
 
     @FXML
@@ -72,6 +75,15 @@ public class handleParkingController implements ControllerIF{
 
     @FXML
     private TextField parkingTextBox;
+    
+
+    @FXML
+    void backPressed(ActionEvent event) {
+    	if(typeOfWorker.equals("1"))
+    		main.setScene("FacilityWorkerMain.fxml", params);
+    	else
+    		main.setScene("ServiceEmployeeMain.fxml", params);
+    }
         
     Color statusToColor(String Status) {
     	Color ret = null;
@@ -273,6 +285,7 @@ public class handleParkingController implements ControllerIF{
         assert Hbox1 != null : "fx:id=\"Hbox1\" was not injected: check your FXML file 'handleParking.fxml'.";
         assert Hbox2 != null : "fx:id=\"Hbox2\" was not injected: check your FXML file 'handleParking.fxml'.";
         assert Hbox3 != null : "fx:id=\"Hbox3\" was not injected: check your FXML file 'handleParking.fxml'.";
+        assert backButton != null : "fx:id=\"backButton\" was not injected: check your FXML file 'handleParking.fxml'.";
         assert parkingTextBox != null : "fx:id=\"parkingTextBox\" was not injected: check your FXML file 'handleParking.fxml'.";
     }
     

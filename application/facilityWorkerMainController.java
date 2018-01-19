@@ -42,6 +42,13 @@ public class facilityWorkerMainController implements ControllerIF{
     @FXML
     private Button updateFacilityButton;
 
+    @FXML
+    private Button logoutButton;
+    
+    @FXML
+    void logoutPressed(ActionEvent event) {
+    	main.setScene("WorkerMainScene.fxml", params);
+    }
 
     @FXML
     void facilityDownClicked(ActionEvent event) {
@@ -100,10 +107,9 @@ public class facilityWorkerMainController implements ControllerIF{
 
     @FXML
     void updateFacilityClicked(ActionEvent event) {
-    	Params x = Params.getEmptyInstance();
-    	x.addParam("amIaWorker", "1");
-    	x.addParam("parkingName", parkingName);
-    	main.setScene("handleParking.fxml", x);
+    	params.addParam("amIaWorker", "1");
+    	params.addParam("parkingName", parkingName);
+    	main.setScene("handleParking.fxml", params);
     }
 
     @FXML
@@ -112,7 +118,8 @@ public class facilityWorkerMainController implements ControllerIF{
         assert facilityFullButton != null : "fx:id=\"facilityFullButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
         assert initFacilityButton != null : "fx:id=\"initFacilityButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
         assert updateFacilityButton != null : "fx:id=\"updateFacilityButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
-    }
+        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";   
+        }
     
 	@Override
 	public void init(ApplicationMain main, Params params) {

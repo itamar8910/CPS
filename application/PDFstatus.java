@@ -1034,19 +1034,19 @@ public class PDFstatus {
         Paragraph preface = new Paragraph();
         preface.add(new Paragraph("CarPark " + parkName +":", catFont));
         addEmptyLine(preface, 1);
-        preface.add(new Paragraph("Orange - saved,     Red - invalid,     Blue - full,     White - empty,     Green - ordered", smallBold));
+        preface.add(new Paragraph("Black - invalid,     Red - full,     Blue - Saved,     Green - Empty", smallBold));
         preface.add(new Paragraph(
-                "first layer:", smallBold));
+                "First Layer:", smallBold));
         addEmptyLine(preface, 1);
         index =createTable(preface, N,parkData,0,index);
         addEmptyLine(preface, 1);
         preface.add(new Paragraph(
-                "second layer:", smallBold));
+                "Second Layer:", smallBold));
         addEmptyLine(preface, 1);
         index =createTable(preface, N,parkData,0,index);
         addEmptyLine(preface, 1);
         preface.add(new Paragraph(
-                "last layer:", smallBold));
+                "Third Layer:", smallBold));
         addEmptyLine(preface, 1);
         index =createTable(preface, N,parkData,0,index);
         document.add(preface);
@@ -1068,14 +1068,16 @@ public class PDFstatus {
         	for(int j=0; j<N;j++) {
         		PdfPCell c1 = new PdfPCell(new Phrase(" "));
         		if(a[i][j] == 'o')
+        			c1.setBackgroundColor(BaseColor.BLACK);
+        		if(a[i][j] == 'e')
         			c1.setBackgroundColor(BaseColor.GREEN);
         		if(a[i][j] == 's')
-            		c1.setBackgroundColor(BaseColor.ORANGE);
-        		if(a[i][j] == 'f')
             		c1.setBackgroundColor(BaseColor.BLUE);
-        		if(a[i][j] == 'i')
+        		if(a[i][j] == 'f')
             		c1.setBackgroundColor(BaseColor.RED);
-
+        		if(a[i][j] == 'i')
+            		c1.setBackgroundColor(BaseColor.BLACK);
+        		
         		table.addCell(c1);
         	}
         }

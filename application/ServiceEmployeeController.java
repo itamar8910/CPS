@@ -59,8 +59,15 @@ public class ServiceEmployeeController implements ControllerIF{
     
     @FXML
     private Button selectParkingButton;
+    
+    @FXML
+    private Button logoutButton;
+    
+    @FXML
+    void logoutPressed(ActionEvent event) {
+    	main.setScene("WorkerMainScene.fxml", params);
+    }
 
-   
     @FXML
     void deleteClicked(ActionEvent event) {
     	if(complainsList.getSelectionModel().getSelectedIndex() == -1)
@@ -142,10 +149,9 @@ public class ServiceEmployeeController implements ControllerIF{
 
     @FXML
     void selectClicked(ActionEvent event) {
-    	Params params2 = Params.getEmptyInstance();
-    	params2.addParam("parkingName", parkingList.getSelectionModel().getSelectedItem().toString());
-    	params2.addParam("amIaWorker", "0");
-    	main.setScene("handleParking.fxml", params2);
+    	params.addParam("parkingName", parkingList.getSelectionModel().getSelectedItem().toString());
+    	params.addParam("amIaWorker", "0");
+    	main.setScene("handleParking.fxml", params);
     }
     
     @FXML
@@ -250,6 +256,7 @@ public class ServiceEmployeeController implements ControllerIF{
         assert refundAmount != null : "fx:id=\"refundAmount\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert refundButton != null : "fx:id=\"refundButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert selectParkingButton != null : "fx:id=\"selectParkingButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
+        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
     }
 	
 	@Override

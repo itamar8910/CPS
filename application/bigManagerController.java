@@ -50,6 +50,9 @@ public class bigManagerController implements ControllerIF{
     private TextField year;
 
     @FXML
+    private Button logOutButton;
+
+    @FXML
     private URL location;
 
     @FXML
@@ -75,8 +78,14 @@ public class bigManagerController implements ControllerIF{
 		}
 		return -1;
 	}
-
-
+    
+    
+    @FXML
+    void logoutPressed(ActionEvent event) {
+    	main.setScene("WorkerMainScene.fxml", params);
+    }
+    
+    
     @FXML
     void activityClicked(ActionEvent event) throws JSONException {
     	if(parkingList.getSelectionModel().getSelectedIndex() == -1)
@@ -243,7 +252,6 @@ public class bigManagerController implements ControllerIF{
 
     }
     
-    
     @FXML
     void initialize() {
         assert activityButton != null : "fx:id=\"activityButton\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
@@ -254,6 +262,7 @@ public class bigManagerController implements ControllerIF{
         assert daysBack != null : "fx:id=\"daysBack\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
         assert month != null : "fx:id=\"month\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
         assert year != null : "fx:id=\"year\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
+        assert logOutButton != null : "fx:id=\"logOutButton\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
         assert priceRequests != null : "fx:id=\"priceRequests\" was not injected: check your FXML file 'bigManagerOptions.fxml'.";
 		showList();
     }
@@ -263,8 +272,6 @@ public class bigManagerController implements ControllerIF{
 		this.main = main;
 		this.params = params;
 	}
-
-
 
 
 }

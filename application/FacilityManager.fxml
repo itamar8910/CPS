@@ -14,5 +14,6 @@
     <Button fx:id="acceptButton" layoutX="110.0" layoutY="390.0" mnemonicParsing="false" onAction="#acceptClicked" prefWidth="60.0" text="Accept" />
     <Button id="denyButton" fx:id="rejectButton" layoutX="470.0" layoutY="390.0" mnemonicParsing="false" onAction="#rejectClicked" prefWidth="60.0" text="Reject" />
     <Button fx:id="refreshButton" layoutX="290.0" layoutY="390.0" mnemonicParsing="false" onAction="#refreshClicked" prefWidth="60.0" text="Refresh" />
+      <Button fx:id="backButton" layoutX="585.0" layoutY="14.0" mnemonicParsing="false" onAction="#backPressed" text="Back" />
   </children>
 </AnchorPane>

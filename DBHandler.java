@@ -96,7 +96,7 @@ public class DBHandler {
 			select.setInt(1, parkingID);
 	
 			ResultSet uprs = select.executeQuery();
-			//System.out.println("success");
+			// 
 			if(uprs.next()){
 				return uprs.getString("name");
 			}
@@ -594,7 +594,6 @@ public class DBHandler {
 				return resData.toString();
 			}
 			
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -624,7 +623,6 @@ public class DBHandler {
 				return resData;
 			}
 			
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -826,7 +824,6 @@ public class DBHandler {
 				return resData.toString();
 			}
 			
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1095,7 +1092,6 @@ public class DBHandler {
 			updatePrice.setString(1, name);
 			updatePrice.setInt(2, balance);
 			updatePrice.executeUpdate();
-			System.out.println("success");
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1113,7 +1109,7 @@ public class DBHandler {
 			updatePrice.setString(2, name);
 			updatePrice.setInt(1, balance);
 			updatePrice.executeUpdate();
-			System.out.println("success");
+			 
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1195,7 +1191,6 @@ public class DBHandler {
 			select.setString(1, userID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			//TODO: support multiple vehicles
 			while(uprs.next()){
 				vehicleIDs.add(uprs.getString("vehicleID"));
@@ -1215,7 +1210,6 @@ public class DBHandler {
 			while(uprs.next()){
 				return uprs.getInt("balance");
 			}
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1232,7 +1226,6 @@ public class DBHandler {
 			while(uprs.next()){
 				buff += uprs.getString("name") + "," + String.valueOf((uprs.getInt("balance"))) + "\n";
 			}
-			System.out.println("success");
 			return buff;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1249,7 +1242,6 @@ public class DBHandler {
 			//PreparedStatement selectName = conn.prepareStatement("SELECT * FROM Users WHERE userID=?;");
 			//selectName.setString(1, "123");
 			ResultSet uprs = selectName.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				return true;
 			}
@@ -1268,7 +1260,6 @@ public class DBHandler {
 			select.setInt(1, parkingLotID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				return uprs.getString("name");
 			}
@@ -1287,7 +1278,6 @@ public class DBHandler {
 			update.setString(3, email);
 			update.setString(4, type);
 			update.executeUpdate();
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1308,7 +1298,6 @@ public class DBHandler {
 			update.setLong(5, endTime);
 			update.setString(6, String.valueOf(isInParking));
 			update.executeUpdate();
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1321,7 +1310,6 @@ public class DBHandler {
 			select.setString(1, parkingLotName);
 
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				return uprs.getInt("width");
 			}
@@ -1339,7 +1327,6 @@ public class DBHandler {
 			select.setString(1, parkingLotName);
 
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				return uprs.getInt("dimension");
 			}
@@ -1357,7 +1344,6 @@ public class DBHandler {
 			select.setString(1, parkingLotName);
 
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
 				return new JSONArray(uprs.getString("data"));
@@ -1381,7 +1367,6 @@ public class DBHandler {
 			select.setString(1, parkingLotName);
 
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
 			if(uprs.next()){
 				System.out.println("getParkingLotJsonData resp:" + uprs.getString("data"));
 				return new JSONObject(uprs.getString("data"));
@@ -1413,7 +1398,6 @@ public class DBHandler {
 			update.setInt(3, width);
 
 			update.executeUpdate();
-			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1434,7 +1418,7 @@ public class DBHandler {
 			update.setString(5, defaultPriceChange);
 			update.setString(6, defaultData);
 			update.executeUpdate();
-			System.out.println("success");
+			System.out.println(" ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1450,7 +1434,7 @@ public class DBHandler {
 			update.setString(2, name);
 
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1466,7 +1450,7 @@ public class DBHandler {
 			update.setString(2, name);
 
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1479,7 +1463,7 @@ public class DBHandler {
 			select.setString(1, userID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getInt("id");
 			}
@@ -1497,7 +1481,7 @@ public class DBHandler {
 			update.setString(2, userID);
 
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1510,7 +1494,7 @@ public class DBHandler {
 			select.setString(1, userID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			//TODO: support multiple vehicles
 			if(uprs.next()){
 				return uprs.getString("vehicleID");
@@ -1528,7 +1512,7 @@ public class DBHandler {
 			select.setString(1, vehicleID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getString("userID");
 			}
@@ -1544,7 +1528,7 @@ public class DBHandler {
 			select.setString(1, userID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getString("type");
 			}
@@ -1563,7 +1547,7 @@ public class DBHandler {
 			update.setString(3, vehicleID);
 
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1578,7 +1562,7 @@ public class DBHandler {
 			update.setString(2, vehicleID);
 
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1593,7 +1577,7 @@ public class DBHandler {
 			update.setDouble(1, amount);
 			update.setString(2, userID);
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1607,7 +1591,7 @@ public class DBHandler {
 			select.setString(1, parkingLot);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				String priceListStr = uprs.getString("price");
 				JSONArray priceList = new JSONArray(priceListStr);
@@ -1630,7 +1614,7 @@ public class DBHandler {
 			select.setString(1, vehicleID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				String timeStr = uprs.getString("startTime");
 				return Long.valueOf(timeStr);
@@ -1647,7 +1631,7 @@ public class DBHandler {
 			select.setString(1, vehicleID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getString("userID");
 			}
@@ -1663,7 +1647,7 @@ public class DBHandler {
 			select.setString(1, vehicleID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getString("parkingLot");
 			}
@@ -1680,7 +1664,7 @@ public class DBHandler {
 			update = conn.prepareStatement("DELETE FROM Users WHERE userID=?");
 			update.setString(1, userID);
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1695,7 +1679,7 @@ public class DBHandler {
 			update = conn.prepareStatement("DELETE FROM Vehicles WHERE vehicleID=?");
 			update.setString(1, vehicleID);
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1708,7 +1692,7 @@ public class DBHandler {
 			PreparedStatement select = conn.prepareStatement("SELECT * FROM Users WHERE 1");
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			while(uprs.next()){
 				users.add(new User(uprs.getString("userID"), uprs.getString("vehicleID"), uprs.getString("email"), uprs.getString("type"), uprs.getDouble("money")));
 			}
@@ -1724,7 +1708,7 @@ public class DBHandler {
 			PreparedStatement select = conn.prepareStatement("SELECT name FROM ParkingFacility WHERE 1");
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			while(uprs.next()){
 				parkingLots.add(uprs.getString("name"));
 			}
@@ -1740,7 +1724,7 @@ public class DBHandler {
 			select.setString(1, vehicleID);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getString("isInParking").equals("true");
 			}
@@ -1756,7 +1740,7 @@ public class DBHandler {
 			select.setString(1, parkingLotName);
 	
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			if(uprs.next()){
 				return uprs.getInt("id");
 			}
@@ -1772,7 +1756,7 @@ public class DBHandler {
 			select.setString(1, String.valueOf(todayUnixTime));
 			select.setString(2, String.valueOf(parkingLotID));
 			ResultSet uprs = select.executeQuery();
-			System.out.println("success");
+			 
 			boolean exists = false;
 			if(uprs.next()){
 				exists = true;
@@ -1811,7 +1795,7 @@ public class DBHandler {
 			updateStats.setInt(5, parkingLotID);
 			updateStats.setString(6, String.valueOf(todayUnixTime));
 			updateStats.executeUpdate();
-			System.out.println("success");
+			 
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1826,7 +1810,7 @@ public class DBHandler {
 			update.setString(1, name);
 			
 			update.executeUpdate();
-			System.out.println("success");
+			 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

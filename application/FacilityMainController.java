@@ -46,11 +46,18 @@ public class FacilityMainController implements ControllerIF{
 
     @FXML
     private Button parkingDownReport;
-
+    
+    @FXML
+    private Button logoutButton;
 
     @FXML
     void RateChangeClicked(ActionEvent event) {
   		main.setScene("SniffManager.fxml",params);
+    }
+    
+    @FXML
+    void logoutPressed(ActionEvent event) {
+    	main.setScene("WorkerMainScene.fxml", params);
     }
 
     @FXML
@@ -183,6 +190,7 @@ public class FacilityMainController implements ControllerIF{
         assert parkingDownReport != null : "fx:id=\"parkingDownReport\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
         assert parkingNameText != null : "fx:id=\"parkingNameText\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
         assert perfReportButton != null : "fx:id=\"perfReportButton\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
+        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
     }
     
 	@Override
