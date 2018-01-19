@@ -414,7 +414,7 @@ public class Server extends AbstractServer
     super(port);
     //System.out.println("Tables:");
     //TestDB.getInstance().printAllTables();
-    final boolean DO_CONJOBS = false; //TODO: remember to change this before submitting :)
+    final boolean DO_CONJOBS = true; //TODO: remember to change this before submitting :)
     if(DO_CONJOBS) { 
 	    new Thread(()-> {
 	    	while(true) {
@@ -425,10 +425,14 @@ public class Server extends AbstractServer
 		    	List<User> allUsers = DBHandler.getInstance().getAllUsers();
 		    	System.out.println("Printing all users:");
 		    	for(User user : allUsers) {
+    				System.out.println("Fucking your late mother fucker user ID : " + user.getUserID());
 		    		if(user.getSubscriptionParams().getParam("type").equals("orderedOneTimeParking")) {
 		    			long orderTimeUnix = Long.valueOf(user.getSubscriptionParams().getParam("enterTimeMS"));
+		    			System.out.println("order unix time:" + orderTimeUnix);
+		    			System.out.println("current unix time:" + System.currentTimeMillis());
 		    			// if customer is late and this is the first minute shes is late in
 		    			if(System.currentTimeMillis() > orderTimeUnix && System.currentTimeMillis() < orderTimeUnix + 60*1000) {
+		    				System.out.println("Fucking your late mother fucker");
 		    				//update stats
 		    				backEndLogic.addToStatistics(DBHandler.getInstance().getVehicleParkingLot(user.getVehicleID()), 1, 0, 0, 0);
 		    				//notify via email
@@ -561,8 +565,10 @@ public class Server extends AbstractServer
     String data = dbInstance.returnActivityDataReport(new Params("{'facID':2,'startDate':1512079200000,'numDays':14}"));
     System.out.println("Data test : " + data);
    
-    */
+   
     
+    backEndLogic.sendEmailToCostumerForBeginLate("gil.maman.5@gmail.com","fuck you");
+     */
     try
     {
       sv.listen(); //Start listening for connections

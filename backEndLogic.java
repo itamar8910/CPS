@@ -16,6 +16,10 @@ import algorithm.Algorithm;
 
 import common.Params;
 import common.Utils;
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
 
 
 public class backEndLogic {
@@ -59,13 +63,65 @@ public class backEndLogic {
 	
 	  //Instance methods ************************************************
 	
+	//add user 20% of this price
+	//TODO
+	//THIS WILL BE CALLED WHEN THE CLIENT IS LATE AND WANTS TO USE PARKING
+	//IT WILL SUE THE USER WITH 20% OF THE PARKING PRICE
+	public void handleClientWantsToKeepParking(int userID,double parkingPrice)  {
+		//call to update DB
+		DBHandler.getInstance().sueUser(userID, parkingPrice);;
+	}
 	
+	//send email to costumer
 	  public static void sendEmailToCostumerForBeginLate(String email, String string) {
-		// TODO: impl.
-		//sends email
-		  
-		//if response is she's still interested, charge additional 20%.
-		
+
+		  try {
+			  
+			  
+			  String to = email;
+		      String from = "cps.system.14@gmail.com";
+		      
+		      
+		      // Get system properties
+		      Properties properties = System.getProperties();
+		      properties.put("mail.smtp.starttls.enable", true); // added this line
+		      properties.put("mail.smtp.host", "smtp.gmail.com");
+		      properties.put("mail.smtp.user", "cps.system.14");
+		      properties.put("mail.smtp.password", "cps123456789");
+		      properties.put("mail.smtp.port", "587");
+		      properties.put("mail.smtp.auth", true);
+
+		      // Get the default Session object.
+		      Session session = Session.getDefaultInstance(properties, 
+		    		    new javax.mail.Authenticator(){
+		    		        protected PasswordAuthentication getPasswordAuthentication() {
+		    		            return new PasswordAuthentication(
+		    		            		from, "cps123456789");// Specify the Username and the PassWord
+		    		        }
+		    		});
+
+		      try {
+		         // Create a default MimeMessage object.
+		         MimeMessage message = new MimeMessage(session);
+		         message.setFrom(new InternetAddress(from));
+		         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+		         // Set Subject: header field
+		         message.setSubject("Car parking system alert");
+
+		         // Now set the actual message
+		         message.setText(string);
+
+		         // Send message
+		         Transport.send(message);
+		         System.out.println("Sent message successfully....");
+		      } catch (MessagingException mex) {
+		         mex.printStackTrace();
+		      }
+		  } catch(Exception e) {
+			  e.printStackTrace();
+		  }
+	   
 	}
 	
 	
