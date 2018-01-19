@@ -97,6 +97,10 @@ public class ServiceEmployeeController implements ControllerIF{
     }
 
     @FXML
+    /**
+     * this function handles refund button clicking
+     * @param event the javafx enevet that's generatede\
+     */
     void refundClicked(ActionEvent event) {
     	if(complainsList.getSelectionModel().getSelectedIndex() == -1)
     		return;

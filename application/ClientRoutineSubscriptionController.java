@@ -2,6 +2,7 @@ package application;
 
 import common.ControllerIF;
 import common.Params;
+import common.StrCallbackIF;
 import common.TalkToServer;
 import common.Utils;
 import javafx.application.Platform;
@@ -90,6 +91,20 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     	});
     }
 
+    public static void handleClientRoutineSubscription(String userID, String vehicleID, String parkingLot, String startDate, String enterTime, String leaveTime, String email, StrCallbackIF callback) {
+    	Params orderParams = Params.getEmptyInstance();
+    	orderParams.addParam("action", "RoutineSubscription");
+    	orderParams.addParam("ID", userID);
+    	orderParams.addParam("vehicleID",vehicleID); //TODO: handle multiple vehicles
+    	orderParams.addParam("parkingLot", parkingLot);
+    	orderParams.addParam("startDate", startDate);
+    	orderParams.addParam("enterTime", enterTime);
+    	orderParams.addParam("leaveTime", leaveTime);
+    	orderParams.addParam("email", email);
+    	System.out.println("sending request to server");
+    	TalkToServer.getInstance().send(orderParams.toString(), callback);
+    }
+    
     @Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;

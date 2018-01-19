@@ -47,12 +47,13 @@ public class TalkToServer implements ChatIF{
 
 	@Override
 	public void display(String message) {
-		
+		System.out.println("display was called");
 		callbacks.poll().handle(message);
 		wait = false;
 	}
 
 	public void send(String message, StrCallbackIF callback){
+		System.out.println("sending:" + message);
 		try {
 			this.client.sendToServer(message);
 			//this.currentCallback = callback;

@@ -19,6 +19,9 @@ import ocsf.server.*;
 import pojos.Car;
 import pojos.User;
 
+/*
+ * TODO: check the parking lot exists on client order / subscription
+ */
 public class Server extends AbstractServer
 {
   //Class variables *************************************************
@@ -292,11 +295,14 @@ public class Server extends AbstractServer
 	    		client.sendToClient(resp.toString());
 	    	  break;
 		  	case "ClientPhysicalOrder":
+		  		System.out.println("ClientPhysicalOrder!");
 	    		resp = backEndLogic.handleClientPhysicalOrder(params);
+	    		System.out.println("resp is:" + resp.toString());
 	    		client.sendToClient(resp.toString());
 	    	break;
 		  	case "clientOneTimeOrder":
 	    		resp = backEndLogic.handleClientOneTimeOrder(params);
+	    		System.out.println("resp is:" + resp);
 	    		client.sendToClient(resp.toString());
 	    	break;
 		  	case "clientLeave":
@@ -377,9 +383,13 @@ public class Server extends AbstractServer
 	    		System.out.println("getAllVehiclesOfUser");
 	    		resp = backEndLogic.getVehiclesOfUser(params);
 	    		client.sendToClient(resp.toString());
-	    	break;
-		
-		  		
+	    		break;
+		  	case "removeUserAndVehicle":
+		  		System.out.println("removeUserAndVehicle");
+		  		DBHandler.getInstance().removeUser(params.getParam("userID"));
+		  		DBHandler.getInstance().removeVehicle(params.getParam("vehicleID"));
+		  		client.sendToClient(Params.getEmptyInstance().addParam("status", "OK").toString());
+		  		break;
 			  //------------------------default api
 			  //if no action specified
 			  default:
@@ -552,6 +562,9 @@ public class Server extends AbstractServer
     }
 
     Server sv = new Server(port);
+    //backEndLogic.createParkingLot("TestParkingLot", 4, "Haifa");
+    //backEndLogic.deleteParkingLot("TestParkingLot");
+    //System.exit(0);
    // sv.initParkingLotData("misgavParking");
     
    /*

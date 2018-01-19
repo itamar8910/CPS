@@ -66,7 +66,7 @@ public class backEndLogic {
 		  
 		//if response is she's still interested, charge additional 20%.
 		
-	}
+	  	}
 	
 	
 	public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
@@ -223,6 +223,15 @@ public class backEndLogic {
 		}
 	 }
 	
+	 public static void createParkingLot(String name, int width, String location) {
+		 DBHandler.getInstance().addParkingLot(name, width, location);
+		 initParkingLotData(name);
+	 }
+	 
+	 public static void deleteParkingLot(String name) {
+		 DBHandler.getInstance().removeParkingLot(name);
+	 }
+	 
 	 public static void initParkingLotData(String parkingLotName) {
 		  final int width = DBHandler.getInstance().getParkingLotWidth(parkingLotName);
 		  //JSONObject data = DBHandler.getInstance().getParkingLotJsonData(parkingLotName);
@@ -310,8 +319,20 @@ public class backEndLogic {
 	  public static Params handleClientPhysicalOrder(Params params) {
 		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 		  if(isInTable){
+			  String vehicleID = DBHandler.getInstance().getUserVehicleID(params.getParam("ID"));
+			  if(vehicleID.equals(params.getParam("vehicleID"))) { // if is in db with same vehicleID
+				  Params resp = Params.getEmptyInstance();
+				  resp.addParam("status", "BAD");
+				  return resp;
+			  }
+			  
+		  }
+		  //check leave time
+		  long leaveTimeMillis = Utils.todayTimeToMillis(params.getParam("leaveTime"));
+		  if(leaveTimeMillis == -1l) {
 			  Params resp = Params.getEmptyInstance();
 			  resp.addParam("status", "BAD");
+			  resp.addParam("message", "invalid leaveing time");
 			  return resp;
 		  }
 		  Params typeParams = Params.getEmptyInstance();
@@ -354,14 +375,18 @@ public class backEndLogic {
 	  }
 	
 	  public static Params handleClientOneTimeOrder(Params params){
-		  //TODO: automatically call Enter when there is a physical order
 		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
-		  if(isInTable){
-			  Params resp = Params.getEmptyInstance();
-			  resp.addParam("status", "BAD");
-			  return resp;
+//		  if(isInTable){
+//			  Params resp = Params.getEmptyInstance();
+//			  resp.addParam("status", "BAD");
+//			  return resp;
+//		  }
+		  
+		  if(Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime")) == -1 || Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")) == -1) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "time is invalid");
 		  }
-	
+		 
+		  
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "orderedOneTimeParking");
 		  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
@@ -394,12 +419,12 @@ public class backEndLogic {
 	  public static Params handleRoutineSubscription(Params params) {
 		  
 		  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
-		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
-		  if(isInTable){
-			  Params resp = Params.getEmptyInstance();
-			  resp.addParam("status", "BAD");
-			  return resp;
-		  }
+//		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
+//		  if(isInTable){
+//			  Params resp = Params.getEmptyInstance();
+//			  resp.addParam("status", "BAD");
+//			  return resp;
+//		  }
 		  
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "routineSubscription");
@@ -483,12 +508,12 @@ public class backEndLogic {
 	public static Params handleFullSubscription(Params params) {
 		  
 		  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
-		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
-		  if(isInTable){
-			  Params resp = Params.getEmptyInstance();
-			  resp.addParam("status", "BAD");
-			  return resp;
-		  }
+//		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
+//		  if(isInTable){
+//			  Params resp = Params.getEmptyInstance();
+//			  resp.addParam("status", "BAD");
+//			  return resp;
+//		  }
 		  
 		  //TODO: handle max park time is 14 days
 		  //TODO: can't park more than subscription unless the subscription is renewed

@@ -1359,6 +1359,11 @@ public class DBHandler {
 		return null;
 	}
 	
+	/**
+	 * DEPRECATED
+
+	 */
+	@Deprecated
 	public void addParkingLot(String name, String data, int width){
 		PreparedStatement update;
 		try {
@@ -1375,6 +1380,27 @@ public class DBHandler {
 		}
 	}
 
+	public void addParkingLot(String name, int width, String location){
+		String defaultPrices = "[5,4,0,0,0]";
+		String defaultPriceChange = "[-1,-1,-1,-1,-1]";
+		String defaultData = "{}";
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("INSERT INTO ParkingFacility(name, location, dimension, price, priceChangeRequest, data) VALUES(?,?,?, ?,?,?)");
+			update.setString(1, name);
+			update.setString(2, location);
+			update.setInt(3, width);
+			update.setString(4, defaultPrices);
+			update.setString(5, defaultPriceChange);
+			update.setString(6, defaultData);
+			update.executeUpdate();
+			System.out.println("success");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void updateParkingLotDataOld(String name, String data){
 		System.out.println("updateParkingLotData with:" + data);
 		PreparedStatement update;
@@ -1608,6 +1634,7 @@ public class DBHandler {
 	}
 
 	public void removeUser(String userID) {
+		System.out.println("removing user:" + userID);
 		PreparedStatement update;
 		try {
 			update = conn.prepareStatement("DELETE FROM Users WHERE userID=?");
@@ -1622,6 +1649,7 @@ public class DBHandler {
 	}
 
 	public void removeVehicle(String vehicleID) {
+		System.out.println("removing vehicle:" + vehicleID);
 		PreparedStatement update;
 		try {
 			update = conn.prepareStatement("DELETE FROM Vehicles WHERE vehicleID=?");
@@ -1745,6 +1773,20 @@ public class DBHandler {
 			updateStats.executeUpdate();
 			System.out.println("success");
 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void removeParkingLot(String name) {
+		PreparedStatement update;
+		try {
+			update = conn.prepareStatement("DELETE FROM ParkingFacility WHERE name=?");
+			update.setString(1, name);
+			
+			update.executeUpdate();
+			System.out.println("success");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

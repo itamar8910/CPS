@@ -11,6 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import com.sun.javafx.image.impl.ByteIndexed.Getter;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -43,6 +45,9 @@ public class Utils {
 	 * @return
 	 */
 	public static long dateAndTimeToMillis(String dateStr, String timeStr) {
+		if(!isDateValid(dateStr) || todayTimeToMillis(timeStr) == -1l) {
+			return -1l;
+		}
 		DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
 		Date date;
 		try {
@@ -67,6 +72,9 @@ public class Utils {
 		String[] tokens = timeStr.split(":");
 		String hours = tokens[0];
 		String minutes = tokens[1];
+		if(Integer.valueOf(hours) < 0 || Integer.valueOf(hours) > 24 || Integer.valueOf(minutes) < 0 || Integer.valueOf(minutes) > 60) {
+			return -1l;
+		}
 		//DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		date.setHours(Integer.valueOf(hours));
@@ -77,11 +85,23 @@ public class Utils {
 		return date.getTime();
 	}
 	
+	public static boolean isDateValid(String date) {
+		String DATE_FORMAT = "dd-MM-yyyy";
+        try {
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+	}
 	
 	
-//	public static void main(String args[]) {
-//		System.out.println(todayTimeToMillis("14:15"));
-//	}
+	public static void main(String args[]) {
+		//System.out.println(timeToMillis("18:88"));
+		System.out.println(dateAndTimeToMillis("01-11-2018", "18:28"));
+	}
 
 	public static boolean isInLastMonth(long subscriptionStartUnixtime) {
 		System.out.println("current time in millis:" + System.currentTimeMillis());
