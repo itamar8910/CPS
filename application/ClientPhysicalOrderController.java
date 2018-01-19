@@ -2,6 +2,7 @@ package application;
 
 import common.ControllerIF;
 import common.Params;
+import common.ParkingAlgo;
 import common.TalkToServer;
 import common.Utils;
 import javafx.application.Platform;
@@ -47,23 +48,8 @@ public class ClientPhysicalOrderController implements ControllerIF{
     		return;
     	}
     	
-    	
-    	System.out.println("isFull:" + isFull);
-    	if(true) {
-    		return;
-    	}
-    	
-    	
-    	Params orderParams = Params.getEmptyInstance();
-    	orderParams.addParam("action", "ClientPhysicalOrder");
-    	orderParams.addParam("ID", tfID.getText());
-    	orderParams.addParam("parkingLot", tfParkingLot.getText()); 
-    	orderParams.addParam("vehicleID", tfVehicleID.getText());
-    	orderParams.addParam("leaveTime", tfLeaveTime.getText());
-    	orderParams.addParam("email", tfEmail.getText());
-    	System.out.println("sending request to server");
-    	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
-    		System.out.println("ClientPhysicalOrderController got msg from server:" + msg);
+    	/*
+    	 System.out.println("ClientPhysicalOrderController got msg from server:" + msg);
     		Params resp = new Params(msg);
     		if(resp.getParam("status").equals("OK")) {
     			Platform.runLater(new Runnable() {
@@ -94,10 +80,29 @@ public class ClientPhysicalOrderController implements ControllerIF{
     	  		      }
 	  		    	});
     		}
-    	});
+    	 */
+    	
     }
 
+    public static void handleClientPhysicalOrder(String userID, String vehicleID, String leaveTime, String email, String parkingLot, StrCallbackIF callback) {
     
+    	
+//    	System.out.println("isFull:" + isFull);
+//    	if(true) {
+//    		return;
+//    	}
+    	
+    	
+    	Params orderParams = Params.getEmptyInstance();
+    	orderParams.addParam("action", "ClientPhysicalOrder");
+    	orderParams.addParam("ID", userID);
+    	orderParams.addParam("parkingLot", parkingLot); 
+    	orderParams.addParam("vehicleID", vehicleID);
+    	orderParams.addParam("leaveTime", leaveTime);
+    	orderParams.addParam("email", email);
+    	System.out.println("sending request to server");
+    	TalkToServer.getInstance().send(orderParams.toString(),callback);
+    }
 	
 
 	@Override
