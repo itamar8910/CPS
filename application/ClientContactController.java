@@ -22,6 +22,9 @@ public class ClientContactController implements ControllerIF{
 
     @FXML
     private TextField tfID;
+    
+    @FXML
+    private TextField tfParkingName;
 
     @FXML
     private Button bSubmit;
