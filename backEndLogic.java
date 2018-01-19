@@ -74,16 +74,6 @@ public class backEndLogic {
 
 	//send email to costumer
 	  public static void sendEmailToCostumerForBeginLate(String email, String string) {
-<<<<<<< HEAD
-		// TODO: impl.
-		//sends email
-		  
-		//if response is she's still interested, charge additional 20%.
-		
-	  	}
-	
-	
-=======
 
 		  try {
 
@@ -135,7 +125,6 @@ public class backEndLogic {
 	}
 
 
->>>>>>> 89cf2dabebc22339369d905b31e4fd1a2a52c730
 	public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
 
 		  JSONArray slots = new JSONArray();
@@ -293,7 +282,6 @@ public class backEndLogic {
 			e.printStackTrace();
 		}
 	 }
-<<<<<<< HEAD
 	
 	 public static void createParkingLot(String name, int width, String location) {
 		 DBHandler.getInstance().addParkingLot(name, width, location);
@@ -304,9 +292,6 @@ public class backEndLogic {
 		 DBHandler.getInstance().removeParkingLot(name);
 	 }
 	 
-=======
-
->>>>>>> 89cf2dabebc22339369d905b31e4fd1a2a52c730
 	 public static void initParkingLotData(String parkingLotName) {
 		  final int width = DBHandler.getInstance().getParkingLotWidth(parkingLotName);
 		  //JSONObject data = DBHandler.getInstance().getParkingLotJsonData(parkingLotName);
@@ -460,12 +445,9 @@ public class backEndLogic {
 		  if(Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime")) == -1 || Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")) == -1) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "time is invalid");
 		  }
-<<<<<<< HEAD
 		 
 		  
-=======
 
->>>>>>> 89cf2dabebc22339369d905b31e4fd1a2a52c730
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "orderedOneTimeParking");
 		  typeParams.addParam("parkingLot", params.getParam("parkingLot"));
@@ -591,7 +573,6 @@ public class backEndLogic {
 	public static Params handleFullSubscription(Params params) {
 
 		  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
-<<<<<<< HEAD
 //		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 //		  if(isInTable){
 //			  Params resp = Params.getEmptyInstance();
@@ -603,15 +584,6 @@ public class backEndLogic {
 			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid start date");
 		}
 		  
-=======
-		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
-		  if(isInTable){
-			  Params resp = Params.getEmptyInstance();
-			  resp.addParam("status", "BAD");
-			  return resp;
-		  }
-
->>>>>>> 89cf2dabebc22339369d905b31e4fd1a2a52c730
 		  //TODO: handle max park time is 14 days
 		  //TODO: can't park more than subscription unless the subscription is renewed
 		  //TODO: system reminds user a week before subscription is over
