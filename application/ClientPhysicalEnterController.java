@@ -63,16 +63,16 @@ public class ClientPhysicalEnterController implements ControllerIF{
         	  	             final TextField tfSubID = new TextField("Please enter your subscription ID");
         	  	             dialogVbox.getChildren().add(tfSubID);
         	  	             final Button bSubmit = new Button("Submit");
-        	  	             bSubmit.setOnAction(event2->{
+        	  	             bSubmit.setOnAction(event->{
         	  	            	 String subscriptionID = tfSubID.getText();
         	  	            	 System.out.println("got subscription id:" + subscriptionID);
 //        	  	              	 Params orderParams = Params.getEmptyInstance();
         	  	            	 orderParams.addParam("action", "clientEnterWithSubscriptionID");
         	  	            	 orderParams.addParam("ID", ID);
         	  	            	 orderParams.addParam("subscriptionID", subscriptionID);
-        	  	            	 TalkToServer.getInstance().send(orderParams.toString(), msg2 ->{
-        	  	            		 System.out.println("ClientPhysicalEnterController with subscriptionID got msg from server:" + msg2);
-        	  	            		 Params respParams = new Params(msg2);
+        	  	            	 TalkToServer.getInstance().send(orderParams.toString(), msg ->{
+        	  	            		 System.out.println("ClientPhysicalEnterController with subscriptionID got msg from server:" + msg);
+        	  	            		 Params respParams = new Params(msg);
         	  	            		if(respParams.getParam("status").equals("OK")){
         	  	            			Platform.runLater(new Runnable() {
         	  	          	  		      @Override public void run() {

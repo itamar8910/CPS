@@ -28,7 +28,7 @@ public class Server extends AbstractServer
 
   //Constructors ****************************************************
 
-  
+
   //Instance methods ************************************************
 
   /**
@@ -39,8 +39,8 @@ public class Server extends AbstractServer
   {
     System.out.println
       ("Server listening for connections on port " + getPort());
-    
-    
+
+
   }
 
   /**
@@ -62,219 +62,219 @@ public class Server extends AbstractServer
     (Object msg, ConnectionToClient client)
   {
 	  //receive params from user
-	  Params params = new Params(msg.toString()); 
+	  Params params = new Params(msg.toString());
 	  Params resp;
 	  String currentAction = params.getParam("action");
 	  DBHandler dbInstance = DBHandler.getInstance();
 	  String data;
-	  
+
 	  System.out.println("Current Action " + currentAction);
-	  
+
 	  try {
 		//try all api
 		  switch(currentAction) {
-		  	 
+
 		  	//------------------------ Reports API
-		  
+
 			//try: returns "Costumar Complaints" Data for report
 			 //rec:  facID
 			 //returns: data,status
 			  case "returnCosCompReports":
 				  data = dbInstance.returnCostumerComplaintsReport(params);
-				  
+
 				  System.out.println("Data Costumer Complaints : " + data);
-				  this.sendResponseToClient(data, client);		  
+				  this.sendResponseToClient(data, client);
 			  break;
-		  
+
 			//try: returns "Orders " Data for report
 			 //rec:  facID
 			 //returns: data,status
 			  case "returnOrdersReport":
 				  data = dbInstance.returnOrdersReport(params);
-				  this.sendResponseToClient(data, client);		  
+				  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			//try: returns "Problematic lots " Data for report
 			 //rec:  facID
 			 //returns: data,status
 			  case "returnProbLotsReport":
 				  data = dbInstance.returnProbLotsReport(params);
-				  this.sendResponseToClient(data, client);		  
+				  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			//try: returns Activity Report Data for Main Mangager
 			 //rec:  facID, startDate(unix)(start of week), numDays,number of days back
 			 //returns: data,status
 			  case "returnActivityDataReport":
 				  data = dbInstance.returnActivityDataReport(params);
-				  this.sendResponseToClient(data, client);		  
+				  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			  //gets facID
 			  //returns data for current status of parking
 		  	  case "requestCurrentParkingStatusReport":
-		  		  
+
 				System.out.println("Request current parking status : ");
-				  
+
 				String parkingName = dbInstance.getParkingNameByID(Integer.parseInt(params.getParam("facID")));
-							
+
 				String dataRet = backEndLogic.generateParkinglotDataForPDF(parkingName);
 				String width = String.valueOf(DBHandler.getInstance().getParkingLotWidth(parkingName));
-				
+
 				Params resData = Params.getEmptyInstance();
 				resData.addParam("name", parkingName);
 				resData.addParam("data", dataRet);
 				resData.addParam("dimension", width);
 				resData.addParam("status", "OK");
-				
+
 				System.out.println("Data : " + resData.toString());
-				
+
 				try {
 					client.sendToClient(resData.toString());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}	
+				}
 			break;
-		  
-		  
+
+
 		     //------------------------Parking Facility Worker API
-			
+
 			//try: pay to system
 			//rec: userID,amount
 			//returns: status
 		  	 case "pay":
 		  		System.out.println("Payment from : " + params.toString());
 		  		data = dbInstance.performPayment(params);
-				this.sendResponseToClient(data, client);	
+				this.sendResponseToClient(data, client);
 		  	  break;
-			
-			
+
+
 			//try: init parking
 			//rec: facID
 			//returns: status
 		  	case "initParkingFacility":
 		  		  System.out.println("Initilizating parking facility" );
-		  		  
+
 		  		  String name = dbInstance.getParkingNameByID(Integer.parseInt(params.getParam("facID")));
 		  		  backEndLogic.initParkingLotData(name);
-		  		  
+
 		  		  Params resDataInit = Params.getEmptyInstance();
 		  		  resDataInit.addParam("status", "OK");
-		  		  this.sendResponseToClient(resDataInit, client);		  
+		  		  this.sendResponseToClient(resDataInit, client);
 			  break;
-			
+
 		  	//try: Set parking to full/not full
 		  	 //rec:  facID,isFull
 		  	 //returns: status: OK/BAD
 		  	  case "changeParkingFull":
 		  		  System.out.println("2.Changed :" +params.toString() );
 		  		  data = dbInstance.setParkingFullStatus(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-		  
+
 			//try: Set parking to disabled/not disabled
 		  	 //rec:  facID,isDisabled
 		  	 //returns: status: OK/BAD
 		  	  case "changeParkingDisabled":
 		  		  System.out.println("1.Changed :" +params.toString() );
 		  		  data = dbInstance.setParkingDisabledStatus(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			//try: return parking status,name
 		  	 //rec:  facID
 		  	 //returns: status: OK/BAD, isFull,isDisabled,name
 		  	  case "requestParkingStatusData":
 		  		  data = dbInstance.requestParkingStatusData(params);
 		  		  System.out.println("Parking status data : "+ data);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
-		
-		  
-		  
+
+
+
+
 		  	  //--------------------- workers api
-		  	  
+
 		  	  //try: Trys to log in employee,
 		  	 //rec:  UserName, Password
 		  	 //returns: type: -1 = failed, 1/2/3 type of worker, user ID, fac ID
 		  	  case "employeLogin":
 		  		  data = dbInstance.emplyeLogin(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			 
+
 			  //try: Request for change of price from manger of facility
 		  	 //rec: facID , price, type
 		  	 //returns: res: 1 for success, 0 for failure
 		  	  case "requestChangePrice":
 		  		  data = dbInstance.requestChangeOfPrice(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			  //try: approve/disapprove change of price
 		  	 //rec: facID, approve(1/0), updatedPrice
 		  	 //returns: res: 1 for success, 0 for failure
 		  	  case "finishChangePrice":
 		  		  data = dbInstance.finishChangePrice(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			  //requests change prices requests for manger
 		  	  case "requestChangePrices":
 		  		  data = dbInstance.requestChangePrices(params);
-		  		  this.sendResponseToClient(data, client);		  
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
+
 			//request all parking available
 		  	  case "requestParkings":
-		  		  
+
 		  		  data = dbInstance.requestParkings(params);
-		  		  
+
 		  		  System.out.println("Request Parking : " + data);
-		  		  
-		  		  this.sendResponseToClient(data, client);		  
+
+		  		  this.sendResponseToClient(data, client);
 			  break;
-			  
-			 
-			  
-			  
+
+
+
+
 			  //--------------------- client api
-		  	  
-			  
+
+
 			  //if parking sent full
 			  //try: send to alternative if full
 			  //gets: facName
 			  //returns: status: OK/BAD, isFull: 0/1, alternative: name
 		  	  case "canBeInParking":
 		  		data = dbInstance.canBeInParking(params);
-		  		this.sendResponseToClient(data, client);	
+		  		this.sendResponseToClient(data, client);
 		      break;
-			  
-			  
+
+
 			  ///-----handling complaints
-			  
+
 			  //client sending complaint
 			  //try: add complaint to system
 		  	 //rec: text,ID, facID
-		  	 //returns: OK/BAD 
+		  	 //returns: OK/BAD
 		  	  case "clientContact":
 		  		data = dbInstance.addUserComplaint(params);
-		  		this.sendResponseToClient(data, client);	
+		  		this.sendResponseToClient(data, client);
 		      break;
-		      
+
 		      //return all complaints to worker
 		     //try: return all comaplints not handled
 		  	 //rec: facID
 		  	 //returns:return all comaplints not handled in format {id,userID,text,dateTime)
 		  	  case "returnComplaints":
 		  		data = dbInstance.returnUsersComplaints(params);
-		  		
+
 		  		System.out.println("Return Complaints : " + data);
-		  		
+
 		  		this.sendResponseToClient(data, client);
 		  	  break;
-		      
+
 		  	//try: handle complaint, ignore / sendMoney
 		  	 //rec: shouldResolve, money, complaintID, userID
 		  	 //returns:status: OK/BAD
@@ -282,7 +282,7 @@ public class Server extends AbstractServer
 		  		data = dbInstance.handleComplaint(params);
 		  		this.sendResponseToClient(data, client);
 		  	  break;
-		  	  
+
 		  	  case "RoutineSubscription":
 	    		resp = backEndLogic.handleRoutineSubscription(params);
 	    		client.sendToClient(resp.toString());
@@ -301,11 +301,11 @@ public class Server extends AbstractServer
 	    	break;
 		  	case "clientLeave":
 	    		resp = backEndLogic.handleClientLeave(params);
-	    		client.sendToClient(resp.toString());	
+	    		client.sendToClient(resp.toString());
 	    	break;
 		  	case "clientEnter":
 	    		resp = backEndLogic.handleClientEnter(params);
-	    		client.sendToClient(resp.toString());	    	
+	    		client.sendToClient(resp.toString());
 	    	break;
 		  	case "clientEnterWithSubscriptionID":
 	    		System.out.println("clientEnterWithSubscriptionID");
@@ -320,7 +320,7 @@ public class Server extends AbstractServer
 //	    		resp.addParam("returnAmount", "42155");
 //	    		client.sendToClient(resp.toString());
 	    	break;
-		  
+
 		  	case "getParkingSlotStatus":
 	    		System.out.println("getParkingSlotStatus");
 	    		resp = backEndLogic.handleGetParkingSlotStatus(params);
@@ -378,27 +378,27 @@ public class Server extends AbstractServer
 	    		resp = backEndLogic.getVehiclesOfUser(params);
 	    		client.sendToClient(resp.toString());
 	    	break;
-		
-		  		
+
+
 			  //------------------------default api
 			  //if no action specified
 			  default:
 				  System.out.println("No case found");
-				  
+
 			  break;
 		  }
 	  }catch(Exception e) {
 		  System.out.println("Error in actions : ");
 		  e.printStackTrace();
-		  
+
 	  }
-	  
-	 
-  } 
-	  
-  
+
+
+  }
+
+
   /*
-   * 
+   *
    * Start of itamars section
    */
 
@@ -414,12 +414,12 @@ public class Server extends AbstractServer
     super(port);
     //System.out.println("Tables:");
     //TestDB.getInstance().printAllTables();
-    final boolean DO_CONJOBS = true; //TODO: remember to change this before submitting :)
-    if(DO_CONJOBS) { 
+    final boolean DO_CONJOBS = false; //TODO: remember to change this before submitting :)
+    if(DO_CONJOBS) {
 	    new Thread(()-> {
 	    	while(true) {
 		    	System.out.println("CRON JOB 1 MIN");
-		    	
+
 		    	//do logic
 		    	//check for all orders if are late
 		    	List<User> allUsers = DBHandler.getInstance().getAllUsers();
@@ -441,7 +441,7 @@ public class Server extends AbstractServer
 		    		}
 		    	}
 		    	System.out.println("END");
-		    	try {	    		
+		    	try {
 		    		//sleep till next minute
 		    		Calendar c = Calendar.getInstance();
 		    		c.setTimeInMillis(System.currentTimeMillis());
@@ -456,12 +456,12 @@ public class Server extends AbstractServer
 					e.printStackTrace();
 				}
 	    	}
-	    	
+
 	    }).start();
 	    new Thread(()-> {
 	    	while(true) {
-	    		
-	    		try {	    		
+
+	    		try {
 		    		//sleep till next day
 		    		Calendar c = Calendar.getInstance();
 		    		c.setTimeInMillis(System.currentTimeMillis());
@@ -475,10 +475,10 @@ public class Server extends AbstractServer
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	    		
+
 	    		System.out.println("CRON JOB START OF DAY");
-	    		
-	    		
+
+
 	    		//do logic
 	    		List<User> allUsers = DBHandler.getInstance().getAllUsers();
 		    	System.out.println("Printing all users:");
@@ -494,16 +494,16 @@ public class Server extends AbstractServer
 		    			}else if(numDaysAgo >= 21) {
 		    				backEndLogic.sendEmailToCostumerForBeginLate(user.getEmail(), "Please notice: your subscription is about to end in a week");
 		    			}
-		    			
+
 		    			backEndLogic.handleCallParkingAlgoOrderForSubscription(user.getUserID(), user.getVehicleID(), DBHandler.getInstance().getVehicleParkingLot(user.getVehicleID()), subscriptionParams);
-		    		}	
+		    		}
 		    	}
-		    	
+
 	    		/*
 	    		 * for each user that's a subscriber
 	    		 * call: handleCallParkingAlgoOrderForSubscription
 	    		 */
-	    		
+
 	    	}
 	    }).start();
     }
@@ -515,7 +515,7 @@ public class Server extends AbstractServer
 
 
 /*
- * 
+ *
  * End of itamars section
  */
 
@@ -527,11 +527,11 @@ public class Server extends AbstractServer
 		  System.out.println("Error sending data to user: " + error.getMessage());
 	  }
   }
-  
 
-  
-  
-  
+
+
+
+
   ///--------- start server
   /**
    * This method is responsible for the creation of
@@ -545,7 +545,7 @@ public class Server extends AbstractServer
     int port = 0; //Port to listen on
 
     DBHandler.getInstance();
-    
+
     try
     {
       port = Integer.parseInt(args[0]); //Get port from command line
@@ -557,16 +557,16 @@ public class Server extends AbstractServer
 
     Server sv = new Server(port);
    // sv.initParkingLotData("misgavParking");
-    
+
    /*
     //test data
 	DBHandler dbInstance = DBHandler.getInstance();
 	// facID, startDate(unix)(start of week), numDays,number of days back
     String data = dbInstance.returnActivityDataReport(new Params("{'facID':2,'startDate':1512079200000,'numDays':14}"));
     System.out.println("Data test : " + data);
-   
-   
-    
+
+
+
     backEndLogic.sendEmailToCostumerForBeginLate("gil.maman.5@gmail.com","fuck you");
      */
     try
