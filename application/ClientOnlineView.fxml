@@ -8,12 +8,12 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientOnlineController">
    <children>
-      <Button fx:id="bOneTimeOrder" layoutX="31.0" layoutY="97.0" mnemonicParsing="false" onAction="#bOneTimeOrderClick" text="One-time Order" />
-      <Button fx:id="bMakeRoutineSubscription" layoutX="31.0" layoutY="140.0" mnemonicParsing="false" onAction="#bMakeRoutineSubscriptionClick" text="Make Routine Subscription" />
-      <Button fx:id="bMakeFullSubscription" layoutX="31.0" layoutY="188.0" mnemonicParsing="false" onAction="#bMakeFullSubscriptionClick" text="Make Full Subscription" />
-      <Button fx:id="bContactUs" layoutX="31.0" layoutY="289.0" mnemonicParsing="false" onAction="#bContactUsClick" text="Contact Us" />
-      <Button fx:id="bCancelOrder" layoutX="31.0" layoutY="237.0" mnemonicParsing="false" onAction="#bCancelOrderClick" text="Cancel Order" />
-      <Button fx:id="bFollowOrder" layoutX="29.0" layoutY="330.0" mnemonicParsing="false" onAction="#bFollowOrderClick" text="Follow Order" />
-      <Button layoutX="29.0" layoutY="361.0" mnemonicParsing="false" onAction="#bPayClick" text="Pay" />
+      <Button fx:id="bOneTimeOrder" layoutX="245.0" layoutY="50.0" mnemonicParsing="false" onAction="#bOneTimeOrderClick" prefWidth="110.0" text="One-time Order" />
+      <Button fx:id="bMakeRoutineSubscription" layoutX="220.0" layoutY="100.0" mnemonicParsing="false" onAction="#bMakeRoutineSubscriptionClick" prefWidth="160.0" text="Make Routine Subscription" />
+      <Button fx:id="bMakeFullSubscription" layoutX="230.0" layoutY="150.0" mnemonicParsing="false" onAction="#bMakeFullSubscriptionClick" prefWidth="140.0" text="Make Full Subscription" />
+      <Button fx:id="bContactUs" layoutX="260.0" layoutY="250.0" mnemonicParsing="false" onAction="#bContactUsClick" prefWidth="80.0" text="Contact Us" />
+      <Button fx:id="bCancelOrder" layoutX="255.0" layoutY="200.0" mnemonicParsing="false" onAction="#bCancelOrderClick" prefWidth="90.0" text="Cancel Order" />
+      <Button fx:id="bFollowOrder" layoutX="255.0" layoutY="300.0" mnemonicParsing="false" onAction="#bFollowOrderClick" prefWidth="90.0" text="Follow Order" />
+      <Button layoutX="280.0" layoutY="350.0" mnemonicParsing="false" onAction="#bPayClick" prefWidth="40.0" text="Pay" />
    </children>
 </AnchorPane>

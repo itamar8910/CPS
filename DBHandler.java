@@ -105,7 +105,29 @@ public class DBHandler {
 		}
 		return "";
 	}
+	
+	
+	//methods for cron job*******************************************8
+	
+	//sue user for a price, add it to the amount it needs to pay
+	public void sueUser(int userID,double suePrice) {
 
+			
+		try { //success
+	
+			PreparedStatement requestPriceChanege = conn.prepareStatement("UPDATE Users SET money= money+ ? WHERE id = ?;");
+			requestPriceChanege.setInt(1, userID);
+			requestPriceChanege.setDouble(2, suePrice);
+			requestPriceChanege.executeUpdate();
+
+	
+			
+		} catch(SQLException e) { //failure
+		
+		}
+		
+	}
+	
 	
 	
 	//Methods for reports ********************************************
@@ -866,7 +888,7 @@ public class DBHandler {
 			//get result
 			while (results.next()) {
 				//if current 
-				if (excludeName == results.getString("name"))
+				if (excludeName.equals(results.getString("name")) || excludeName.equals("Default"))
 					continue;
 				
 				allParkingNames.add(results.getString("name"));
@@ -887,11 +909,29 @@ public class DBHandler {
 	}
 	
 			
-	
+	//return fac id by name 
+	public int returnFacIDByName(String name) {
+		PreparedStatement reqData;
+		try {
+			reqData = conn.prepareStatement("SELECT id FROM ParkingFacility WHERE name =?;");
+			reqData.setString(1,name);
+			
+			ResultSet results = reqData.executeQuery();
+			
+			while (results.next()) {
+				return results.getInt("id");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	
 	//add complaint by the users
 	public String addUserComplaint(Params data) {
-		
+		int facID = this.returnFacIDByName(data.getParam("facName"));
 	
 		System.out.println("Adding User Complaint");
 		
@@ -901,10 +941,10 @@ public class DBHandler {
 			long unixTime = System.currentTimeMillis() / 1000L;
 	
 			PreparedStatement changeToNoRequsts = conn.prepareStatement("INSERT INTO complaints(userID,text,dateTime,facID) VALUES (?,?,?,?) ");
-			changeToNoRequsts.setInt(1,Integer.valueOf(data.getParam("ID")));
+			changeToNoRequsts.setString(1,data.getParam("ID"));
 			changeToNoRequsts.setString(2,data.getParam("text").toString());
 			changeToNoRequsts.setLong(3,Long.valueOf(unixTime));
-			changeToNoRequsts.setInt(3,Integer.valueOf(data.getParam("facID")));
+			changeToNoRequsts.setInt(4,facID);
 			changeToNoRequsts.executeUpdate();
 			
 			System.out.println("Added user complaint ");
@@ -1013,7 +1053,7 @@ public class DBHandler {
 			updateStatus1.setInt(2, Integer.parseInt(data.getParam("complaintID")));
 			updateStatus1.executeUpdate();
 			
-			String userFullID = this.returnGenericUserID(Integer.parseInt(data.getParam("userID")));
+			String userFullID = data.getParam("userID");
 			//update handled
 			PreparedStatement updateUserMoney = conn.prepareStatement("UPDATE Users SET money= money - ? WHERE userID = ? ;");
 			updateUserMoney.setInt(1, Integer.parseInt(data.getParam("money")));

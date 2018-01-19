@@ -7,16 +7,16 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.FMController">
+<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FMController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="212.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Facility Manager" />
-    <Button fx:id="rateRequestButton" layoutX="435.0" layoutY="258.0" mnemonicParsing="false" onAction="#newRateRequest" text="Request" />
-    <Text layoutX="34.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request General Manger for new rate" />
-    <TextField id="rateRequest" fx:id="newRate" alignment="CENTER" layoutX="199.0" layoutY="262.0" prefWidth="200.0" text="price" />
+    <Text layoutX="277.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Facility Manager" />
+    <Button fx:id="rateRequestButton" layoutX="430.0" layoutY="260.0" mnemonicParsing="false" onAction="#newRateRequest" prefWidth="60.0" text="Request" />
+    <Text layoutX="35.0" layoutY="230.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request General Manger for new rate" />
+    <TextField id="rateRequest" fx:id="newRate" alignment="CENTER" layoutX="200.0" layoutY="260.0" prefWidth="200.0" text="price" />
     <Text fx:id="grantedText" fill="#10cc00" layoutX="179.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Granted" visible="false" />
     <Text id="den" fx:id="deniedText" fill="RED" layoutX="179.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Denied" visible="false" />
-    <ComboBox fx:id="dropDown" layoutX="34.0" layoutY="262.0" prefWidth="135.0">
+    <ComboBox fx:id="dropDown" layoutX="35.0" layoutY="260.0" prefWidth="135.0">
       <items>
         <FXCollections fx:factory="observableArrayList">
           <String fx:value="Item 1" />

@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="325.0" prefWidth="237.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientController">
+<AnchorPane prefHeight="320.0" prefWidth="240.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientController">
    <children>
-      <Button layoutX="80.0" layoutY="36.0" mnemonicParsing="false" onAction="#buttonPress" text="Execute" />
-      <TextField fx:id="tf" layoutX="27.0" layoutY="6.0" onAction="#TFEnter" />
-      <ListView fx:id="lv" layoutX="4.0" layoutY="71.0" prefHeight="231.0" prefWidth="113.0" />
-      <ListView fx:id="lv2" layoutX="116.0" layoutY="71.0" prefHeight="231.0" prefWidth="113.0" />
+      <Button layoutX="90.0" layoutY="40.0" mnemonicParsing="false" onAction="#buttonPress" prefWidth="60.0" text="Execute" />
+      <TextField fx:id="tf" layoutX="45.0" layoutY="10.0" onAction="#TFEnter" prefWidth="150.0" />
+      <ListView fx:id="lv" layoutX="10.0" layoutY="70.0" prefHeight="230.0" prefWidth="110.0" />
+      <ListView fx:id="lv2" layoutX="120.0" layoutY="70.0" prefHeight="230.0" prefWidth="110.0" />
    </children>
 </AnchorPane>
