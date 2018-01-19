@@ -3,6 +3,7 @@ package application;
 import common.ControllerIF;
 import common.Params;
 import common.ParkingAlgo;
+import common.StrCallbackIF;
 import common.TalkToServer;
 import common.Utils;
 import javafx.application.Platform;
@@ -47,6 +48,45 @@ public class ClientPhysicalOrderController implements ControllerIF{
     	if(isFull){
     		return;
     	}
+    	
+    	handleClientPhysicalOrder(tfID.getText(), tfVehicleID.getText(), tfLeaveTime.getText(), tfEmail.getText(), tfParkingLot.getText(), new StrCallbackIF() {
+			
+			@Override
+			public void handle(String msg) {
+				System.out.println("ClientPhysicalOrderController got msg from server:" + msg);
+	    		Params resp = new Params(msg);
+	    		if(resp.getParam("status").equals("OK")) {
+	    			Platform.runLater(new Runnable() {
+	    	  		      @Override public void run() {
+	    	  	    		 final Stage dialog = new Stage();
+	    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	    	  	             dialog.initOwner(main.primaryStage);
+	    	  	             VBox dialogVbox = new VBox(20);
+	    	  	             dialogVbox.getChildren().add(new Text("Access granted, Please exit your vehicle"));
+	    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	    	  	             dialog.setScene(dialogScene);
+	    	  	             dialog.show();
+	    	  	             System.out.println("showed dialog");
+	    	  		      }
+		  		    	});
+	    		}else {
+	    			Platform.runLater(new Runnable() {
+	    	  		      @Override public void run() {
+	    	  	    		 final Stage dialog = new Stage();
+	    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	    	  	             dialog.initOwner(main.primaryStage);
+	    	  	             VBox dialogVbox = new VBox(20);
+	    	  	             dialogVbox.getChildren().add(new Text("Sorry, your request could not be granted"));
+	    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	    	  	             dialog.setScene(dialogScene);
+	    	  	             dialog.show();
+	    	  	             System.out.println("showed dialog");
+	    	  		      }
+		  		    	});
+	    		}
+				
+			}
+		});
     	
     	/*
     	 System.out.println("ClientPhysicalOrderController got msg from server:" + msg);

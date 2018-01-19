@@ -15,6 +15,7 @@ class TestClientPhysicalOrderController {
 
 	void testRegOrder() {
 		ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
+		controller.
 	}
 	
 }
