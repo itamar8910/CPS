@@ -384,7 +384,6 @@ public class Server extends AbstractServer
 	    		System.out.println("getAllVehiclesOfUser");
 	    		resp = backEndLogic.getVehiclesOfUser(params);
 	    		client.sendToClient(resp.toString());
-<<<<<<< HEAD
 	    		break;
 		  	case "removeUserAndVehicle":
 		  		System.out.println("removeUserAndVehicle");
@@ -392,11 +391,6 @@ public class Server extends AbstractServer
 		  		DBHandler.getInstance().removeVehicle(params.getParam("vehicleID"));
 		  		client.sendToClient(Params.getEmptyInstance().addParam("status", "OK").toString());
 		  		break;
-=======
-	    	break;
-
-
->>>>>>> 89cf2dabebc22339369d905b31e4fd1a2a52c730
 			  //------------------------default api
 			  //if no action specified
 			  default:
