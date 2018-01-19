@@ -1,6 +1,6 @@
 # Car Parking System
-System build for car parking system, both the server side and the client side.
-This project was built in the "Software Enegeneering" course in the University of Haifa.
+This system was built for a car parking system (server side and the client side).
+Project created for a "Software Enegeneering" course at the "University of Haifa".
 
 Authers:
 
