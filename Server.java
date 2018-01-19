@@ -288,6 +288,7 @@ public class Server extends AbstractServer
 		  	  
 		  	  case "RoutineSubscription":
 	    		resp = backEndLogic.handleRoutineSubscription(params);
+	    		System.out.println("resp:" + resp);
 	    		client.sendToClient(resp.toString());
 	    	  break;
 		  	  case "FullSubscription":

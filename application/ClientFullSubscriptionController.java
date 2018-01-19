@@ -2,6 +2,7 @@ package application;
 
 import common.ControllerIF;
 import common.Params;
+import common.StrCallbackIF;
 import common.TalkToServer;
 import common.Utils;
 import javafx.application.Platform;
@@ -44,15 +45,8 @@ public class ClientFullSubscriptionController implements ControllerIF{
 //    		return;
 //    	}
     	
-    	Params orderParams = Params.getEmptyInstance();
-    	orderParams.addParam("action", "FullSubscription");
-    	orderParams.addParam("ID", tfID.getText());
-    	orderParams.addParam("vehicleID", tfVehicleID.getText()); //TODO: handle multiple vehicles
-    	orderParams.addParam("startDate", tfStartDate.getText());
-    	orderParams.addParam("email", tfEmail.getText());
-    	System.out.println("sending request to server");
-    	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
-    		System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
+    	handleClientFullSubscription(tfID.getText(), tfVehicleID.getText(), tfStartDate.getText(), tfEmail.getText(), msg->{
+     		System.out.println("ClientfullSubscriptionController got msg from server:" + msg);
     		Params respParams = new Params(msg);
 
     		if(respParams.getParam("status").equals("OK")){
@@ -73,8 +67,50 @@ public class ClientFullSubscriptionController implements ControllerIF{
     	  		      }
   		    });
     		}
-
     	});
+    	
+//    	Params orderParams = Params.getEmptyInstance();
+//    	orderParams.addParam("action", "FullSubscription");
+//    	orderParams.addParam("ID", tfID.getText());
+//    	orderParams.addParam("vehicleID", tfVehicleID.getText()); //TODO: handle multiple vehicles
+//    	orderParams.addParam("startDate", tfStartDate.getText());
+//    	orderParams.addParam("email", tfEmail.getText());
+//    	System.out.println("sending request to server");
+//    	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
+//    		System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
+//    		Params respParams = new Params(msg);
+//
+//    		if(respParams.getParam("status").equals("OK")){
+//    			Platform.runLater(new Runnable() {
+//    	  		      @Override public void run() {
+//    	  		    	  //TODO: handle payment
+//    	  	    		 final Stage dialog = new Stage();
+//    	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
+//    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+//    	  	             dialog.initOwner(main.primaryStage);
+//    	  	             VBox dialogVbox = new VBox(20);
+//    	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
+//    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
+//    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//    	  	             dialog.setScene(dialogScene);
+//    	  	             dialog.show();
+//    	  	             System.out.println("showed dialog");
+//    	  		      }
+//  		    });
+//    		}
+//
+//    	});
+    }
+    
+    public static void handleClientFullSubscription(String userID, String vehicleID, String startDate, String email, StrCallbackIF callback) {
+    	Params orderParams = Params.getEmptyInstance();
+    	orderParams.addParam("action", "FullSubscription");
+    	orderParams.addParam("ID", userID);
+    	orderParams.addParam("vehicleID", vehicleID);
+    	orderParams.addParam("startDate", startDate);
+    	orderParams.addParam("email", email);
+    	System.out.println("sending request to server");
+    	TalkToServer.getInstance().send(orderParams.toString(), callback );
     }
 
     @Override

@@ -54,41 +54,74 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     		return;
     	}
     	
-    	Params orderParams = Params.getEmptyInstance();
-    	orderParams.addParam("action", "RoutineSubscription");
-    	orderParams.addParam("ID", tfID.getText());
-    	orderParams.addParam("vehicleID", tfVehicleID.getText()); //TODO: handle multiple vehicles
-    	orderParams.addParam("parkingLot", tfParkingLot.getText());
-    	orderParams.addParam("startDate", tfStartDate.getText());
-    	orderParams.addParam("enterTime", tfEnterTime.getText());
-    	orderParams.addParam("leaveTime", tfLeavingTime.getText());
-    	orderParams.addParam("email", tfEmail.getText());
-    	System.out.println("sending request to server");
-    	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
-    		System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
-    		Params respParams = new Params(msg);
+    	handleClientRoutineSubscription(tfID.getText(), tfVehicleID.getText(),
+    			tfParkingLot.getText(),
+    			tfStartDate.getText(), tfEnterTime.getText(),
+    			tfLeavingTime.getText(), tfEmail.getText(),
+    			new StrCallbackIF() {
+					
+					@Override
+					public void handle(String msg) {
+						System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
+			    		Params respParams = new Params(msg);
 
-    		if(respParams.getParam("status").equals("OK")){
-    			Platform.runLater(new Runnable() {
-    	  		      @Override public void run() {
-    	  		    	  //TODO: handle payment
-    	  	    		 final Stage dialog = new Stage();
-    	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
-    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
-    	  	             dialog.initOwner(main.primaryStage);
-    	  	             VBox dialogVbox = new VBox(20);
-    	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
-    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
+			    		if(respParams.getParam("status").equals("OK")){
+			    			Platform.runLater(new Runnable() {
+			    	  		      @Override public void run() {
+			    	  		    	  //TODO: handle payment
+			    	  	    		 final Stage dialog = new Stage();
+			    	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
+			    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+			    	  	             dialog.initOwner(main.primaryStage);
+			    	  	             VBox dialogVbox = new VBox(20);
+			    	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
+			    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
 
-    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
-    	  	             dialog.setScene(dialogScene);
-    	  	             dialog.show();
-    	  	             System.out.println("showed dialog");
-    	  		      }
-  		    });
-    		}
-
-    	});
+			    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+			    	  	             dialog.setScene(dialogScene);
+			    	  	             dialog.show();
+			    	  	             System.out.println("showed dialog");
+			    	  		      }
+			  		    });
+			    		}
+					}
+			});
+//    	
+//    	Params orderParams = Params.getEmptyInstance();
+//    	orderParams.addParam("action", "RoutineSubscription");
+//    	orderParams.addParam("ID", tfID.getText());
+//    	orderParams.addParam("vehicleID", tfVehicleID.getText()); //TODO: handle multiple vehicles
+//    	orderParams.addParam("parkingLot", tfParkingLot.getText());
+//    	orderParams.addParam("startDate", tfStartDate.getText());
+//    	orderParams.addParam("enterTime", tfEnterTime.getText());
+//    	orderParams.addParam("leaveTime", tfLeavingTime.getText());
+//    	orderParams.addParam("email", tfEmail.getText());
+//    	System.out.println("sending request to server");
+//    	TalkToServer.getInstance().send(orderParams.toString(), msg -> {
+//    		System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
+//    		Params respParams = new Params(msg);
+//
+//    		if(respParams.getParam("status").equals("OK")){
+//    			Platform.runLater(new Runnable() {
+//    	  		      @Override public void run() {
+//    	  		    	  //TODO: handle payment
+//    	  	    		 final Stage dialog = new Stage();
+//    	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
+//    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+//    	  	             dialog.initOwner(main.primaryStage);
+//    	  	             VBox dialogVbox = new VBox(20);
+//    	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
+//    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
+//
+//    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//    	  	             dialog.setScene(dialogScene);
+//    	  	             dialog.show();
+//    	  	             System.out.println("showed dialog");
+//    	  		      }
+//  		    });
+//    		}
+//
+//    	});
     }
 
     public static void handleClientRoutineSubscription(String userID, String vehicleID, String parkingLot, String startDate, String enterTime, String leaveTime, String email, StrCallbackIF callback) {

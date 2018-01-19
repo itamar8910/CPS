@@ -426,6 +426,10 @@ public class backEndLogic {
 //			  return resp;
 //		  }
 		  
+		  if(Utils.todayTimeToMillis(params.getParam("enterTime")) == -1l || Utils.todayTimeToMillis(params.getParam("leaveTime")) == -1l) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "invalid enter/exit time");
+		  }
+		  
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "routineSubscription");
 		  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
@@ -514,6 +518,10 @@ public class backEndLogic {
 //			  resp.addParam("status", "BAD");
 //			  return resp;
 //		  }
+		
+		if(Utils.dateToMillis(params.getParam("startDate")) == -1l){
+			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid start date");
+		}
 		  
 		  //TODO: handle max park time is 14 days
 		  //TODO: can't park more than subscription unless the subscription is renewed

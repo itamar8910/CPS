@@ -28,6 +28,9 @@ public class Utils {
 	 * @return
 	 */
 	public static long dateToMillis(String dateStr){
+		if(!isDateValid(dateStr)) {
+			return -1l;
+		}
 		DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 		Date date;
 		try {
