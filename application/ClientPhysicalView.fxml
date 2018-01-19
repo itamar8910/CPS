@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientPhysicalController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientPhysicalController">
    <children>
-      <Button fx:id="bOrder" layoutX="429.0" layoutY="155.0" mnemonicParsing="false" onAction="#bOrderClick" text="Order" />
-      <Button fx:id="bLeave" layoutX="134.0" layoutY="155.0" mnemonicParsing="false" onAction="#bLeaveClick" text="Leave" />
-      <Button fx:id="bEnter" layoutX="275.0" layoutY="155.0" mnemonicParsing="false" onAction="#bEnterClick" text="Enter" />
+      <Button fx:id="bOrder" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOrderClick" prefWidth="60.0" text="Order" />
+      <Button fx:id="bLeave" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bLeaveClick" prefWidth="60.0" text="Leave" />
+      <Button fx:id="bEnter" layoutX="270.0" layoutY="187.5" mnemonicParsing="false" onAction="#bEnterClick" prefWidth="60.0" text="Enter" />
    </children>
 </AnchorPane>

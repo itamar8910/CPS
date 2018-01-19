@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientEnterController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientEnterController">
    <children>
-      <Button fx:id="bPhysical" layoutX="429.0" layoutY="155.0" mnemonicParsing="false" onAction="#bPhysicalClick" text="Physical" />
-      <Button fx:id="bOnlnie" layoutX="134.0" layoutY="155.0" mnemonicParsing="false" onAction="#bOnlineClick" text="Online" />
+      <Button fx:id="bPhysical" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bPhysicalClick" prefWidth="60.0" text="Physical" />
+      <Button fx:id="bOnlnie" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOnlineClick" prefWidth="60.0" text="Online" />
    </children>
 </AnchorPane>

@@ -6,21 +6,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.bigManagerController">
+<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.bigManagerController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="73.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="WHAT THE FUCK DO U WANT TO DO" />
-    <Button id="ordersButton" fx:id="activityButton" layoutX="89.0" layoutY="139.0" mnemonicParsing="false" onAction="#activityClicked" text="Activity Report" />
-    <Button fx:id="performanceButton" layoutX="54.0" layoutY="224.0" mnemonicParsing="false" onAction="#performanceClicked" text="Performance Report" />
-    <Button fx:id="currentStateButton" layoutX="52.0" layoutY="311.0" mnemonicParsing="false" onAction="#currentStateClicked" text="Current State Report" />
-    <Button fx:id="priceRequests" layoutX="38.0" layoutY="396.0" mnemonicParsing="false" onAction="#priceReqClicked" text="Price Change Requests" />
-    <ListView fx:id="parkingList" layoutX="411.0" layoutY="124.0" prefHeight="200.0" prefWidth="200.0" />
-    <TextField fx:id="day" layoutX="411.0" layoutY="341.0" prefWidth="44.0" />
-    <Text layoutX="460.0" layoutY="375.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
-    <TextField fx:id="month" layoutX="476.0" layoutY="341.0" prefWidth="44.0" />
-    <Text layoutX="525.0" layoutY="375.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
-    <TextField fx:id="year" layoutX="541.0" layoutY="341.0" prefWidth="70.0" />
-    <Text layoutX="411.0" layoutY="431.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Days Back:" />
-    <TextField id="day" fx:id="daysBack" layoutX="554.0" layoutY="396.0" prefWidth="57.0" />
+    <Text layoutX="33.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="WHAT THE FUCK DO U WANT TO DO" />
+    <Button id="ordersButton" fx:id="activityButton" layoutX="70.0" layoutY="140.0" mnemonicParsing="false" onAction="#activityClicked" prefWidth="140.0" text="Activity Report" />
+    <Button fx:id="performanceButton" layoutX="70.0" layoutY="220.0" mnemonicParsing="false" onAction="#performanceClicked" prefWidth="140.0" text="Performance Report" />
+    <Button fx:id="currentStateButton" layoutX="70.0" layoutY="300.0" mnemonicParsing="false" onAction="#currentStateClicked" prefWidth="140.0" text="Current State Report" />
+    <Button fx:id="priceRequests" layoutX="70.0" layoutY="380.0" mnemonicParsing="false" onAction="#priceReqClicked" prefWidth="140.0" text="Price Change Requests" />
+    <ListView fx:id="parkingList" layoutX="410.0" layoutY="125.0" prefHeight="200.0" prefWidth="200.0" />
+    <TextField fx:id="day" layoutX="410.0" layoutY="340.0" prefWidth="45.0" />
+    <Text layoutX="462.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
+    <TextField fx:id="month" layoutX="475.0" layoutY="340.0" prefWidth="45.0" />
+    <Text layoutX="528.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
+    <TextField fx:id="year" layoutX="540.0" layoutY="340.0" prefWidth="70.0" />
+    <Text layoutX="433.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Days Back:" />
+    <TextField id="day" fx:id="daysBack" layoutX="500.0" layoutY="390.0" prefWidth="60.0" />
   </children>
 </AnchorPane>

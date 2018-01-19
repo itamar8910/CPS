@@ -938,7 +938,7 @@ public class DBHandler {
 		Params resData = Params.getEmptyInstance();
 		
 		try { 
-			long unixTime = System.currentTimeMillis() / 1000L;
+			long unixTime = System.currentTimeMillis();
 	
 			PreparedStatement changeToNoRequsts = conn.prepareStatement("INSERT INTO complaints(userID,text,dateTime,facID) VALUES (?,?,?,?) ");
 			changeToNoRequsts.setString(1,data.getParam("ID"));

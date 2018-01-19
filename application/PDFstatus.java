@@ -891,6 +891,11 @@ public class PDFstatus {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+            	
+            	if (accepted == 0 && rejected == 0) {
+            		continue;
+            	}
+            	
             	dataSet.addValue(accepted,"Accepted",""+(i+1)); 
             	dataSet.addValue(rejected,"Rejected",""+(i+1));
             }

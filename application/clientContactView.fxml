@@ -11,12 +11,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientContactController">
    <children>
-      <Label layoutX="227.0" layoutY="90.0" text="Please write your complaint" />
-      <TextArea fx:id="taComplaint" layoutX="119.0" layoutY="118.0" prefHeight="119.0" prefWidth="372.0" />
-      <Button fx:id="bSubmit" layoutX="277.0" layoutY="352.0" mnemonicParsing="false" onAction="#bSubmitClick" text="Submit" />
-      <Label layoutX="163.0" layoutY="268.0" text="ID" />
-      <TextField fx:id="tfID" layoutX="226.0" layoutY="264.0" />
-      <TextField fx:id="tfParkingName" layoutX="226.0" layoutY="301.0" />
-      <Label layoutX="119.0" layoutY="304.0" text="ParkingFacility" />
+      <Label layoutX="230.0" layoutY="90.0" text="Please write your complaint" />
+      <TextArea fx:id="taComplaint" layoutX="120.0" layoutY="120.0" prefHeight="120.0" prefWidth="370.0" />
+      <Button fx:id="bSubmit" layoutX="275.0" layoutY="305.0" mnemonicParsing="false" onAction="#bSubmitClick" prefWidth="60.0" text="Submit" />
+      <Label layoutX="195.0" layoutY="265.0" text="ID" />
+      <TextField fx:id="tfID" layoutX="230.0" layoutY="260.0" prefWidth="150.0" />
    </children>
 </AnchorPane>
