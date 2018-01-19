@@ -31,6 +31,7 @@ public class WelcomeController implements ControllerIF{
     @FXML
     void bEmployeeClick(ActionEvent event) {
     	System.out.println("bEmployeeClick");
+    	main.setScene("WorkerMainScene.fxml", params);
     }
 
 
