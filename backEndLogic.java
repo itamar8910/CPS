@@ -49,6 +49,10 @@ public class backEndLogic {
 	 */
 	public static Params getVehicleStatus(Params params) {
 		String vehicleID = params.getParam("vehicleID");
+		if(DBHandler.getInstance().getUserIDByVehicleID(vehicleID).equals("")) { // if vehicle doesnlt exist
+			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Vehicle doesn't exist");
+			
+		}
 		boolean isParked = DBHandler.getInstance().getIsVehicleInParking(vehicleID);
 		if(!isParked) {
 			return Params.getEmptyInstance().addParam("status", "OK").addParam("isParked", "false");

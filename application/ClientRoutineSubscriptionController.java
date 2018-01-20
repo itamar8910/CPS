@@ -89,6 +89,23 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
 			    	  	             System.out.println("showed dialog");
 			    	  		      }
 			  		    });
+			    		}else {
+			    			Platform.runLater(new Runnable() {
+			    	  		      @Override public void run() {
+			    	  	    		 final Stage dialog = new Stage();
+			    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+			    	  	             dialog.initOwner(main.primaryStage);
+			    	  	             VBox dialogVbox = new VBox(20);
+			    	  	             dialogVbox.getChildren().add(new Text("Sorry, your request could not be granted"));
+			    	  	             if(respParams.hasParam("message")) {
+			  	    	  	             dialogVbox.getChildren().add(new Text("message:" + respParams.getParam("message")));
+			    	  	             }
+			    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+			    	  	             dialog.setScene(dialogScene);
+			    	  	             dialog.show();
+			    	  	             System.out.println("showed dialog");
+			    	  		      }
+			  	  		    	});
 			    		}
 					}
 			});
