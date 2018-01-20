@@ -47,7 +47,7 @@ class TestClientPhysicalOrderController {
 		wait = true;
 		
 		//ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
-		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmail", "TestParkinglot", msg -> {
+		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmail@gmail.com", "TestParkinglot", msg -> {
 			System.out.println("test response:" + msg);
 			String status1 = new Params(msg).getParam("status");
 			wait = false;
@@ -63,7 +63,7 @@ class TestClientPhysicalOrderController {
 		wait = true;
 		
 		//ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
-		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmail", "TestParkinglot", msg -> {
+		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmail@gmail.com", "TestParkinglot", msg -> {
 			System.out.println("test response:" + msg);
 			String status1 = new Params(msg).getParam("status");
 			wait = false;
@@ -88,7 +88,7 @@ class TestClientPhysicalOrderController {
 		wait = true;
 		
 		//ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
-		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "11:70", "TestEmail", "TestParkinglot", msg -> {
+		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "11:70", "TestEmail@gmail.com", "TestParkinglot", msg -> {
 			System.out.println("test response:" + msg);
 			String status1 = new Params(msg).getParam("status");
 			wait = false;
@@ -108,4 +108,60 @@ class TestClientPhysicalOrderController {
 		});
 		System.out.println("end test");
 	}
+	
+	
+	@Test
+	void testBadEmailOrder() {
+		
+		wait = true;
+		
+		//ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
+		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmailgmail.com", "TestParkinglot", msg -> {
+			System.out.println("test response:" + msg);
+			String status1 = new Params(msg).getParam("status");
+			wait = false;
+			assertTrue(status1.equals("BAD") && new Params(msg).getParam("message").equals("Invalid email address"));
+		});
+		int a = 0;
+		while(wait) {
+			a++;
+			System.out.println("waiting");
+		}
+		
+		// tear down
+		TalkToServer.getInstance().sendAndWait(Params.getEmptyInstance().addParam("action", "removeUserAndVehicle").addParam("userID", "TestUser").addParam("vehicleID", "TestVehicle").toString(), msg2->{
+			System.out.println("test response2:" + msg2);
+			String status2 = new Params(msg2).getParam("status");
+			assertTrue(status2.equals("OK"));
+		});
+		System.out.println("end test");
+	}
+	
+	@Test
+	void testBadEmailOrder2() {
+		
+		wait = true;
+		
+		//ClientPhysicalOrderController controller = new ClientPhysicalOrderController();
+		ClientPhysicalOrderController.handleClientPhysicalOrder("TestUser", "TestVehicle", "23:00", "TestEmail@gmailcom", "TestParkinglot", msg -> {
+			System.out.println("test response:" + msg);
+			String status1 = new Params(msg).getParam("status");
+			wait = false;
+			assertTrue(status1.equals("BAD") && new Params(msg).getParam("message").equals("Invalid email address"));
+		});
+		int a = 0;
+		while(wait) {
+			a++;
+			System.out.println("waiting");
+		}
+		
+		// tear down
+		TalkToServer.getInstance().sendAndWait(Params.getEmptyInstance().addParam("action", "removeUserAndVehicle").addParam("userID", "TestUser").addParam("vehicleID", "TestVehicle").toString(), msg2->{
+			System.out.println("test response2:" + msg2);
+			String status2 = new Params(msg2).getParam("status");
+			assertTrue(status2.equals("OK"));
+		});
+		System.out.println("end test");
+	}
+	
 }

@@ -550,6 +550,9 @@ public class backEndLogic {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "time is invalid");
 		  }
 		 
+		  if(!Utils.isEmailValid(params.getParam("email"))) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
+		  }
 		  
 
 		  Params typeParams = Params.getEmptyInstance();
@@ -600,6 +603,10 @@ public class backEndLogic {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "invalid enter/exit time");
 		  }
 
+		  if(!Utils.isEmailValid(params.getParam("email"))) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
+		  }
+		  
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "routineSubscription");
 		  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
@@ -710,6 +717,10 @@ public class backEndLogic {
 			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid start date");
 		}
 		  
+		if(!Utils.isEmailValid(params.getParam("email"))) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
+		}
+		
 		  //TODO: handle max park time is 14 days
 		  //TODO: can't park more than subscription unless the subscription is renewed
 		  //TODO: system reminds user a week before subscription is over
