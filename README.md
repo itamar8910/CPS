@@ -9,3 +9,4 @@ Authers:
 - Itamar Shenhar  : itamar8910@gmail.com
 - Alon Melamud    : alonmem@gmail.com
 - Tom Guter        : tomyguter@gmail.com
+- Gilad Katz      : gilad17499@gmail.com
