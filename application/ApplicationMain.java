@@ -23,6 +23,7 @@ public class ApplicationMain extends Application {
 	public Stage primaryStage;
 	final int DEFAULT_PORT = 55560;//6654;//55560;
 	
+	
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
