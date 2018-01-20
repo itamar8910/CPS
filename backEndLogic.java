@@ -468,10 +468,13 @@ public class backEndLogic {
 			  String vehicleID = DBHandler.getInstance().getUserVehicleID(params.getParam("ID"));
 			  if(vehicleID.equals(params.getParam("vehicleID"))) { // if is in db with same vehicleID
 				  Params resp = Params.getEmptyInstance();
-				  resp.addParam("status", "BAD");
+				  resp.addParam("status", "BAD").addParam("message", "User with same vehicle already ordered parking");
 				  return resp;
 			  }
 			  
+		  }
+		  if(!Utils.isEmailValid(params.getParam("email"))) {
+			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
 		  }
 		  //check leave time
 		  long leaveTimeMillis = Utils.todayTimeToMillis(params.getParam("leaveTime"));
@@ -1022,6 +1025,13 @@ public class backEndLogic {
 		String vehicleID = params.getParam("vehicleID");
 		String userID = DBHandler.getInstance().getUserIDByVehicleID(vehicleID);
 		String parkingLot = DBHandler.getInstance().getVehicleParkingLot(vehicleID);
+		String subscriptionTypeStr = DBHandler.getInstance().getUserSubscriptionTypeStr(userID);
+		if(DBHandler.getInstance().getUserVehicleID(userID).equals("")) { // vehicle doesn't exist
+			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Given VehicleID doesn't exist");
+		}
+		if(subscriptionTypeStr.equals("")) { //user doesn't exist
+			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Given UserID doesn't exist");
+		}
 		Params subscriptionParams = new Params(DBHandler.getInstance().getUserSubscriptionTypeStr(userID));
 		if (!subscriptionParams.getParam("type").equals("orderedOneTimeParking")) {
 			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Your Order/subscription type cannot be canceled");

@@ -236,5 +236,9 @@ public class Utils {
 		c.setTimeInMillis(vehicleStartParkTime);
 		return c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE);
 	}
+
+	public static boolean isEmailValid(String email) {
+		return email.contains("@") && email.contains(".");
+	}
 	
 }
