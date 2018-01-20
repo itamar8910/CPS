@@ -9,10 +9,13 @@ import common.Params;
 import common.TalkToServer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -47,6 +50,38 @@ public class WorkerController implements ControllerIF{
     @FXML
     void pressedLogin(ActionEvent event) {
     	System.out.println("Pressed Login");
+    	if(userName.getText() == "") {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Enter Username"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+    		return;
+    	}
+    	if(Password.getText() == "") {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Enter Password"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+    		return;
+    	}
 
     	Params loginParams = Params.getEmptyInstance();
     	loginParams.addParam("UserName", userName.getText());
@@ -91,7 +126,6 @@ public class WorkerController implements ControllerIF{
     	  	        		break;
     	  	        		
     	  	        	default:
-    	  	        		System.out.println("fuckkckkc");
     	  	        		invalideText.setVisible(true);
     	  	        	}
     	  		      }

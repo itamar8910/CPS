@@ -299,8 +299,7 @@ public class handleParkingController implements ControllerIF{
 		    	});
   		return;
   	}
-    		return;
-    	}
+
     	this.currentFloor-=1;
     	updateParkingSpots();
     }
