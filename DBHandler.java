@@ -601,6 +601,7 @@ public class DBHandler {
 
 	// if login failed
 		resData.addParam("type", "-1");
+		resData.addParam("userID", "-1");
 		resData.addParam("facID", "None");
 		return resData.toString();
 	}
