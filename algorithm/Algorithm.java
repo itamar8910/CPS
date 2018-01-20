@@ -9,18 +9,35 @@ import org.json.JSONObject;
 
 import pojos.Car;
 
+/**
+ * Class to arrange the handling of the park
+ * @author ~~ Etgar ~~ team,  Software Engineering course 2018
+ * @version 1.0
+ * @since 10.1.18
+ */
 public class Algorithm{
 
 	private static class ArrayListCar extends ArrayList<Car>{
 
 	}
-
+	/**
+	 * this is the number of cars in one row
+	 */
 	private int spotsInRow; // as an input from server. possible value: 4,5,6,7,8
+	/**
+	 * 3-dimension array holds list of cars in each cell
+	 */
 	private ArrayListCar[][][] park; // each spot has a list of all the cars belong to the spot
+	/**
+	 * 3-dimension array holds the status in each spot
+	 */
 	private char[][][] statusPark; // real time 3-dimensions array that has status for each spot
 	// e - EMPTY, f - FULL, i - INVALID, s - SAVE, o - ordered
-
-	Algorithm(){ // CONSTRUCTOR
+	
+	/**
+	 * default constructor which sets up an empty parking
+	 */
+	public Algorithm(){ // CONSTRUCTOR
 		spotsInRow = 4; // spotsInRow = 4 as an initial value
 		statusPark = new char[3][3][4];
 		park = new ArrayListCar[3][3][4];
@@ -33,7 +50,11 @@ public class Algorithm{
 					statusPark[i][j][k] = 'e';
 				}
 		}
-
+	
+	/**
+	 * 2nd constructor which sets up a parking with given number of cars in a row
+	 * @param numSpotsInRow number of cars in a row
+	 */
 	public Algorithm(int numSpotsInRow){ // 2nd CONSTRUCTOR
 		statusPark = new char[3][3][numSpotsInRow];
 		park = new ArrayListCar[3][3][numSpotsInRow];
@@ -47,7 +68,13 @@ public class Algorithm{
 					statusPark[i][j][k] = 'e';
 				}
 	}
-
+	
+	/**
+	 * 3rd constructor which sets up the parking with given database from the server
+	 * @param numSpotsInRow number of cars in one row
+	 * @param db database of the parking as string
+	 * @param si string describes the status in each spot in the park
+	 */
 	public Algorithm(int numSpotsInRow, String db, String si){ // 3rd CONSTRUCTOR
 		this.spotsInRow = numSpotsInRow;
 		this.park = generateParkFromString(db);
@@ -60,7 +87,12 @@ public class Algorithm{
 					// sort by exit time. It also means it is sorted by entry time.
 					Collections.sort(park[i][j][k]);
 	}
-
+	
+	/**
+	 * method creates the 3-dimensions array with the given string of status in each spot
+	 * @param si status in each spot
+	 * @return 3-dimensions char array of the given string
+	 */
 	private char[][][] generateStatusPark(String si){
 		//TODO: make row width dynamic
 		char[][][] tmpStatuses = new char[3][3][spotsInRow];
@@ -90,6 +122,11 @@ public class Algorithm{
 		return tmpStatuses;
 	}
 
+	/**
+	 * method creates 3-dimensions array of the park
+	 * @param st string of the database
+	 * @return 3-dimensions array of the park
+	 */
 	private ArrayListCar[][][] generateParkFromString(String st){
 		ArrayListCar[][][] cars = new ArrayListCar[3][3][spotsInRow];
 		for (int i = 0; i < 3; i++)
@@ -121,7 +158,13 @@ public class Algorithm{
 
 	//------------------------//
 
-		// function checks whether specific spot is empty in real time or not
+		/**
+		 * function checks whether specific spot is empty in real time or not
+		 * @param i depth in the park
+		 * @param j floor in the park
+		 * @param k width in the park
+		 * @return true when the spot is empty in the current time, otherwise returns false
+		 */
 		private boolean isEmptySpotRealTime(int i, int j, int k){
 			if (statusPark[i][j][k] == 's' || statusPark[i][j][k] == 'i')
 				return false;
@@ -136,15 +179,27 @@ public class Algorithm{
 			return true;
 		}
 
-		// function checks whether specific spot is empty but has ordered cars belong to it
+		/**
+		 * function checks whether specific spot is empty but has ordered cars belong to it
+		 * @param i depth in the park
+		 * @param j floor in the park
+		 * @param k width in the park
+		 * @return true when the specific spot is empty in real time but has at-least one ordered car
+		 */
 		private boolean isEmptyButOrderedRealTime(int i, int j, int k){
 			if (!park[i][j][k].isEmpty() && isEmptySpotRealTime(i, j, k))
 				return true;
 			return false;
 		}
 
-		// function gets specific list of cars that have any connection with a specific spot
-		// returns true if the specific spot is empty in the given times
+		/**
+		 * function gets specific list of cars that have any connection with a specific spot
+		 * returns true if the specific spot is empty in the given times
+		 * @param entryTime describes the beginning time of the interval
+		 * @param exitTime describes the ending time of the interval
+		 * @param list list of cars have any connection with the spot
+		 * @return true when it is possible to insert car in the given interval times
+		 */
 		private boolean checkAvailableSpot(long entryTime, long exitTime, ArrayListCar list){
 			// NO NEED TO CHECK 's' , 'i' CASES
 
@@ -165,7 +220,12 @@ public class Algorithm{
 			}
 		}
 
-		// function checks whether the park is available to insertion command in the given times
+		/**
+		 * function checks whether the park is available to insertion command in the given times
+		 * @param entryTime the beginning time of the interval
+		 * @param exitTime the ending time of the interval
+		 * @return true when it is possible to insert car in the given times into the park
+		 */
 		private boolean checkAvailablePark(long entryTime, long exitTime){
 			int i, j, k;
 			for (i = 0; i < 3; i++)
@@ -177,7 +237,11 @@ public class Algorithm{
 			return false;
 		}
 
-		// function returns spot's coordinates where a given car is located at
+		/**
+		 * function returns spot's coordinates where a given car is located at
+		 * @param carID identifier of the car
+		 * @return location of the car in the park if was found, otherwise return {-1,-1,-1}
+		 */
 		private int[] locateCarSpot(String carID){
 			int[] a = {-1, -1, -1}; // an array holds the coordinates of the car
 			int i, j, k, z;
@@ -197,8 +261,13 @@ public class Algorithm{
 			return a;
 		}
 
-		// get the cars out of the park from a specific depth
-		// list is a list which keeps the ejected cars
+		/**
+		 * get the cars out of the park from a specific depth
+		 * @param list a list which keeps the ejected cars
+		 * @param i the depth in the park
+		 * @param j the floor in the park
+		 * @param k the width in the park
+		 */
 		private void ejectInDepth(ArrayListCar list, int i, int j, int k){
 			int t, z;
 			for (t = 0; t <= i; t++){
@@ -213,8 +282,12 @@ public class Algorithm{
 			}
 		}
 
-		// get the cars out of the park from a specific floor
-		// list is a list which keeps the ejected cars
+		/**
+		 * get the cars out of the park from a specific floor
+		 * @param list a list which keeps the ejected cars
+		 * @param j the floor in the park
+		 * @param k the width in the park
+		 */
 		private void ejectInFloor(ArrayList<Car> list, int j, int k){
 			int t, z;
 			for (t = 0; t < j; t++){
@@ -229,7 +302,12 @@ public class Algorithm{
 			}
 		}
 
-		// find the optimal position for an entry command of a car
+		/**
+		 * find the optimal position for an entry command of a car
+		 * @param entryTime beginning of the interval
+		 * @param exitTime ending of the interval
+		 * @return the coordinate in the park to plot in the car if possible, otherwise return {-1,-1,-1}
+		 */
 		private int[] locateOptimalSpot(long entryTime, long exitTime){
 			int i, j, k, z, moves, minMoves = 6;
 			int[] optimal = {-1, -1, -1};
@@ -266,8 +344,13 @@ public class Algorithm{
 			return optimal;
 		}
 
-		// function plots back the ejected cars (given in list) into the park
-		// assume list is sorted by exit time
+		/**
+		 * function plots back the ejected cars (given in list) into the park, assume list is sorted by exit time
+		 * @param list list of the cars to re-insert to the park
+		 * @param i depth in the park
+		 * @param j floor in the park
+		 * @param k width in the park
+		 */
 		private void reEnterCars(ArrayListCar list, int i, int j, int k){
 			long lastCTime;
 
@@ -322,7 +405,11 @@ public class Algorithm{
 				}
 			}
 		}
-
+		
+		/**
+		 * function inserts into the park an ordered car
+		 * @param car object of the car to insert into the park
+		 */
 		public void insertOrderedCar(Car car){
 			boolean fullPark = !this.checkAvailablePark(car.getEntryTime(), car.getExitTime());
 			if(fullPark){
@@ -337,7 +424,11 @@ public class Algorithm{
 					statusPark[a[0]][a[1]][a[2]] = 'o';
 			}
 		}
-
+		
+		/**
+		 * function inserts car that immediately needs to be inserted into the park
+		 * @param car object of the car to insert into the park
+		 */
 		public void insertCar(Car car){
 			long entryTime = car.getEntryTime(), exitTime = car.getExitTime();
 
@@ -360,7 +451,11 @@ public class Algorithm{
 				reEnterCars(list, a[0] - 1, a[1], a[2]);
 			}
 		}
-
+		
+		/**
+		 * function ejects car out of the park
+		 * @param car object of the car to eject
+		 */
 		public void ejectCar(Car car){
 			int[] a = locateCarSpot(car.getCarID());
 			ArrayListCar list = new ArrayListCar();
@@ -403,6 +498,11 @@ public class Algorithm{
 			}
 			return statusString;
 		}
+		
+		/**
+		 * function generates string to describe the status in each spot of the park
+		 * @return string includes status in each spot
+		 */
 		public String generateStatusString(){
 			JSONArray statuses = new JSONArray();
 			//String statusString = "";
@@ -432,6 +532,10 @@ public class Algorithm{
 
 		// FORMAT: <depth index,> <height index,> <width index,> <carID> <entry time of car,>
 		// <exit time of car,> <#> <\n> ((EACH LINE DESCRIBES ONE SPOT))
+		/**
+		 * function generates string that describes the database in the park
+		 * @return string includes description in each spot
+		 */
 		public String generateDBString(){
 			JSONArray spots = new JSONArray();
 			int i, j, k, z;
