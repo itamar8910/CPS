@@ -21,9 +21,19 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
 
-
+/**
+ * 
+ * @author ~~ Etgar ~~ team, Software Engineering, course 2018
+ * @version 1.0
+ * @since 10.1.18
+ */
 public class backEndLogic {
-
+	
+	/**
+	 * function returns a params describes whether the specific park is full, and if so gives an alternative park
+	 * @param params the data
+	 * @return a param to inform the information as described above
+	 */
 	public static Params isParkingLotFull(Params params) {
 		String parkingName = params.getParam("name");
 		String fullRespStr = DBHandler.getInstance().canBeInParking(Params.getEmptyInstance().addParam("facName", parkingName));
@@ -32,7 +42,11 @@ public class backEndLogic {
 		return Params.getEmptyInstance().addParam("isFull", fullResp.getParam("isFull").equals("1") ? "yes" : "false").addParam("alternative", fullResp.getParam("alternative"));
 	}
 
-
+	/**
+	 * function gives data about car's parking status
+	 * @param params other data of the car
+	 * @return param object describes the status
+	 */
 	public static Params getVehicleStatus(Params params) {
 		String vehicleID = params.getParam("vehicleID");
 		boolean isParked = DBHandler.getInstance().getIsVehicleInParking(vehicleID);
@@ -49,7 +63,11 @@ public class backEndLogic {
 		return resp;
 	}
 
-
+	/**
+	 * function gives all vehicles of given user
+	 * @param params given data
+	 * @return json object of all vehicles
+	 */
 	public static Params getVehiclesOfUser(Params params) {
 		String userID = params.getParam("userID");
 		List<String> vehiclesIDs = DBHandler.getInstance().getAllVehiclesOfUser(userID);
@@ -67,12 +85,22 @@ public class backEndLogic {
 	//TODO
 	//THIS WILL BE CALLED WHEN THE CLIENT IS LATE AND WANTS TO USE PARKING
 	//IT WILL SUE THE USER WITH 20% OF THE PARKING PRICE
+	/**
+	 * function calls the handler for this case
+	 * @param userID identifier of user
+	 * @param parkingPrice the price of the parking
+	 */
 	public void handleClientWantsToKeepParking(int userID,double parkingPrice)  {
 		//call to update DB
 		DBHandler.getInstance().sueUser(userID, parkingPrice);;
 	}
 
 	//send email to costumer
+	/**
+	 * function sends an email to a specific customer
+	 * @param email send mail to that email
+	 * @param string text
+	 */
 	  public static void sendEmailToCostumerForBeginLate(String email, String string) {
 
 		  try {
@@ -124,7 +152,13 @@ public class backEndLogic {
 
 	}
 
-
+	/**
+	 * functions initiates the parking data as empty
+	 * @param rows number of rows
+	 * @param height number of floors
+	 * @param cols number of columns
+	 * @return JSON object
+	 */
 	public JSONArray generateEmptyParkingLotDataJson(int rows, int height, int cols){
 
 		  JSONArray slots = new JSONArray();
@@ -207,7 +241,12 @@ public class backEndLogic {
 	//  }
 
 		final static boolean CALL_ALGO = true;
-
+	  /**
+	   * function inserts car
+	   * @param parkingLot some data about the park
+	   * @param vehicleID identifier of the vehicle
+	   * @param leaveTime the exit time of the vehicle
+	   */
 	  public static void callParkingAlgoEnter(String parkingLot, String vehicleID, long leaveTime) {
 		  if(!CALL_ALGO) {
 			  return;
@@ -235,7 +274,14 @@ public class backEndLogic {
 		}
 
 	  }
-
+	 
+	  /**
+	   * function of ordering a spot in a park
+	   * @param parkingLot some data of the park
+	   * @param vehicleID identifier of the vehicle
+	   * @param entryTime the entry time of the vehicle
+	   * @param leaveTime the exit time of the vehicle
+	   */
 	 public static void callParkingAlgoOrder(String parkingLot, String vehicleID, long entryTime, long leaveTime) {
 		 if(!CALL_ALGO) {
 			  return;
@@ -258,7 +304,12 @@ public class backEndLogic {
 			e.printStackTrace();
 		}
 	 }
-
+	 
+	 /**
+	  * function to eject car
+	  * @param parkingLot some data of the park
+	  * @param vehicleID identifier of the car to eject
+	  */
 	 public static void callParkingAlgoLeave(String parkingLot, String vehicleID) {
 		 if(!CALL_ALGO) {
 			  return;
@@ -283,15 +334,29 @@ public class backEndLogic {
 		}
 	 }
 	
+	 /**
+	  * creates park
+	  * @param name name of the park
+	  * @param width the width of the park. the others (floors, depth) are costant
+	  * @param location the location of the park
+	  */
 	 public static void createParkingLot(String name, int width, String location) {
 		 DBHandler.getInstance().addParkingLot(name, width, location);
 		 initParkingLotData(name);
 	 }
 	 
+	 /**
+	  * function to delete a lot
+	  * @param name name of the lot
+	  */
 	 public static void deleteParkingLot(String name) {
 		 DBHandler.getInstance().removeParkingLot(name);
 	 }
 	 
+	 /**
+	  * function intiates the lot
+	  * @param parkingLotName name of the park
+	  */
 	 public static void initParkingLotData(String parkingLotName) {
 		  final int width = DBHandler.getInstance().getParkingLotWidth(parkingLotName);
 		  //JSONObject data = DBHandler.getInstance().getParkingLotJsonData(parkingLotName);
@@ -311,6 +376,9 @@ public class backEndLogic {
 	}
 	 }
 
+	 /**
+	  * gather 3 indices and create a compare function
+	  */
 	 public static class ThreeIndices implements Comparable{
 		 int i,j,k;
 		 String data;
@@ -339,6 +407,11 @@ public class backEndLogic {
 
 	 }
 
+	 /**
+	  * function prepares the data that is needed for the PDF
+	  * @param parkingLotName name of the park
+	  * @return string as data
+	  */
 	 public static String generateParkinglotDataForPDF(String parkingLotName) {
 		 try {
 			 JSONObject data = DBHandler.getInstance().getParkingLotJsonData(parkingLotName);
@@ -363,6 +436,14 @@ public class backEndLogic {
 
 	 }
 
+	 /**
+	  * function adds data to the statistics
+	  * @param parkingLotName name of the park
+	  * @param lateDelta
+	  * @param cancelDelta
+	  * @param arrivedDelta
+	  * @param numDisabledDelta
+	  */
 	 public static void addToStatistics(String parkingLotName, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
 		 int parkingLotID = DBHandler.getInstance().getParkingLotIDByName(parkingLotName);
 		 Calendar current = Calendar.getInstance();
@@ -376,6 +457,11 @@ public class backEndLogic {
 
 	 }
 
+	 /**
+	  * functions handle the case of pyhsical order
+	  * @param params data of the order
+	  * @return some data about the completion of the actions
+	  */
 	  public static Params handleClientPhysicalOrder(Params params) {
 		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 		  if(isInTable){
@@ -423,6 +509,12 @@ public class backEndLogic {
 		  }
 	  }
 
+	  /**
+	   * function calculates price
+	   * @param parkingLot name of the park
+	   * @param subscriptionParams data about the subscription
+	   * @return calculated price
+	   */
 	  public static double calcPriceUpfrontForOneTimeOrder(String parkingLot, Params subscriptionParams) {
 			System.out.println("calcPriceUpfrontForOneTimeOrder");
 			List<Integer> prices = DBHandler.getInstance().getPrices(parkingLot);
@@ -434,6 +526,11 @@ public class backEndLogic {
 			return numHours * prices.get(1);
 	  }
 
+	  /**
+	   * function handles case of one time order
+	   * @param params data of the order
+	   * @return data about the completion of the action
+	   */
 	  public static Params handleClientOneTimeOrder(Params params){
 		  boolean isInTable = DBHandler.getInstance().isInTable("Users", "userID", params.getParam("ID"));
 //		  if(isInTable){
@@ -477,6 +574,11 @@ public class backEndLogic {
 		  return resp;
 	  }
 
+	  /**
+	   * function handles the case of routine subscription
+	   * @param params some data about the subscription
+	   * @return data about the completion of the action
+	   */
 	  public static Params handleRoutineSubscription(Params params) {
 
 		  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
@@ -521,6 +623,13 @@ public class backEndLogic {
 
 	  }
 
+	/**
+	 * function handles call algo of subscription
+	 * @param userID identifier of user
+	 * @param vehicleID identifier of the vehicle
+	 * @param parkingLot name of the park
+	 * @param subscriptionParams data of the subscription
+	 */
 	public static void handleCallParkingAlgoOrderForSubscription(String userID, String vehicleID, String parkingLot, Params subscriptionParams) {
 		if(!(subscriptionParams.equals("routineSubscription") || subscriptionParams.equals("fullSubscription"))) {
 			System.out.println("ERR: called handleCallParkingAlgoOrderForSubscription with subscriptionType that are not of a subscription");
@@ -544,7 +653,12 @@ public class backEndLogic {
 
 	}
 
-
+	/**
+	 * function calculates the price of the subscription
+	 * @param parkingLot name of the park
+	 * @param subscriptionParams some data about the subscription
+	 * @return the calculated price
+	 */
 	public static double calcSubscriptionPrice(String parkingLot, Params subscriptionParams) {
 		List<Integer> prices = DBHandler.getInstance().getPrices(parkingLot);
 
@@ -569,7 +683,12 @@ public class backEndLogic {
 		return 0;
 	}
 
-
+	
+	/**
+	 * function handles case of full subscription
+	 * @param params some data about the subscription
+	 * @return data about the completion of the action
+	 */
 	public static Params handleFullSubscription(Params params) {
 
 		  //TODO: support of routine subscriber that wants to enter another parking lot one time so orders in a different way (currently will return BAD b.c there is already a user with the same ID)
@@ -613,10 +732,10 @@ public class backEndLogic {
 	  }
 
 	/**
-	 *
-	 * @param userID
-	 * @param parkingLot
-	 * @param command: Order or Enter
+	 * function of adding vehicle into the database
+	 * @param userID identifier of the user
+	 * @param parkingLot name of the park
+	 * @param vehicleID indentifer of the vehicle
 	 */
 	public static void handleAddVehicleToDB(String userID, String parkingLot, String vehicleID) {
 		//first inserts vehicles to Vehicles table
@@ -629,14 +748,32 @@ public class backEndLogic {
 
 	}
 
+	/**
+	 * function calls function to add money to the user's purse
+	 * @param userID identifier of the user
+	 * @param amount the amount of money to be added
+	 */
 	public static void addToUserMoney(String userID, double amount) {
 		DBHandler.getInstance().addToUserMoney(userID, (amount));
 	}
-
+	
+	/**
+	 * function returns list of the prices of the park
+	 * @param parkingLot name of the park
+	 * @return list of the prices
+	 */
 	public static List<Integer> getPrices(String parkingLot){
 		return DBHandler.getInstance().getPrices(parkingLot);
 	}
-
+	
+	/**
+	 * function updates the data in the database
+	 * @param userID identifier of the user
+	 * @param vehicleID identifier of the vehicle
+	 * @param parkingLot name of the park
+	 * @param subscriptionTypeParams some data of the subscription
+	 * @return
+	 */
 	public static String updateVehicleEntered(String userID, String vehicleID, String parkingLot, Params subscriptionTypeParams) {
 		boolean isInTable = DBHandler.getInstance().isInTable("Vehicles", "vehicleID", vehicleID);
 		if(!isInTable) {
@@ -656,7 +793,11 @@ public class backEndLogic {
 
 
 
-
+	/**
+	 * return the leaving time as unix time
+	 * @param subscriptionParams some data of the subscription
+	 * @return unix time
+	 */
 	public static String getExpectedLeaveTimeUnix(Params subscriptionParams) {
 		String subType = subscriptionParams.getParam("type");
 		if(subType.equals("physicalOrder")) {
@@ -672,7 +813,11 @@ public class backEndLogic {
 
 	}
 
-
+	/**
+	 * function handles case of entrance into the park
+	 * @param params some data of the car, user, etc.
+	 * @return some data about the completion of the action
+	 */
 	public static Params handleClientEnter(Params params) {
 		String vehicleID = params.getParam("vehicleID");
 		String parkingLot = params.getParam("parkingLot");
@@ -710,7 +855,13 @@ public class backEndLogic {
 	}
 
 
-
+    /**
+     * function returns the leaving time of the specific vehicle
+     * @param userID identifier of the user
+     * @param vehicleID identifier of the vehicle
+     * @param subscriptionParams some data about the subscription
+     * @return leaving time
+     */
 	public static long getVehicleExpectedLeaveTime(String userID, String vehicleID, Params subscriptionParams) {
 		if(subscriptionParams.getParam("type").equals("physicalOrder")) {
 			return Long.valueOf(subscriptionParams.getParam("leaveTimeMS"));
@@ -727,11 +878,24 @@ public class backEndLogic {
 	}
 
 
+	/**
+	 * returns true when the subscription if either full or routine
+	 * @param type string of type of the subscription
+	 * @return true or false as described above
+	 */
 	public static boolean needsSubscriptionID(String type) {
 		return (type.equals("routineSubscription") || type.equals("fullSubscription"));
 	}
 
 
+	/**
+	 * function check the entrance of the insertion
+	 * @param userID identifier of the user
+	 * @param parkingLot name of the park
+	 * @param subscriptionID identifier of the ID of the subscription
+	 * @param subscriptionParams some data about the subscription
+	 * @return message about completion the action
+	 */
 	public static String canEnterParking(String userID, String parkingLot, String subscriptionID, Params subscriptionParams) {
 		String subType = subscriptionParams.getParam("type");
 		if(subType.equals("physicalOrder")) {
@@ -783,6 +947,11 @@ public class backEndLogic {
 
 		}
 
+	/**
+	 * function handles the case that client is leaving
+	 * @param params some data about the vehicle, user, etc.
+	 * @return some data about the completion of the action
+	 */
 	public static Params handleClientLeave(Params params) {
 		String vehicleID = params.getParam("vehicleID");
 		String parkingLot = params.getParam("parkingLot");
@@ -814,6 +983,13 @@ public class backEndLogic {
 	}
 
 
+	/**
+	 * function calculates the price that is needed to pay
+	 * @param parkingLot name of the park
+	 * @param vehicleID identifier of the vehicle
+	 * @param subscriptionParams some data about the subscription
+	 * @return the calculated price is needed to be payed
+	 */
 	public static double calcPriceToPay(String parkingLot, String vehicleID, Params subscriptionParams) {
 		List<Integer> prices = DBHandler.getInstance().getPrices(parkingLot);
 		if(subscriptionParams.getParam("type").equals("physicalOrder")) {
@@ -837,6 +1013,11 @@ public class backEndLogic {
 	}
 
 
+	/**
+	 * function handles the case which the client wants to cancel an order
+	 * @param params some data about the user, vehicle, etc.
+	 * @return some data about the completion of the action
+	 */
 	public static Params handleClientCancelOrder(Params params) {
 		String vehicleID = params.getParam("vehicleID");
 		String userID = DBHandler.getInstance().getUserIDByVehicleID(vehicleID);
@@ -884,6 +1065,11 @@ public class backEndLogic {
 	//}
 
 
+	/**
+	 * function returns status of completion the action with the status
+	 * @param params required data about the park
+	 * @return status of completion with the status data
+	 */
 	public static Params handleGetParkingSlotStatus(Params params) {
 		String parkingLotName = params.getParam("name");
 		JSONObject data = DBHandler.getInstance().getParkingLotJsonData(parkingLotName);
@@ -900,6 +1086,11 @@ public class backEndLogic {
 		return resp;
 	}
 
+	/**
+	 * counter function and handler function
+	 * @param params data about the subscription
+	 * @return data about completion of the action with the needed counter (num)
+	 */
 	public static Params handleGNumOfSubscribers(Params params) {
 		int parkingLotID = Integer.valueOf(params.getParam("facID"));
 		String parkingLotName = DBHandler.getInstance().getParkingLotNameByID(parkingLotID);
@@ -916,6 +1107,11 @@ public class backEndLogic {
 		return Params.getEmptyInstance().addParam("status", "OK").addParam("num", String.valueOf(count));
 	}
 
+	/**
+	 * handles subscribers with more than one car
+	 * @param params data about the subscription
+	 * @return data about the completion of the action
+	 */
 	public static Params handleGNumOfSubscribersWithMoreThanOneCar(Params params) {
 		int parkingLotID = Integer.valueOf(params.getParam("facID"));
 		String parkingLotName = DBHandler.getInstance().getParkingLotNameByID(parkingLotID);
@@ -941,6 +1137,11 @@ public class backEndLogic {
 		return Params.getEmptyInstance().addParam("status", "OK").addParam("num", String.valueOf(count));
 	}
 
+	/**
+	 * return stats of the subscription
+	 * @param params subscription data
+	 * @return data of stats
+	 */
 	public static Params getSubscriptionStats(Params params) {
 		String parkingName = params.getParam("name");
 		String facID = String.valueOf(DBHandler.getInstance().getParkingLotIDByName(parkingName));
@@ -954,7 +1155,12 @@ public class backEndLogic {
 		return Params.getEmptyInstance().addParam("name", parkingName).addParam("monthly", respNumSubs.getParam("num")).addParam("monthlyWithMoreCars", resNumsSubsMoreThanOneVehicle.getParam("num"));
 
 	}
-
+	
+	/**
+	 * function toggle the disabled spot
+	 * @param params some data about the spot
+	 * @return data about completion of the action
+	 */
 	public static Params toggleDisableSpot(Params params) {
 		//status:true/false. floor, position, name
 		try {
@@ -990,6 +1196,11 @@ public class backEndLogic {
 	}
 
 
+	/**
+	 * function reserves spot
+	 * @param params some data of the required spot
+	 * @return some data about completion of the action
+	 */
 	public static Params reserveSpot(Params params) {
 		//"floor" , "position":1D, name
 
@@ -1028,6 +1239,11 @@ public class backEndLogic {
 
 
 
+	/**
+	 * function returns data of status in spot
+	 * @param params some data of the required spot
+	 * @return data of the spot
+	 */
 	public static Params getSpotStatus(Params params) {
 
 		try {
