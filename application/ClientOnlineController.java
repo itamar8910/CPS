@@ -30,6 +30,11 @@ public class ClientOnlineController implements ControllerIF{
     private Params params;
 
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientEnterView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bContactUsClick(ActionEvent event) {
     	System.out.println("bContactUsClick");
     	main.setScene("clientContactView.fxml", params);

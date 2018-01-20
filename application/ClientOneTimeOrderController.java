@@ -53,6 +53,11 @@ public class ClientOneTimeOrderController implements ControllerIF{
     private TextField tfEmail;
 
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bSumbitClick(ActionEvent event) {
     	
 

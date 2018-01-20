@@ -25,6 +25,11 @@ public class ClientEnterController implements ControllerIF{
     }
 
     @FXML
+    void bBackClick(){
+    	main.setScene("Welcome.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bPhysicalClick(ActionEvent event) {
     	System.out.println("bPhysicalClick");
     	main.setScene("ClientPhysicalView.fxml", params);

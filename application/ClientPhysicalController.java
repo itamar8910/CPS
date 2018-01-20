@@ -42,6 +42,11 @@ public class ClientPhysicalController implements ControllerIF{
     	main.setScene("clientPhysicalOrderView.fxml", params);
 
     }
+    
+    @FXML
+    void bBackClick(){
+    	main.setScene("ClientEnterView.fxml", Params.getEmptyInstance());
+    }
 
 	@Override
 	public void init(ApplicationMain main, Params params) {

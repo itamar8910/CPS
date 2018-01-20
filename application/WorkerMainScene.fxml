@@ -14,5 +14,6 @@
     <Button fx:id="loginBottun" layoutX="290.0" layoutY="260.0" mnemonicParsing="false" onAction="#pressedLogin" prefWidth="60.0" text="Login" />
     <Text id="TextCotert" layoutX="282.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Workers Login" />
     <Text fx:id="invalideText" disable="false" fill="RED" layoutX="236.0" layoutY="417.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login Failed!" visible="false" />
+      <Button layoutX="564.0" layoutY="33.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
   </children>
 </AnchorPane>

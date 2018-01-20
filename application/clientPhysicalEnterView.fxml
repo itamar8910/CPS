@@ -15,5 +15,6 @@
       <Button fx:id="bSubmit" layoutX="270.0" layoutY="175.0" mnemonicParsing="false" onAction="#bSubmitClick" prefWidth="60.0" text="Submit" />
       <TextField fx:id="tfParkingLot" layoutX="225.0" layoutY="130.0" prefWidth="150.0" />
       <Label layoutX="110.0" layoutY="134.0" text="ParkingLot" />
+      <Button layoutX="524.0" layoutY="23.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>

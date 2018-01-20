@@ -25,5 +25,6 @@
       <Label layoutX="70.0" layoutY="310.0" text="EMAIL" />
       <Label layoutX="70.0" layoutY="230.0" text="ENTER TIME" />
       <TextField fx:id="tfEnterTime" layoutX="160.0" layoutY="225.0" prefWidth="150.0" text="00:00" />
+      <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>

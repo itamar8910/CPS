@@ -102,6 +102,10 @@ public class WorkerController implements ControllerIF{
     	});   
     }
     
+    @FXML
+    void bBackClick(){
+    	main.setScene("Welcome.fxml", Params.getEmptyInstance());
+    }
 
     @FXML
     void initialize() {

@@ -11,5 +11,6 @@
       <Button fx:id="bOrder" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOrderClick" prefWidth="60.0" text="Order" />
       <Button fx:id="bLeave" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bLeaveClick" prefWidth="60.0" text="Leave" />
       <Button fx:id="bEnter" layoutX="270.0" layoutY="187.5" mnemonicParsing="false" onAction="#bEnterClick" prefWidth="60.0" text="Enter" />
+      <Button layoutX="500.0" layoutY="38.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>

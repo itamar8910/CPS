@@ -28,6 +28,10 @@ public class ClientPhysicalLeaveController implements ControllerIF{
     private ApplicationMain main;
     private Params params;
 
+    @FXML
+    void bBackClick(){
+    	main.setScene("ClientPhysicalView.fxml", Params.getEmptyInstance());
+    }
     
     @FXML
     void bSubmitClick(ActionEvent event) {

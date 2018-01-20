@@ -53,7 +53,7 @@ public class ApplicationMain extends Application {
 		try {
 
 			URL url = getClass().getResource(urlStr);
-
+			String name = urlStr.substring(0, urlStr.indexOf(".fxml"));
 
 			FXMLLoader fxmlLoader = new FXMLLoader(url);
 
@@ -76,7 +76,7 @@ public class ApplicationMain extends Application {
 
 			// setting the stage
 			primaryStage.setScene( scene );
-			primaryStage.setTitle( "Main view" );
+			primaryStage.setTitle( name );
 			primaryStage.show();
 
 		} catch (IOException e) {
