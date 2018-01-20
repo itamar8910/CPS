@@ -9,10 +9,13 @@ import common.TalkToServer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -53,8 +56,40 @@ public class FMController implements ControllerIF{
     @FXML
     void newRateRequest(ActionEvent event) 
     {
+    	if(dropDown.getValue() == null) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Order Type"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+    		return;
+    	}
+    	
+    	if(newRate.getText().equals("price")) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select New Price"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+    		return;
+    	}
     	System.out.println("Pressed request change rate");
-
     	Params loginParams = Params.getEmptyInstance();
     	loginParams.addParam("action", "requestChangePrice");
     	loginParams.addParam("price", newRate.getText());

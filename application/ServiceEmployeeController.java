@@ -70,8 +70,22 @@ public class ServiceEmployeeController implements ControllerIF{
 
     @FXML
     void deleteClicked(ActionEvent event) {
-    	if(complainsList.getSelectionModel().getSelectedIndex() == -1)
+    	if(complainsList.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Complain"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "handleComplaint");
@@ -109,11 +123,39 @@ public class ServiceEmployeeController implements ControllerIF{
      * @param event the javafx enevet that's generatede\
      */
     void refundClicked(ActionEvent event) {
-    	if(complainsList.getSelectionModel().getSelectedIndex() == -1)
+    	if(complainsList.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Complain"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
-    	if(refundAmount.getText() == "")
+    	if(refundAmount.getText() == "") {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Refund Amount"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "handleComplaint");
@@ -149,6 +191,22 @@ public class ServiceEmployeeController implements ControllerIF{
 
     @FXML
     void selectClicked(ActionEvent event) {
+    	if(parkingList.getSelectionModel().getSelectedItem() == null) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Parking"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+    		return;
+    	}
     	params.addParam("parkingName", parkingList.getSelectionModel().getSelectedItem().toString());
     	params.addParam("amIaWorker", "0");
     	main.setScene("handleParking.fxml", params);

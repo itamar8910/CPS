@@ -261,16 +261,46 @@ public class handleParkingController implements ControllerIF{
 
     @FXML
     void nextFloorClicked(ActionEvent event) {
-    	if(this.currentFloor == 3)
+    	if(this.currentFloor == 3) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("There Are Only 3 Floors"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	this.currentFloor+=1;
     	updateParkingSpots();
     }
     
     @FXML
     void floorDownClicked(ActionEvent event) {
-    	if(this.currentFloor == 1)
+    	if(this.currentFloor == 1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("No Floors Below"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
+  		return;
+  	}
     		return;
+    	}
     	this.currentFloor-=1;
     	updateParkingSpots();
     }

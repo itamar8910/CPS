@@ -17,9 +17,13 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -59,8 +63,22 @@ public class GMController implements ControllerIF{
 
     @FXML
     void acceptClicked(ActionEvent event) throws JSONException { 
-    	if(tableReq.getSelectionModel().getSelectedIndex() == -1)
+    	if(tableReq.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Request"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
     	System.out.println("accept clicked");
     	
@@ -144,8 +162,22 @@ public class GMController implements ControllerIF{
     @FXML
     void rejectClicked(ActionEvent event) throws JSONException {   
     	
-    	if(tableReq.getSelectionModel().getSelectedIndex() == -1)
+    	if(tableReq.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Request"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     				
     	System.out.println("reject clicked");
     	

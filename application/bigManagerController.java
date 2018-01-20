@@ -19,9 +19,13 @@ import org.json.JSONException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -88,10 +92,38 @@ public class bigManagerController implements ControllerIF{
     
     @FXML
     void activityClicked(ActionEvent event) throws JSONException {
-    	if(parkingList.getSelectionModel().getSelectedIndex() == -1)
+    	if(parkingList.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Parking"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
-    	if(day.getText().equals("") || year.getText().equals("")|| month.getText().equals("") || daysBack.getText().equals(""))
+    	}
+    	if(day.getText().equals("") || year.getText().equals("")|| month.getText().equals("") || daysBack.getText().equals("")) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Fill Date Correctly"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
     	String date = day.getText() + "-"+month.getText() +"-"+ year.getText();
 		long unixD = dateToMillis(date);
@@ -139,8 +171,22 @@ public class bigManagerController implements ControllerIF{
 
     @FXML
     void currentStateClicked(ActionEvent event) throws JSONException {
-    	if(parkingList.getSelectionModel().getSelectedIndex() == -1)
+    	if(parkingList.getSelectionModel().getSelectedIndex() == -1) {
+    		Platform.runLater(new Runnable() {
+	  		      @Override public void run() {
+	  	    		 final Stage dialog = new Stage();
+	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+	  	             dialog.initOwner(main.primaryStage);
+	  	             VBox dialogVbox = new VBox(20);
+	  	             dialogVbox.getChildren().add(new Text("Please Select Parking"));
+	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	  	             dialog.setScene(dialogScene);
+	  	             dialog.show();
+	  	             System.out.println("showed dialog");
+	  		      }
+		    	});
     		return;
+    	}
     	
     	String facID = "";
         for (int i = 0; i < curList.length(); i++) {
@@ -180,8 +226,22 @@ public class bigManagerController implements ControllerIF{
 
     @FXML
     void performanceClicked(ActionEvent event) {
-    	if(parkingList.getSelectionModel().getSelectedIndex() == -1)
+    	if(parkingList.getSelectionModel().getSelectedIndex() == -1) {
+    			Platform.runLater(new Runnable() {
+    	  		      @Override public void run() {
+    	  	    		 final Stage dialog = new Stage();
+    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
+    	  	             dialog.initOwner(main.primaryStage);
+    	  	             VBox dialogVbox = new VBox(20);
+    	  	             dialogVbox.getChildren().add(new Text("Please Select Parking"));
+    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
+    	  	             dialog.setScene(dialogScene);
+    	  	             dialog.show();
+    	  	             System.out.println("showed dialog");
+    	  		      }
+	  		    	});
     		return;
+    	}
     	
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "getSubscriptionStats");
