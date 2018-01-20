@@ -29,6 +29,11 @@ public class ClientFollowOrderView implements ControllerIF{
     String[] vIDS;
     
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bSubIDSubmit(ActionEvent event) {
     	System.out.println("bSubIDSubmit");
     	Params getVehicles = Params.getEmptyInstance();

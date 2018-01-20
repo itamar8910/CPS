@@ -45,6 +45,12 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     private ApplicationMain main;
     private Params params;
 
+    
+    @FXML
+    void bBackClick(){
+    	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
+    }
+    
     @FXML
     void bSumbitClick(ActionEvent event) {
     	

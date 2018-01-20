@@ -14,5 +14,6 @@
       <TextField fx:id="vehicleID" layoutX="150.0" layoutY="190.0" prefWidth="150.0" text="Enter vehicle id" />
       <Button layoutX="350.0" layoutY="190.0" mnemonicParsing="false" onAction="#bVehicleIDSubmit" prefWidth="60.0" text="Submit" />
       <Label layoutX="210.0" layoutY="160.0" text="OR" />
+      <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>

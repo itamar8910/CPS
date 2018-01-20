@@ -37,6 +37,11 @@ public class ClientFullSubscriptionController implements ControllerIF{
     private Params params;
 
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bSumbitClick(ActionEvent event) {
     	
 

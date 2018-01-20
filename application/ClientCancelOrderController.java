@@ -26,6 +26,11 @@ public class ClientCancelOrderController implements ControllerIF{
     private Params params;
 
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bSubmitClick(ActionEvent event) {
     	Params orderParams = Params.getEmptyInstance();
 

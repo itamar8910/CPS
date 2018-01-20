@@ -42,6 +42,11 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
 
     @FXML
+    void bBackClick(){
+    	main.setScene("ClientPhysicalView.fxml", Params.getEmptyInstance());
+    }
+    
+    @FXML
     void bSumbitClick(ActionEvent event) {
     	
     	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);

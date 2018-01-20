@@ -10,5 +10,6 @@
    <children>
       <Button fx:id="bPhysical" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bPhysicalClick" prefWidth="60.0" text="Physical" />
       <Button fx:id="bOnlnie" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOnlineClick" prefWidth="60.0" text="Online" />
+      <Button layoutX="524.0" layoutY="23.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>
