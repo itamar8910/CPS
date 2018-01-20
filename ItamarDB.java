@@ -17,6 +17,20 @@ import com.mysql.jdbc.DatabaseMetaData;
 import common.Params;
 import common.User;
 
+
+/*
+* <h> Main class for communication and management of DataBase </h>
+* This class implements the singleton design pattern.
+* This class is responsible for all communication with DB and his management.
+* This is the only class the communicate (requests and responses) with SQL DB.
+* Each update, insertion or query of DataBase is going through this class.
+
+* @author  ~~ Etgar ~~ team, Software Engineering course 2018
+* @version 1.0
+* @since   10.1.18
+*/
+
+
 public class ItamarDB {
 
 	private static ItamarDB instance;
@@ -26,7 +40,10 @@ public class ItamarDB {
 	public ItamarDB(Connection conn){
 		this.conn = conn;
 	}
-
+	/**
+	* Implementation of the singleton design pattern
+	* @return ItamarDB Instance this class
+	*/
 	public static ItamarDB getInstance(){ // implements the singleton design pattern
 		if(instance == null){
 			try
@@ -51,7 +68,9 @@ public class ItamarDB {
 		}
         return instance;
 	}
-
+	/**
+	* Prints all tables
+	*/
 	public void printAllTables(){
 		try{
 			  java.sql.DatabaseMetaData md = conn.getMetaData();
@@ -63,7 +82,11 @@ public class ItamarDB {
 			System.out.println(e.getMessage());
 		}
 	}
-
+	/**
+	* Adds a new row to DB given name, balance
+	* @param name username
+	* @param balance Balance of user in account
+	*/
 	public boolean addRow(String name, int balance){
 		Statement stmt;
 		try {
@@ -84,7 +107,11 @@ public class ItamarDB {
 		}
 		return false;
 	}
-
+	/**
+	* Updates row given name, balance according to given balance
+	* @param name Username
+	* @param balance New balance to update in user's account
+	*/
 	public void updateRow(String name, int balance){
 		Statement stmt;
 		try {
@@ -101,7 +128,12 @@ public class ItamarDB {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	* Returns balance of given user
+	* @param name Username
+	*
+	* @return int Balance of user with given name
+	*/
 	public int getBalanceOf(String name){
 		try {
 			PreparedStatement selectName = conn.prepareStatement("SELECT balance FROM test_table WHERE name=?;");
@@ -118,7 +150,10 @@ public class ItamarDB {
 		}
 		return -1;
 	}
-
+	
+	/**
+	* @return String All names and their balances from table
+	*/
 	public String getAll() {
 		try {
 			PreparedStatement selectName = conn.prepareStatement("SELECT name, balance FROM test_table WHERE 1;");
@@ -137,7 +172,14 @@ public class ItamarDB {
 		return "";
 
 	}
-
+	/**
+	* Check if colName with given value is in a specific table
+	*
+	* @param table Table to search in
+	* @param colName Column name
+	* @param value Target value to check if col's value equals to
+	* @return boolean Indicates weather value of colName is equal to given value param
+	*/
 	public boolean isInTable(String table, String colName, String value) {
 		try {
 			PreparedStatement selectName = conn.prepareStatement("SELECT * FROM " + table + " WHERE "+colName+"=?;");
@@ -157,7 +199,14 @@ public class ItamarDB {
 		}
 		return false;
 	}
-
+	
+	/**
+	* Adds user to DB
+	* @param userID UserID number
+	* @param vehicleID User's vehicleID number
+	* @param email User's email
+	* @param type User type
+	*/
 	public void addUser(String userID, String vehicleID, String email, String type) {
 		PreparedStatement update;
 		try {
@@ -174,7 +223,16 @@ public class ItamarDB {
 		}
 
 	}
-
+	
+	/**
+	* Adds vehicle to DB
+	* @param userID UserID number
+	* @param vehicleID User's vehicleID number
+	* @param parkingLot parkingLot where the vehicle parks
+	* @param startTime Parking of vehicle start time
+	* @param endTime Parking of vehicle end time
+	* @param isInParking Is vehicle in parking
+	*/
 	public void addVehicle(String userID, String vehicleID, String parkingLot, long startTime, long endTime, boolean isInParking) {
 		PreparedStatement update;
 		try {
@@ -195,6 +253,10 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* @param ParkingLotName Parking lot name
+	* @return int Width of parkingLog
+	*/
 	public int getParkingLotWidthOld(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT width FROM ParkingLots WHERE name=?");
@@ -212,7 +274,11 @@ public class ItamarDB {
 		}
 		return -1;
 	}
-	
+
+	/**
+	* @param ParkingLotName Parking lot name
+	* @return int Width of parkingLog
+	*/
 	public int getParkingLotWidth(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT dimension FROM ParkingFacility WHERE name=?");
@@ -231,6 +297,10 @@ public class ItamarDB {
 		return -1;
 	}
 
+	/**
+	* @param ParkingLotName Parking lot name
+	* @return JSONArray Data about parking lot with given name
+	*/
 	public JSONArray getParkingLotJsonDataOld(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT data FROM ParkingLots WHERE name=?");
@@ -255,6 +325,10 @@ public class ItamarDB {
 		return null;
 	}
 
+	/**
+	* @param ParkingLotName Parking lot name
+	* @return JSONArray Data about parking lot with given name
+	*/
 	public JSONObject getParkingLotJsonData(String parkingLotName){
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT data FROM ParkingFacility WHERE name=?");
@@ -279,6 +353,11 @@ public class ItamarDB {
 		return null;
 	}
 	
+	/**
+	* @param name Parking lot's name
+	* @param data Parking lot's data
+	* @param width Width of parking lot
+	*/
 	public void addParkingLot(String name, String data, int width){
 		PreparedStatement update;
 		try {
@@ -295,6 +374,11 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* Updates data of given parking lot.
+	* @param name Parking lot's name
+	* @param data Parking lot's data
+	*/
 	public void updateParkingLotDataOld(String name, String data){
 		System.out.println("updateParkingLotData with:" + data);
 		PreparedStatement update;
@@ -310,7 +394,12 @@ public class ItamarDB {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	* Updates data of given parking lot.
+	* @param name Parking lot's name
+	* @param data Parking lot's data
+	*/
 	public void updateParkingLotData(String name, String data){
 		System.out.println("updateParkingLotData with:" + data);
 		PreparedStatement update;
@@ -327,6 +416,10 @@ public class ItamarDB {
 		}
 	}
 	
+	/**
+	* @param userID UserID
+	* @return index of user with userID
+	*/
 	public int getIndexIDOfUser(String userID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT ID FROM Users WHERE userID=?");
@@ -343,6 +436,12 @@ public class ItamarDB {
 		return -1;
 	}
 
+		
+	/**
+	* Updates user type
+	* @param userID UserID
+	* @param typeStr Type to update to
+	*/
 	public void updateUserType(String userID, String typeStr) {
 		PreparedStatement update;
 		try {
@@ -358,6 +457,10 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* @param userID UserID
+	* @return VehicleID of vehicle of user with UserID
+	*/
 	public String getUserVehicleID(String userID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT vehicleID FROM Users WHERE userID=?");
@@ -376,6 +479,10 @@ public class ItamarDB {
 		
 	}
 
+	/**
+	* @param vehicleID VehicleID
+	* @return UserID of user owning vehicle with vehicleID
+	*/
 	public String getUserIdFromVehicleID(String vehicleID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT userID FROM Vehicles WHERE vehicleID=?");
@@ -392,6 +499,10 @@ public class ItamarDB {
 		return "";
 	}
 
+	/**
+	* @param userID UserID
+	* @return User subscription type
+	*/
 	public String getUserSubscriptionTypeStr(String userID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT type FROM Users WHERE userID=?");
@@ -408,6 +519,12 @@ public class ItamarDB {
 		return "";
 	}
 
+	/**
+	* Updates vehicle start and leave time
+	* @param vehicleID VehicleID
+	* @param startTimeUnix StartTimeUnix
+	* @param leaveTimeUnix LeaveTimeUnix
+	*/
 	public void updateVehicleStartLeaveTimes(String vehicleID, String startTimeUnix, String leaveTimeUnix) {
 		PreparedStatement update;
 		try {
@@ -424,6 +541,11 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* Updates status of isParking (doest the vehicle parks or not)
+	* @param vehicleID VehicleID
+	* @param val Value to update to 
+	*/
 	public void updateVehicleIsParking(String vehicleID, String val) {
 		PreparedStatement update;
 		try {
@@ -440,6 +562,11 @@ public class ItamarDB {
 		
 	}
 
+	/**
+	* Adds Money amount to user's account
+	* @param vehicleID VehicleID
+	* @param amount Amount of money to add to user's account
+	*/
 	public void addToUserMoney(String userID, double amount) {
 		PreparedStatement update;
 		try {
@@ -454,6 +581,10 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* @param parkingLot Parking lot name
+	* @return List<Integer> prices in given parking lot
+	*/
 	public List<Integer> getPrices(String parkingLot) {
 		List<Integer> prices = new ArrayList<Integer>();
 		try {
@@ -478,6 +609,11 @@ public class ItamarDB {
 		return prices;
 	}
 
+	
+	/**
+	* @param vehicleID VehicleID
+	* @return long Parking start time of given vehicle
+	*/
 	public long getVehicleStartParkTime(String vehicleID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT startTime FROM Vehicles WHERE vehicleID=?");
@@ -495,6 +631,10 @@ public class ItamarDB {
 		return 0l;
 	}
 
+	/**
+	* @param vehicleID VehicleID
+	* @return String UserID corresponding to vehicleID
+	*/
 	public String getUserIDByVehicleID(String vehicleID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT userID FROM Vehicles WHERE vehicleID=?");
@@ -511,6 +651,10 @@ public class ItamarDB {
 		return "";
 	}
 
+	/**
+	* @param vehicleID VehicleID
+	* @return String Parking lot where the vehicle with vehicleID parks at
+	*/
 	public String getVehicleParkingLot(String vehicleID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT parkingLot FROM Vehicles WHERE vehicleID=?");
@@ -527,6 +671,10 @@ public class ItamarDB {
 		return "";
 	}
 
+	/**
+	* Removes user with userID from DB
+	* @param userID UserID
+	*/
 	public void removeUser(String userID) {
 		PreparedStatement update;
 		try {
@@ -541,6 +689,10 @@ public class ItamarDB {
 		
 	}
 
+	/**
+	* Removes vehicle with vehicleID from DB
+	* @param vehicleID VehicleID
+	*/
 	public void removeVehicle(String vehicleID) {
 		PreparedStatement update;
 		try {
@@ -554,6 +706,10 @@ public class ItamarDB {
 		}
 	}
 
+	/**
+	* @return List<User> list of all users in DB
+	* @see User
+	*/
 	public List<User> getAllUsers() {
 		ArrayList<User> users = new ArrayList<User>();
 		try {
@@ -570,6 +726,9 @@ public class ItamarDB {
 		return users;
 	}
 
+	/**
+	* @return List<String> list of all parking lots names in DB
+	*/
 	public List<String> getAllParkingLotNames() {
 		List<String> parkingLots = new ArrayList<String>();
 		try {
@@ -586,6 +745,10 @@ public class ItamarDB {
 		return parkingLots;
 	}
 
+	/**
+	* @param vehicleID VehicleID 
+	* @return boolean Indicating weather vehicle is in parking or not
+	*/
 	public boolean getIsVehicleInParking(String vehicleID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT isInParking FROM Vehicles WHERE vehicleID=?");
@@ -602,6 +765,11 @@ public class ItamarDB {
 		return false;
 	}
 
+	
+	/**
+	* @param parkingLotName Parking lot name 
+	* @return int This is the parking lot ID corresponding to the given parking lot name
+	*/
 	public int getParkingLotIDByName(String parkingLotName) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT id FROM ParkingFacility WHERE name=?");
@@ -618,6 +786,10 @@ public class ItamarDB {
 		return 0;
 	}
 
+	/**
+	* @param parkingLotID Parking lot ID 
+	* @return String This is the parking lot name corresponding to the given parking lot ID
+	*/
 	public String getParkingLotNameByID(int parkingLotID) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT name FROM ParkingFacility WHERE id=?");
@@ -634,6 +806,11 @@ public class ItamarDB {
 		return "";
 	}
 	
+	/**
+	* Initiates stats in given parking lot
+	* @param parkingLotID Parking lot ID 
+	* @param todayUnixTime time of today in unix time format
+	*/
 	public void initStatsIfDoesntExists(int parkingLotID, long todayUnixTime) {
 		try {
 			PreparedStatement select = conn.prepareStatement("SELECT id FROM dailyStats WHERE date=? AND facID=?");
@@ -667,10 +844,15 @@ public class ItamarDB {
 		}
 		
 	}
+	
 	/**
 	 * 
-	 * @param data: facName,
-	 * @return
+	 * @param data 
+	 * @see Params
+	 * @return String Structure of return: isFull, status, alternative.
+	 * If parking lot written in data param is not full --> returns isFull = 0, status = OK, alternative = -1
+	 * If parking lot written in data param is full --> returns isFull = 1, status = OK,
+	 * alternative = some other random parking facility which is not full
 	 */
 	public String canBeInParking(Params data) {
         System.out.println("canBeInParking : " + data.toString());
@@ -716,6 +898,11 @@ public class ItamarDB {
         return resData.toString();
     }
 	
+	/**
+	 * 
+	 * @param excludeName Name of parking lot to exclude from random choice
+	 * @return String Name of parking lot which is not full (picked randomly from all parking facilities which are not full)
+	 */
 	  public String getRandomParking(String excludeName) {
 	       
 	        ArrayList<String> allParkingNames = new ArrayList<String>();
@@ -747,6 +934,15 @@ public class ItamarDB {
 	        return "";
 	    }
 	
+	/**
+	* Adds daily stats to DB, filled by given params
+	* @param parkingLotID Parking lot ID
+	* @param todayUnixTime Time of today in unix time format
+	* @param lateDelta Late delta
+	* @param cancelDelta Cancel delta
+	* @param arrivedDelta arrived delta
+	* @param numDisabledDelta number disabled delta
+	*/
 
 	public void addToDailyStats(int parkingLotID, long todayUnixTime, int lateDelta, int cancelDelta, int arrivedDelta, int numDisabledDelta) {
 		try {
@@ -767,6 +963,11 @@ public class ItamarDB {
 		}
 	}
 	
+	/**
+	* @param vehicleID VehicleID
+	* @param parkingLot Parking lot to search in (should be where vehicle is parked)
+	* @return int[] Vehicle's parking spot (of vehicle with given vehicleID)
+	*/
 	public int[] getVehicleParkingSpot(String vehicleID, String parkingLot) {
 		JSONObject data = getParkingLotJsonData(parkingLot);
 		try {
@@ -789,6 +990,10 @@ public class ItamarDB {
 		return new int[] {-1,-1,-1};
 	}
 
+	/**
+	* @param userID UserID of user
+	* @return List<String> List of all vehicles of user with given userID
+	*/
 	public List<String> getAllVehiclesOfUser(String userID) {
 		List<String> vehicleIDs = new ArrayList<String>();
 		try {

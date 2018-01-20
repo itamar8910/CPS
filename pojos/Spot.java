@@ -1,5 +1,11 @@
 package pojos;
 
+/**
+* Spot class containing all Spot properties needed
+* Implements Comparable, meaning Spot objects can be compared (compared by exitTime)
+* Properties (of each spot): status, carID, entryTime, exitTime
+*/
+
 public class Spot implements Comparable{
 	private char status;
 	private String carID;

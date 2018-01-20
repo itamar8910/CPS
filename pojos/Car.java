@@ -1,5 +1,11 @@
 package pojos;
 
+/**
+* Car class containing all cat properties needed
+* Implements Comparable, meaning Car objects can be compared (compared by exitTime)
+* Properties (of each car): carID, entryTime, exitTime
+*/
+
 public class Car implements Comparable{
 	private String carID;
     private long entryTime;

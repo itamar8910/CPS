@@ -3,6 +3,12 @@ package common;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* Class that implements the singleton design pattern.
+* This class is the parking lot enter queue (id's queue) --> each parking lot has one like this.
+* Aggregates all data about parking lot enter queue --> queue of id's
+*/
+
 public class LocalParkingEnterQueue {
 
 	private static LocalParkingEnterQueue enterQueue;

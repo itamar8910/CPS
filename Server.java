@@ -22,6 +22,20 @@ import pojos.User;
 /*
  * TODO: check the parking lot exists on client order / subscription
  */
+ 
+/**
+* <h1>Main Server --> This Section handles queries from clients</h1>
+* This section is responsible for classifying received queries from clients.
+* Handles each query correspondingly.
+* Sends a response message for each client-request.
+*
+* <b>Note:</b>The handleMessageFromClient method communicates with dbInstance (working with DB).
+*
+* @author  ~~ Etgar ~~ team, Software Engineering course 2018
+* @version 1.0
+* @since   10.1.18
+*/
+
 public class Server extends AbstractServer
 {
   //Class variables *************************************************
@@ -56,7 +70,9 @@ public class Server extends AbstractServer
       ("Server has stopped listening for connections.");
   }
   /**
-   * This method handles any messages received from the client.
+   * This method handles any message received from the client.
+   * Messages received are with specific and known structure.
+   *
    *
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
@@ -74,14 +90,21 @@ public class Server extends AbstractServer
 	  System.out.println("Current Action " + currentAction);
 
 	  try {
-		//try all api
+		/**
+		* Find out what action is asked by the client
+		* and handle it correspondingly
+		*/
 		  switch(currentAction) {
 
 		  	//------------------------ Reports API
+			/**
+			* This section handles all queries related to Reports
+			* asked by client
+			*/
 
-			//try: returns "Costumar Complaints" Data for report
+			//try: returns "Costumer Complaints" Data for report
 			 //rec:  facID
-			 //returns: data,status
+			 //returns: data, status
 			  case "returnCosCompReports":
 				  data = dbInstance.returnCostumerComplaintsReport(params);
 
@@ -142,7 +165,12 @@ public class Server extends AbstractServer
 
 
 		     //------------------------Parking Facility Worker API
-
+			
+			/**
+			* This section handles all queries related to Parking Facility
+			* asked by client
+			*/
+			
 			//try: pay to system
 			//rec: userID,amount
 			//returns: status
@@ -157,7 +185,7 @@ public class Server extends AbstractServer
 			//rec: facID
 			//returns: status
 		  	case "initParkingFacility":
-		  		  System.out.println("Initilizating parking facility" );
+		  		  System.out.println("Initializing parking facility" );
 
 		  		  String name = dbInstance.getParkingNameByID(Integer.parseInt(params.getParam("facID")));
 		  		  backEndLogic.initParkingLotData(name);
@@ -197,8 +225,13 @@ public class Server extends AbstractServer
 
 
 
-		  	  //--------------------- workers api
-
+			//--------------------- workers api
+			
+			/**
+			* This section handles all workers queries
+			* asked by client
+			*/
+			
 		  	  //try: Trys to log in employee,
 		  	 //rec:  UserName, Password
 		  	 //returns: type: -1 = failed, 1/2/3 type of worker, user ID, fac ID
@@ -243,7 +276,12 @@ public class Server extends AbstractServer
 
 
 			  //--------------------- client api
-
+			
+			/**
+			* This section handles all queries related to client-users
+			* of the system (not client in the sever-client architecture)
+			* but clients of the CPS system
+			*/
 
 			  //if parking sent full
 			  //try: send to alternative if full
@@ -426,6 +464,11 @@ public class Server extends AbstractServer
     //System.out.println("Tables:");
     //TestDB.getInstance().printAllTables();
     final boolean DO_CONJOBS = false; //TODO: remember to change this before submitting :)
+	
+	/**
+	* Section below is responsible for notifying system users
+	* if necessary
+	*/
     if(DO_CONJOBS) {
 	    new Thread(()-> {
 	    	while(true) {
@@ -433,6 +476,11 @@ public class Server extends AbstractServer
 
 		    	//do logic
 		    	//check for all orders if are late
+				/**
+				* Section below is responsible checking late users --> loop every minute
+				* Responsible for notifying corresponding users
+				*/
+				
 		    	List<User> allUsers = DBHandler.getInstance().getAllUsers();
 		    	System.out.println("Printing all users:");
 		    	for(User user : allUsers) {
@@ -469,6 +517,12 @@ public class Server extends AbstractServer
 	    	}
 
 	    }).start();
+		
+		/**
+		* Section below is responsible for checking end of users subscription --> loop every day
+		* Responsible for notifying corresponding users
+		*/
+				
 	    new Thread(()-> {
 	    	while(true) {
 
@@ -530,6 +584,11 @@ public class Server extends AbstractServer
  * End of itamars section
  */
 
+/**
+* Sends response to client
+* @param msg	--> to be sent
+* @param ConnectionToClient		--> client to send the message to
+*/
 
   public void sendResponseToClient(Object msg, ConnectionToClient client) {
 	  try {

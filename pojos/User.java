@@ -5,8 +5,15 @@ import org.json.JSONObject;
 
 import common.Params;
 
-public class User {
 
+/**
+* User class containing all User properties needed for a user in the CPS system
+* Properties (of each User): userID, vehicleID, email, subscriptionParams, money
+*/
+
+
+public class User {
+	
 	private String userID, vehicleID, email;
 	private Params subscriptionParams;
 	private double money;
