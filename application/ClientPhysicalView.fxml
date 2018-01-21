@@ -8,9 +8,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientPhysicalController">
    <children>
-      <Button fx:id="bOrder" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOrderClick" prefWidth="60.0" text="Order" />
-      <Button fx:id="bLeave" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bLeaveClick" prefWidth="60.0" text="Leave" />
-      <Button fx:id="bEnter" layoutX="270.0" layoutY="187.5" mnemonicParsing="false" onAction="#bEnterClick" prefWidth="60.0" text="Enter" />
+      <Button fx:id="bOrder" layoutX="393.0" layoutY="186.0" mnemonicParsing="false" onAction="#bOrderClick" prefHeight="59.0" prefWidth="129.0" text="Order" />
+      <Button fx:id="bLeave" layoutX="37.0" layoutY="188.0" mnemonicParsing="false" onAction="#bLeaveClick" prefHeight="59.0" prefWidth="123.0" text="Leave" />
+      <Button fx:id="bEnter" layoutX="218.0" layoutY="186.0" mnemonicParsing="false" onAction="#bEnterClick" prefHeight="59.0" prefWidth="129.0" text="Enter" />
       <Button layoutX="500.0" layoutY="38.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
+      <Label layoutX="204.0" layoutY="90.0" text="Please select an action" textFill="#4129b9" />
    </children>
 </AnchorPane>

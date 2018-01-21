@@ -16,9 +16,10 @@
       <Label layoutX="70.0" layoutY="110.0" text="VEHICLE ID" />
       <TextField fx:id="tfStartDate" layoutX="160.0" layoutY="145.0" prefWidth="150.0" />
       <Label layoutX="70.0" layoutY="150.0" text="START DATE" />
-      <Button fx:id="bSubmit" layoutX="205.0" layoutY="230.0" mnemonicParsing="false" onAction="#bSumbitClick" prefWidth="60.0" text="Submit" />
+      <Button fx:id="bSubmit" layoutX="187.0" layoutY="234.0" mnemonicParsing="false" onAction="#bSumbitClick" prefHeight="39.0" prefWidth="94.0" text="Submit" />
       <TextField fx:id="tfEmail" layoutX="160.0" layoutY="185.0" prefWidth="150.0" />
       <Label layoutX="70.0" layoutY="190.0" text="EMAIL" />
       <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
+      <Label layoutX="238.0" layoutY="18.0" text="Please enter your details" textFill="#590fc9" />
    </children>
 </AnchorPane>

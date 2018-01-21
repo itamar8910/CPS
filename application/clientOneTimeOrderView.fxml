@@ -18,7 +18,7 @@
       <Label layoutX="70.0" layoutY="150.0" text="PARKING LOT" />
       <TextField fx:id="tfEnterDate" layoutX="160.0" layoutY="185.0" prefWidth="150.0" />
       <Label layoutX="70.0" layoutY="190.0" text="ENTER DATE" />
-      <Button fx:id="bSubmit" layoutX="205.0" layoutY="310.0" mnemonicParsing="false" onAction="#bSumbitClick" prefWidth="60.0" text="Submit" />
+      <Button fx:id="bSubmit" layoutX="188.0" layoutY="310.0" mnemonicParsing="false" onAction="#bSumbitClick" prefHeight="50.0" prefWidth="88.0" text="Submit" />
       <TextField fx:id="tfEnterTime" layoutX="160.0" layoutY="225.0" prefWidth="150.0" />
       <Label layoutX="70.0" layoutY="230.0" text="ENTER TIME" />
       <TextField fx:id="tfLeaveDate" layoutX="435.0" layoutY="185.0" prefWidth="150.0" />
@@ -28,5 +28,6 @@
       <TextField fx:id="tfEmail" layoutX="160.0" layoutY="265.0" prefWidth="150.0" />
       <Label layoutX="70.0" layoutY="270.0" text="EMAIL" />
       <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
+      <Label layoutX="227.0" layoutY="21.0" text="Please enter your details" textFill="#5f22ee" />
    </children>
 </AnchorPane>

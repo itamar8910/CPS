@@ -9,11 +9,16 @@
 <AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GMController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="260.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rate Change Requests" />
-    <ListView fx:id="tableReq" layoutX="110.0" layoutY="140.0" prefHeight="220.0" prefWidth="420.0" />
-    <Button fx:id="acceptButton" layoutX="110.0" layoutY="390.0" mnemonicParsing="false" onAction="#acceptClicked" prefWidth="60.0" text="Accept" />
-    <Button id="denyButton" fx:id="rejectButton" layoutX="470.0" layoutY="390.0" mnemonicParsing="false" onAction="#rejectClicked" prefWidth="60.0" text="Reject" />
-    <Button fx:id="refreshButton" layoutX="290.0" layoutY="390.0" mnemonicParsing="false" onAction="#refreshClicked" prefWidth="60.0" text="Refresh" />
-      <Button fx:id="backButton" layoutX="585.0" layoutY="14.0" mnemonicParsing="false" onAction="#backPressed" text="Back" />
+    <Text layoutX="47.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" text="What would you like to do wil the following price changes requests?" />
+    <ListView fx:id="tableReq" layoutX="45.0" layoutY="122.0" prefHeight="220.0" prefWidth="550.0" />
+    <Button fx:id="acceptButton" layoutX="45.0" layoutY="350.0" mnemonicParsing="false" onAction="#acceptClicked" prefHeight="35.0" prefWidth="170.0" text="Accept" />
+    <Button id="denyButton" fx:id="rejectButton" layoutX="425.0" layoutY="350.0" mnemonicParsing="false" onAction="#rejectClicked" prefHeight="35.0" prefWidth="170.0" text="Reject" />
+    <Button fx:id="refreshButton" layoutX="235.0" layoutY="350.0" mnemonicParsing="false" onAction="#refreshClicked" prefHeight="35.0" prefWidth="170.0" text="Refresh" />
+      <Button fx:id="backButton" layoutX="486.0" layoutY="14.0" mnemonicParsing="false" onAction="#backPressed" prefWidth="140.0" text="Back" />
+      <Label layoutX="45.0" layoutY="61.0" text="CPS Manager Panel" textFill="#0048ff">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
   </children>
 </AnchorPane>

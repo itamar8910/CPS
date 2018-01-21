@@ -8,8 +8,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientEnterController">
    <children>
-      <Button fx:id="bPhysical" layoutX="440.0" layoutY="187.5" mnemonicParsing="false" onAction="#bPhysicalClick" prefWidth="60.0" text="Physical" />
-      <Button fx:id="bOnlnie" layoutX="100.0" layoutY="187.5" mnemonicParsing="false" onAction="#bOnlineClick" prefWidth="60.0" text="Online" />
+      <Button fx:id="bPhysical" layoutX="355.0" layoutY="188.0" mnemonicParsing="false" onAction="#bPhysicalClick" prefHeight="74.0" prefWidth="145.0" text="Physical" />
+      <Button fx:id="bOnlnie" layoutX="100.0" layoutY="188.0" mnemonicParsing="false" onAction="#bOnlineClick" prefHeight="74.0" prefWidth="145.0" text="Online" />
       <Button layoutX="524.0" layoutY="23.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
+      <Label layoutX="105.0" layoutY="48.0" prefHeight="90.0" prefWidth="421.0" text="Please select the medium you whish to use our services through" textFill="#152ca1" />
    </children>
 </AnchorPane>

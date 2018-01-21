@@ -8,12 +8,12 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClientFollowOrderView">
    <children>
-      <Label layoutX="265.0" layoutY="60.0" text="Follow order" />
-      <Button layoutX="350.0" layoutY="120.0" mnemonicParsing="false" onAction="#bSubIDSubmit" prefWidth="60.0" text="Submit" />
-      <TextField fx:id="tfSubID" layoutX="150.0" layoutY="120.0" prefWidth="150.0" text="Enter subscription id" />
-      <TextField fx:id="vehicleID" layoutX="150.0" layoutY="190.0" prefWidth="150.0" text="Enter vehicle id" />
-      <Button layoutX="350.0" layoutY="190.0" mnemonicParsing="false" onAction="#bVehicleIDSubmit" prefWidth="60.0" text="Submit" />
-      <Label layoutX="210.0" layoutY="160.0" text="OR" />
+      <Label layoutX="201.0" layoutY="64.0" text="Please enter your details" textFill="#621de4" />
+      <Button layoutX="350.0" layoutY="120.0" mnemonicParsing="false" onAction="#bSubIDSubmit" prefHeight="47.0" prefWidth="89.0" text="Submit" />
+      <TextField fx:id="tfSubID" layoutX="151.0" layoutY="132.0" prefWidth="150.0" text="Enter subscription id" />
+      <TextField fx:id="vehicleID" layoutX="148.0" layoutY="201.0" prefWidth="150.0" text="Enter vehicle id" />
+      <Button layoutX="350.0" layoutY="190.0" mnemonicParsing="false" onAction="#bVehicleIDSubmit" prefHeight="47.0" prefWidth="89.0" text="Submit" />
+      <Label layoutX="210.0" layoutY="172.0" text="OR" />
       <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
    </children>
 </AnchorPane>

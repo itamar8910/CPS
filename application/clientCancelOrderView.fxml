@@ -12,7 +12,8 @@
    <children>
       <Label layoutX="135.0" layoutY="134.0" text="vehicleID" />
       <TextField fx:id="tfVehicleID" layoutX="225.0" layoutY="130.0" prefWidth="150.0" />
-      <Button fx:id="bSubmit" layoutX="270.0" layoutY="220.0" mnemonicParsing="false" onAction="#bSubmitClick" prefWidth="60.0" text="Sumbit" />
+      <Button fx:id="bSubmit" layoutX="246.0" layoutY="218.0" mnemonicParsing="false" onAction="#bSubmitClick" prefHeight="54.0" prefWidth="104.0" text="Sumbit" />
       <Button layoutX="524.0" layoutY="14.0" mnemonicParsing="false" onAction="#bBackClick" text="Back" />
+      <Label layoutX="215.0" layoutY="36.0" text="Please enter you details" textFill="#4e21bf" />
    </children>
 </AnchorPane>

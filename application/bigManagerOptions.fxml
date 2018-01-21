@@ -9,19 +9,29 @@
 <AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.bigManagerController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="95.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Parking Manager" />
-    <Button id="ordersButton" fx:id="activityButton" layoutX="70.0" layoutY="140.0" mnemonicParsing="false" onAction="#activityClicked" prefWidth="140.0" text="Activity Report" />
-    <Button fx:id="performanceButton" layoutX="70.0" layoutY="220.0" mnemonicParsing="false" onAction="#performanceClicked" prefWidth="140.0" text="Performance Report" />
-    <Button fx:id="currentStateButton" layoutX="70.0" layoutY="300.0" mnemonicParsing="false" onAction="#currentStateClicked" prefWidth="140.0" text="Current State Report" />
-    <Button fx:id="priceRequests" layoutX="70.0" layoutY="380.0" mnemonicParsing="false" onAction="#priceReqClicked" prefWidth="140.0" text="Price Change Requests" />
-    <ListView fx:id="parkingList" layoutX="410.0" layoutY="125.0" prefHeight="200.0" prefWidth="200.0" />
-    <TextField fx:id="day" layoutX="410.0" layoutY="340.0" prefWidth="45.0" />
-    <Text layoutX="462.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
-    <TextField fx:id="month" layoutX="475.0" layoutY="340.0" prefWidth="45.0" />
-    <Text layoutX="528.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
-    <TextField fx:id="year" layoutX="540.0" layoutY="340.0" prefWidth="70.0" />
-    <Text layoutX="433.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Days Back:" />
-    <TextField id="day" fx:id="daysBack" layoutX="500.0" layoutY="390.0" prefWidth="60.0" />
-    <Button fx:id="logOutButton" layoutX="574.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutPressed" text="Logout" />
+    <Button id="ordersButton" fx:id="activityButton" layoutX="45.0" layoutY="218.0" mnemonicParsing="false" onAction="#activityClicked" prefHeight="45.0" prefWidth="355.0" text="Activity Report" />
+    <Button fx:id="performanceButton" layoutX="45.0" layoutY="273.0" mnemonicParsing="false" onAction="#performanceClicked" prefHeight="45.0" prefWidth="355.0" text="Performance Report" />
+    <Button fx:id="currentStateButton" layoutX="45.0" layoutY="328.0" mnemonicParsing="false" onAction="#currentStateClicked" prefHeight="45.0" prefWidth="355.0" text="Current State Report" />
+    <Button fx:id="priceRequests" layoutX="45.0" layoutY="383.0" mnemonicParsing="false" onAction="#priceReqClicked" prefHeight="45.0" prefWidth="355.0" text="Price Change Requests" />
+    <ListView fx:id="parkingList" layoutX="420.0" layoutY="97.0" prefHeight="167.0" prefWidth="175.0" />
+    <TextField fx:id="day" layoutX="420.0" layoutY="273.0" prefWidth="50.0" />
+    <Text layoutX="473.0" layoutY="291.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
+    <TextField fx:id="month" layoutX="483.0" layoutY="273.0" prefWidth="50.0" />
+    <Text layoutX="536.0" layoutY="291.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" />
+    <TextField fx:id="year" layoutX="545.0" layoutY="273.0" prefHeight="25.0" prefWidth="50.0" />
+    <Text layoutX="420.0" layoutY="322.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Days Back:" />
+    <TextField id="day" fx:id="daysBack" layoutX="483.0" layoutY="305.0" prefHeight="25.0" prefWidth="50.0" />
+    <Button fx:id="logOutButton" layoutX="486.0" layoutY="14.0" mnemonicParsing="false" onAction="#logoutPressed" prefWidth="140.0" text="Logout" />
+      <Label layoutX="45.0" layoutY="61.0" text="CPS Manager Panel" textFill="#0048ff">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextArea editable="false" layoutX="45.0" layoutY="97.0" pickOnBounds="false" prefHeight="107.0" prefWidth="355.0" text="Welcome manager, please choose a parking facility and then:&#10;1. Produce Performence Report/current state report&#10;2. Produce Activity report by providing:&#10;    - number of days for the report and the end date&#10;3. Accept price change requests" />
+      <Label layoutX="420.0" layoutY="75.0" text="Parking Facilities:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
   </children>
 </AnchorPane>
