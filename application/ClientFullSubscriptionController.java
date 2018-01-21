@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import common.ControllerIF;
 import common.Params;
 import common.StrCallbackIF;
@@ -40,16 +42,16 @@ public class ClientFullSubscriptionController implements ControllerIF{
     void bBackClick(){
     	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
     }
-    
+
     @FXML
     void bSumbitClick(ActionEvent event) {
-    	
+
 
 //    	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
 //    	if(isFull){
 //    		return;
 //    	}
-    	
+
     	handleClientFullSubscription(tfID.getText(), tfVehicleID.getText(), tfStartDate.getText(), tfEmail.getText(), msg->{
      		System.out.println("ClientfullSubscriptionController got msg from server:" + msg);
     		Params respParams = new Params(msg);
@@ -58,6 +60,15 @@ public class ClientFullSubscriptionController implements ControllerIF{
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  		    	  //TODO: handle payment
+    	  		    	double payAmount = Double.valueOf(respParams.getParam("price"));
+	   	  	             payAmount = Math.abs(payAmount);
+	   	  	             String amountNiceStr = "";
+	   	  	             try{
+	   	  	              amountNiceStr = new DecimalFormat("#.##").format(Double.valueOf(payAmount));
+	   	  	             }catch(Exception e){
+	   	  	            	 e.printStackTrace();
+	   	  	            	 amountNiceStr = respParams.getParam("price");
+	   	  	             }
     	  	    		 final Stage dialog = new Stage();
     	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
     	  	             dialog.initModality(Modality.APPLICATION_MODAL);
@@ -68,6 +79,8 @@ public class ClientFullSubscriptionController implements ControllerIF{
     	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
     	  	             dialog.setScene(dialogScene);
     	  	             dialog.show();
+    	  	             PayDialog.show(main.primaryStage, payAmount);
+
     	  	             System.out.println("showed dialog");
     	  		      }
   		    });
@@ -90,7 +103,7 @@ public class ClientFullSubscriptionController implements ControllerIF{
   	  		    	});
     		}
     	});
-    	
+
 //    	Params orderParams = Params.getEmptyInstance();
 //    	orderParams.addParam("action", "FullSubscription");
 //    	orderParams.addParam("ID", tfID.getText());
@@ -123,7 +136,7 @@ public class ClientFullSubscriptionController implements ControllerIF{
 //
 //    	});
     }
-    
+
     public static void handleClientFullSubscription(String userID, String vehicleID, String startDate, String email, StrCallbackIF callback) {
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "FullSubscription");

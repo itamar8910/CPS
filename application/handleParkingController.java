@@ -31,7 +31,7 @@ import javafx.stage.Stage;
 
 
 public class handleParkingController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
     private String typeOfWorker;
@@ -45,16 +45,16 @@ public class handleParkingController implements ControllerIF{
 
     @FXML
     private URL location;
-    
+
     @FXML
     private Button editButton;
 
     @FXML
     private Text currentFloorText;
-    
+
     @FXML
     private Button backButton;
-    
+
     @FXML
     private Button floorDownButton;
 
@@ -63,7 +63,7 @@ public class handleParkingController implements ControllerIF{
 
     @FXML
     private Button nextFloorButton;
-    
+
     @FXML
     private HBox Hbox1;
 
@@ -75,7 +75,7 @@ public class handleParkingController implements ControllerIF{
 
     @FXML
     private TextField parkingTextBox;
-    
+
 
     @FXML
     void backPressed(ActionEvent event) {
@@ -84,7 +84,7 @@ public class handleParkingController implements ControllerIF{
     	else
     		main.setScene("ServiceEmployeeMain.fxml", params);
     }
-        
+
     Color statusToColor(String Status) {
     	Color ret = null;
     	switch(Status) {
@@ -97,21 +97,21 @@ public class handleParkingController implements ControllerIF{
     	}
     	return ret;
     }
-    
+
     void updateParkingSpots() {
     	currentFloorText.setText("Floor: " + this.currentFloor);
     	// ask itamar for info about all the parking spots
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "getParkingSlotStatus");
     	serverRequest.addParam("name", params.getParam("parkingName").toString());
-    	
+
     	final Params temp = Params.getEmptyInstance();
 
     	// send this JSON to server
     	TalkToServer.getInstance().send(serverRequest.toString(), msg -> {
     		final Params res2 = new Params(msg);
-    		
-    		if(true || res2.getParam("status").equals("OK")){ 
+
+    		if(true || res2.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
@@ -123,21 +123,21 @@ public class handleParkingController implements ControllerIF{
 								String floor = arr.getJSONObject(i).get("i").toString();
 								if(!floor.equals(String.valueOf(currentFloor-1)))
 									continue;
-								
+
 								int pos = (Integer.parseInt(arr.getJSONObject(i).get("j").toString())*numOfCols)+Integer.parseInt(arr.getJSONObject(i).get("k").toString());
 								try {	// this try is for ignoring indices not in range
 									recArr[pos].setFill(statusToColor(arr.getJSONObject(i).get("status").toString()));
 								} catch (Exception e){
 								}
-								
+
 							}
 						} catch (JSONException e1) {
 							e1.printStackTrace();
 						}
-    	  	    		
+
     	  		      }});}});
     }
-    
+
     String spotStatus(String numOfParking) {
     	Params serverUpdate = Params.getEmptyInstance();
     	String posForItamar = String.valueOf(Integer.parseInt(numOfParking)-1);
@@ -146,24 +146,24 @@ public class handleParkingController implements ControllerIF{
 		serverUpdate.addParam("floor", String.valueOf(currentFloor-1));
 		serverUpdate.addParam("position", posForItamar);
 		serverUpdate.addParam("name", params.getParam("parkingName"));
-	    
+
    		Params got = Params.getEmptyInstance();
-   		
+
 	   	// send this JSON to server
    		wait =true;
-   		
+
 	   	TalkToServer.getInstance().send(serverUpdate.toString(), msg -> {
 	   		Params res = new Params(msg);
-	   		got.addParam("status", res.getParam("status")); 
+	   		got.addParam("status", res.getParam("status"));
 	   		wait = false;});
-	   		
+
 	   	while(wait) {
 	   		System.out.print("");
 	   	}
-	   	
+
 	   	return got.getParam("status").toString();
     }
-    
+
     void editClicked(String numOfParking) {
     	String posForItamar = String.valueOf(Integer.parseInt(numOfParking)-1);
     	Platform.runLater(new Runnable() {
@@ -174,7 +174,7 @@ public class handleParkingController implements ControllerIF{
 	    		 VBox dialogVbox = new VBox(20);
 	    		 dialogVbox.getChildren().add(new Text("Parking "+numOfParking+ " Selcted"));
 	    		 dialogVbox.getChildren().add(new Text("Select Action"));
-	    		 
+
 	    		 String buttonText = "Reserve Spot";
 	    		 final Params temp = Params.getEmptyInstance();
 	    		 if(spotStatus(numOfParking).equals("s")) {
@@ -183,18 +183,18 @@ public class handleParkingController implements ControllerIF{
 	    		 }
 	    		 else
 	    			 temp.addParam("bool", "true");
-	    			 
+
 	    		 Button reserveButton = new Button(buttonText);
-	    		 
+
 	    		 reserveButton.setOnAction(event ->{
 	    			 Params serverUpdate = Params.getEmptyInstance();
-	    			 
+
 	    			 serverUpdate.addParam("action", "reserveSpot");
 	    			 serverUpdate.addParam("status", temp.getParam("bool").toString());
 	    			 serverUpdate.addParam("name", params.getParam("parkingName"));
 	    			 serverUpdate.addParam("floor", String.valueOf(currentFloor-1));
 	    			 serverUpdate.addParam("position", posForItamar);
-	    			 
+
 	    			 if(temp.getParam("bool").toString().equals("true")) {
 	    				 reserveButton.setText("Cancel Reservation");
 		    			 temp.addParam("bool", "false");
@@ -205,14 +205,14 @@ public class handleParkingController implements ControllerIF{
 	    			 }
 
 	    		   	// send this JSON to server
-	    		   	TalkToServer.getInstance().send(serverUpdate.toString(), msg -> 
+	    		   	TalkToServer.getInstance().send(serverUpdate.toString(), msg ->
 	    		   	{updateParkingSpots();	});
-	    			 
+
 	    		 });
-	    		 
-	    		 
+
+
 	    		 dialogVbox.getChildren().add(reserveButton);
-	    		 
+
 	    		 Button disabledButton = new Button("Spot Disabled");
 
 	    		 final Params temp2 = Params.getEmptyInstance();
@@ -223,16 +223,16 @@ public class handleParkingController implements ControllerIF{
 	    		 }
 	    		 else
 	    			 temp2.addParam("bool", "true");
-	    		 
+
 	    		 disabledButton.setOnAction(event ->{
 	    			 Params serverUpdate = Params.getEmptyInstance();
-	    			 
+
 	    			 serverUpdate.addParam("action", "spotDisabled");
 	    			 serverUpdate.addParam("name", params.getParam("parkingName"));
 	    			 serverUpdate.addParam("status", temp2.getParam("bool").toString());
 	    			 serverUpdate.addParam("floor", String.valueOf(currentFloor-1));
 	    			 serverUpdate.addParam("position", posForItamar);
-	    			 
+
 	    			 if(temp2.getParam("bool").toString().equals("true")) {
 	    				 disabledButton.setText("Spot Not Disabled");
 		    			 temp2.addParam("bool", "false");
@@ -243,15 +243,15 @@ public class handleParkingController implements ControllerIF{
 		    			 temp2.addParam("bool", "true");
 		    			 reserveButton.setDisable(false);
 	    			 }
-	    			 	    		    	
+
 	    		   	// send this JSON to server
-	    		   	TalkToServer.getInstance().send(serverUpdate.toString(), msg -> 
+	    		   	TalkToServer.getInstance().send(serverUpdate.toString(), msg ->
 	    		   	{updateParkingSpots();});
-	             	 
+
 	    		 });
 	    		 if(typeOfWorker.equals("1"))
 		    		 dialogVbox.getChildren().add(disabledButton);
-	    		 
+
 	    		 Scene dialogScene = new Scene(dialogVbox, 300, 200);
 	    		 dialog.setScene(dialogScene);
 	    		 dialog.show();
@@ -280,7 +280,7 @@ public class handleParkingController implements ControllerIF{
     	this.currentFloor+=1;
     	updateParkingSpots();
     }
-    
+
     @FXML
     void floorDownClicked(ActionEvent event) {
     	if(this.currentFloor == 1) {
@@ -317,14 +317,32 @@ public class handleParkingController implements ControllerIF{
         assert backButton != null : "fx:id=\"backButton\" was not injected: check your FXML file 'handleParking.fxml'.";
         assert parkingTextBox != null : "fx:id=\"parkingTextBox\" was not injected: check your FXML file 'handleParking.fxml'.";
     }
-    
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;
 		this.params = params;
 		this.currentFloor = 1;
-		
-		
+
+
+		new Thread(()->{
+			while(true){
+				Platform.runLater(new Runnable() {
+		  		      @Override public void run() {
+		  		    	  System.out.println("calling auto update");
+		  		    	  updateParkingSpots();
+
+		  		      }
+			    	});
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 		Params serverUpdate = Params.getEmptyInstance();
 		serverUpdate.addParam("action", "getParkingLotWidth");
 		serverUpdate.addParam("name", params.getParam("parkingName"));
@@ -335,35 +353,35 @@ public class handleParkingController implements ControllerIF{
 	   		this.numOfCols = Integer.parseInt(res.getParam("width").toString());
 	   		wait = false;
 	   	});
-	   	
+
 	   	while(wait) {
 	   		System.out.print("");}
-	   	
+
 		nameOfParking.setText(params.getParam("parkingName"));
 		typeOfWorker = params.getParam("amIaWorker").toString();
-		
+
 		double screenWidth = main.primaryStage.getWidth();
 		double screenHeight = main.primaryStage.getHeight();
 		double recWidth = 50;
 		int startingX = 30;
-        		
+
 		this.recArr = new Rectangle[this.numOfCols*3];
 
 		HBox[] curr = new HBox[]{Hbox1, Hbox2, Hbox3};
-		
+
 		HBox x = new HBox();
-		
+
 		for(int j=0; j<3; j++) {
 			for(int i=1; i<=this.numOfCols; i++) {
 				Rectangle tempRec = new Rectangle();
-				tempRec.setX(startingX+ i*recWidth);	
+				tempRec.setX(startingX+ i*recWidth);
 				tempRec.setY(300);
-				
+
 				tempRec.setWidth(recWidth);
 				tempRec.setHeight(50);
 				tempRec.setArcHeight(20);
 				tempRec.setArcWidth(20);
-			
+
 				this.recArr[(i-1)+(j*this.numOfCols)] = tempRec;
 				curr[j].getChildren().add(tempRec);
 			}
@@ -372,12 +390,12 @@ public class handleParkingController implements ControllerIF{
 		for(int i=0; i< this.recArr.length ; i++) {
 			final int temp = i+1;
 			this.recArr[i].setOnMousePressed(new EventHandler<MouseEvent>() {
-			    @Override 
+			    @Override
 			    public void handle(MouseEvent event) {
 			        if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
 			        	editClicked(String.valueOf(temp));
 			        }
-			    }});	
+			    }});
 		}
 		updateParkingSpots();
 	}

@@ -22,7 +22,7 @@ import pojos.User;
 /*
  * TODO: check the parking lot exists on client order / subscription
  */
- 
+
 /**
 * <h1>Main Server --> This Section handles queries from clients</h1>
 * This section is responsible for classifying received queries from clients.
@@ -165,12 +165,12 @@ public class Server extends AbstractServer
 
 
 		     //------------------------Parking Facility Worker API
-			
+
 			/**
 			* This section handles all queries related to Parking Facility
 			* asked by client
 			*/
-			
+
 			//try: pay to system
 			//rec: userID,amount
 			//returns: status
@@ -226,12 +226,12 @@ public class Server extends AbstractServer
 
 
 			//--------------------- workers api
-			
+
 			/**
 			* This section handles all workers queries
 			* asked by client
 			*/
-			
+
 		  	  //try: Trys to log in employee,
 		  	 //rec:  UserName, Password
 		  	 //returns: type: -1 = failed, 1/2/3 type of worker, user ID, fac ID
@@ -276,7 +276,7 @@ public class Server extends AbstractServer
 
 
 			  //--------------------- client api
-			
+
 			/**
 			* This section handles all queries related to client-users
 			* of the system (not client in the sever-client architecture)
@@ -463,8 +463,8 @@ public class Server extends AbstractServer
     super(port);
     //System.out.println("Tables:");
     //TestDB.getInstance().printAllTables();
-    final boolean DO_CONJOBS = false; //TODO: remember to change this before submitting :)
-	
+    final boolean DO_CONJOBS = true; //TODO: remember to change this before submitting :)
+
 	/**
 	* Section below is responsible for notifying system users
 	* if necessary
@@ -480,18 +480,18 @@ public class Server extends AbstractServer
 				* Section below is responsible checking late users --> loop every minute
 				* Responsible for notifying corresponding users
 				*/
-				
+
 		    	List<User> allUsers = DBHandler.getInstance().getAllUsers();
 		    	System.out.println("Printing all users:");
 		    	for(User user : allUsers) {
-    				System.out.println("Fucking your late mother fucker user ID : " + user.getUserID());
+    				//System.out.println("Fucking your late mother fucker user ID : " + user.getUserID());
 		    		if(user.getSubscriptionParams().getParam("type").equals("orderedOneTimeParking")) {
 		    			long orderTimeUnix = Long.valueOf(user.getSubscriptionParams().getParam("enterTimeMS"));
 		    			System.out.println("order unix time:" + orderTimeUnix);
 		    			System.out.println("current unix time:" + System.currentTimeMillis());
 		    			// if customer is late and this is the first minute shes is late in
 		    			if(System.currentTimeMillis() > orderTimeUnix && System.currentTimeMillis() < orderTimeUnix + 60*1000) {
-		    				System.out.println("Fucking your late mother fucker");
+		    			//	System.out.println("Fucking your late mother fucker");
 		    				//update stats
 		    				backEndLogic.addToStatistics(DBHandler.getInstance().getVehicleParkingLot(user.getVehicleID()), 1, 0, 0, 0);
 		    				//notify via email
@@ -517,12 +517,12 @@ public class Server extends AbstractServer
 	    	}
 
 	    }).start();
-		
+
 		/**
 		* Section below is responsible for checking end of users subscription --> loop every day
 		* Responsible for notifying corresponding users
 		*/
-				
+
 	    new Thread(()-> {
 	    	while(true) {
 

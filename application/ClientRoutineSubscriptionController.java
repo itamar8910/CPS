@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import common.ControllerIF;
 import common.Params;
 import common.StrCallbackIF;
@@ -32,10 +34,10 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
 
     @FXML
     private Button bSubmit;
-    
+
     @FXML
     private TextField tfEnterTime;
-    
+
     @FXML
     private TextField tfLeavingTime;
 
@@ -45,27 +47,27 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     private ApplicationMain main;
     private Params params;
 
-    
+
     @FXML
     void bBackClick(){
     	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
     }
-    
+
     @FXML
     void bSumbitClick(ActionEvent event) {
-    	
+
 
     	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
     	if(isFull){
     		return;
     	}
-    	
+
     	handleClientRoutineSubscription(tfID.getText(), tfVehicleID.getText(),
     			tfParkingLot.getText(),
     			tfStartDate.getText(), tfEnterTime.getText(),
     			tfLeavingTime.getText(), tfEmail.getText(),
     			new StrCallbackIF() {
-					
+
 					@Override
 					public void handle(String msg) {
 						System.out.println("ClientRoutineSubscriptionController got msg from server:" + msg);
@@ -74,18 +76,28 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
 			    		if(respParams.getParam("status").equals("OK")){
 			    			Platform.runLater(new Runnable() {
 			    	  		      @Override public void run() {
-			    	  		    	  //TODO: handle payment
+			    	  		    	double payAmount = Double.valueOf(respParams.getParam("price"));
+	    	    	  	             payAmount = Math.abs(payAmount);
+	    	    	  	             String amountNiceStr = "";
+	    	    	  	             try{
+	    	    	  	              amountNiceStr = new DecimalFormat("#.##").format(Double.valueOf(payAmount));
+	    	    	  	             }catch(Exception e){
+	    	    	  	            	 e.printStackTrace();
+	    	    	  	            	 amountNiceStr = respParams.getParam("price");
+	    	    	  	             }
 			    	  	    		 final Stage dialog = new Stage();
 			    	  	    		 String subscriptionID = respParams.getParam("subscriptionID");
 			    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
 			    	  	             dialog.initOwner(main.primaryStage);
 			    	  	             VBox dialogVbox = new VBox(20);
 			    	  	             dialogVbox.getChildren().add(new Text("Your subscription ID:" + subscriptionID));
-			    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + respParams.getParam("price")));
+			    	  	             dialogVbox.getChildren().add(new Text("Please pay:" + amountNiceStr));
 
 			    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
 			    	  	             dialog.setScene(dialogScene);
 			    	  	             dialog.show();
+			    	  	             PayDialog.show(main.primaryStage, payAmount);
+
 			    	  	             System.out.println("showed dialog");
 			    	  		      }
 			  		    });
@@ -109,7 +121,7 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
 			    		}
 					}
 			});
-//    	
+//
 //    	Params orderParams = Params.getEmptyInstance();
 //    	orderParams.addParam("action", "RoutineSubscription");
 //    	orderParams.addParam("ID", tfID.getText());
@@ -160,7 +172,7 @@ public class ClientRoutineSubscriptionController implements ControllerIF{
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(), callback);
     }
-    
+
     @Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;

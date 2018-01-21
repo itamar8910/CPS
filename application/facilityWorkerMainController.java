@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 
 public class facilityWorkerMainController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
     private boolean parkingFull;
@@ -44,7 +44,7 @@ public class facilityWorkerMainController implements ControllerIF{
 
     @FXML
     private Button logoutButton;
-    
+
     @FXML
     void logoutPressed(ActionEvent event) {
     	main.setScene("WorkerMainScene.fxml", params);
@@ -55,7 +55,7 @@ public class facilityWorkerMainController implements ControllerIF{
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "changeParkingDisabled");
     	updateServer.addParam("facID", params.getParam("facID"));
-    	
+
     	if(this.parkingDisabled) {
     		updateServer.addParam("isDisabled", "0");
     		facilityDownButton.setText("Facility Disabled");
@@ -66,10 +66,10 @@ public class facilityWorkerMainController implements ControllerIF{
     		facilityDownButton.setText("Facility Not Disabled");
     		this.parkingDisabled = true;
     	}
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});  
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+    	{ 	    		});
     }
 
     @FXML
@@ -77,7 +77,7 @@ public class facilityWorkerMainController implements ControllerIF{
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "changeParkingFull");
     	updateServer.addParam("facID", params.getParam("facID"));
-    	
+
     	if(this.parkingFull) {
     		updateServer.addParam("isFull", "0");
     		facilityFullButton.setText("Facility Full");
@@ -88,10 +88,10 @@ public class facilityWorkerMainController implements ControllerIF{
     		facilityFullButton.setText("Facility Not Full");
     		this.parkingFull = true;
     	}
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});  
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+    	{ 	    		});
     }
 
     @FXML
@@ -99,10 +99,10 @@ public class facilityWorkerMainController implements ControllerIF{
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "initParkingFacility");
     	updateServer.addParam("facID", params.getParam("facID"));
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});  
+//    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+//    	{ 	    		});
     }
 
     @FXML
@@ -118,25 +118,25 @@ public class facilityWorkerMainController implements ControllerIF{
         assert facilityFullButton != null : "fx:id=\"facilityFullButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
         assert initFacilityButton != null : "fx:id=\"initFacilityButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
         assert updateFacilityButton != null : "fx:id=\"updateFacilityButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
-        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";   
+        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'FacilityWorkerMain.fxml'.";
         }
-    
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;
 		this.params = params;
-		
+
 		// init parking status
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "requestParkingStatusData");
     	updateServer.addParam("facID", params.getParam("facID"));
-    	
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
+
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
     	{
     		Params res = new Params(msg);
-    		if(true){ 
+    		if(true){
     			Platform.runLater(new Runnable() {
-    			
+
 					@Override public void run() {
     	  	    		final Stage dialog = new Stage();
     	  	    		if(res.getParam("isFull").equals("1")) {
@@ -159,7 +159,7 @@ public class facilityWorkerMainController implements ControllerIF{
     	  		      }
     	  	    });
     		}
-    		
+
     	});
 	}
 }

@@ -26,13 +26,13 @@ import javafx.stage.Stage;
 import javafx.stage.Popup;
 
 public class ServiceEmployeeController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
     private	JSONArray curList;
     private	JSONArray complainsArray;
 
-	
+
 	@FXML
     private ResourceBundle resources;
 
@@ -41,13 +41,12 @@ public class ServiceEmployeeController implements ControllerIF{
 
     @FXML
     private ListView<String> complainsList;
-    
-    @FXML
-    private Button refreshButton;
+
+
 
     @FXML
     private TextField refundAmount;
-    
+
     @FXML
     private ListView<String> parkingList;
 
@@ -56,13 +55,13 @@ public class ServiceEmployeeController implements ControllerIF{
 
     @FXML
     private Button refundButton;
-    
+
     @FXML
     private Button selectParkingButton;
-    
+
     @FXML
     private Button logoutButton;
-    
+
     @FXML
     void logoutPressed(ActionEvent event) {
     	main.setScene("WorkerMainScene.fxml", params);
@@ -86,14 +85,14 @@ public class ServiceEmployeeController implements ControllerIF{
 		    	});
     		return;
     	}
-    	
+
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "handleComplaint");
     	updateServer.addParam("money", "-1");
-    	
+
     	String complaintID = "";
     	String userID = "";
-    	
+
     	for (int i = 0; i < complainsArray.length(); i++) {
   			if(complainsList.getSelectionModel().getSelectedIndex() == i) {
   				try {
@@ -105,15 +104,15 @@ public class ServiceEmployeeController implements ControllerIF{
   				break;
   			}
   		}
-    	
+
     	updateServer.addParam("complaintID", complaintID);
     	updateServer.addParam("userID", userID);
     	updateServer.addParam("shouldResolve", "0");
 
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});    
-    	
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+    	{ 	    		});
+
     	complainsList.getItems().remove(complainsList.getSelectionModel().getSelectedIndex());
     }
 
@@ -139,7 +138,7 @@ public class ServiceEmployeeController implements ControllerIF{
 		    	});
     		return;
     	}
-    	
+
     	if(refundAmount.getText() == "") {
     		Platform.runLater(new Runnable() {
 	  		      @Override public void run() {
@@ -156,15 +155,15 @@ public class ServiceEmployeeController implements ControllerIF{
 		    	});
     		return;
     	}
-    	
+
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "handleComplaint");
     	// add money textbox
     	updateServer.addParam("money", refundAmount.getText());
-    	
+
     	String complaintID = "";
     	String userID = "";
-    	
+
     	for (int i = 0; i < complainsArray.length(); i++) {
   			if(complainsList.getSelectionModel().getSelectedIndex() == i) {
   				try {
@@ -176,15 +175,15 @@ public class ServiceEmployeeController implements ControllerIF{
   				break;
   			}
   		}
-    	
+
     	updateServer.addParam("complaintID", complaintID);
     	updateServer.addParam("userID", userID);
     	updateServer.addParam("shouldResolve", "1");
 
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});    
-    	
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+    	{ 	    		});
+
     	refundAmount.setText("");
     	complainsList.getItems().remove(complainsList.getSelectionModel().getSelectedIndex());
     }
@@ -211,7 +210,7 @@ public class ServiceEmployeeController implements ControllerIF{
     	params.addParam("amIaWorker", "0");
     	main.setScene("handleParking.fxml", params);
     }
-    
+
     @FXML
     void refreshClicked(ActionEvent event) {
 	      Platform.runLater(new Runnable() {
@@ -223,33 +222,33 @@ public class ServiceEmployeeController implements ControllerIF{
 	  			}
 	  		});
     }
-    
+
     void initParkingTable() {
     	Params refRequest = Params.getEmptyInstance();
     	refRequest.addParam("action", "requestParkings");
-    	
+
     	parkingList.getItems().clear();
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(refRequest.toString(), msg -> 
+    	TalkToServer.getInstance().send(refRequest.toString(), msg ->
     	{
     		Params res = new Params(msg);
 
-    		if(true || res.getParam("status").equals("OK")){ 
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
-    	  	    		// code here 
+    	  	    		// code here
     	  	    		try {
 							curList = new JSONArray(res.getParam("array"));
 	    	  	    		for (int i = 0; i < curList.length(); i++) {
 	    	  	    			parkingList.getItems().add(curList.getJSONObject(i).get("name").toString());
 	    	  	    		}
-	    	  	    		
+
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-    	  	    		
+
     	  	      	System.out.println("Parking List Loaded");
         	  	      Platform.runLater(new Runnable() {
             	  			@Override
@@ -263,27 +262,27 @@ public class ServiceEmployeeController implements ControllerIF{
     	  		      }
     	  	    });
     		}
-    		
+
     	});
     }
-    
+
     void initComplainsTable() {
     	Params refRequest = Params.getEmptyInstance();
     	refRequest.addParam("action", "returnComplaints");
     	refRequest.addParam("facID", params.getParam("facID"));
-    	
+
     	complainsList.getItems().clear();
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(refRequest.toString(), msg -> 
+    	TalkToServer.getInstance().send(refRequest.toString(), msg ->
     	{
     		Params res = new Params(msg);
-    		
-    		if(true || res.getParam("status").equals("OK")){ 
+
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
-    	  	    		// code here 
+    	  	    		// code here
     	  	    		try {
     	  	    			complainsArray = new JSONArray(res.getParam("array"));
 	    	  	    		for (int i = 0; i < complainsArray.length(); i++) {
@@ -292,16 +291,16 @@ public class ServiceEmployeeController implements ControllerIF{
 	    	  	    			String s = "user ID: "+complainsArray.getJSONObject(i).get("userID").toString()+ "  ("  +time+")";
 	    	  	    			complainsList.getItems().add(s);
 	    	  	    		}
-	    	  	    		
+
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-    	  	    		
+
     	  	      	System.out.println("Complains List Loaded");
     	  		      }
     	  	    });
     		}
-    		
+
     	});
     }
 
@@ -310,18 +309,19 @@ public class ServiceEmployeeController implements ControllerIF{
     	assert complainsList != null : "fx:id=\"complainsList\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert deleteButton != null : "fx:id=\"deleteButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert parkingList != null : "fx:id=\"parkingList\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
-        assert refreshButton != null : "fx:id=\"refreshButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert refundAmount != null : "fx:id=\"refundAmount\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert refundButton != null : "fx:id=\"refundButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert selectParkingButton != null : "fx:id=\"selectParkingButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
         assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'ServiceEmployeeMain.fxml'.";
     }
-	
+
 	@Override
 	public void init(ApplicationMain main, Params params){
 		this.main = main;
 		this.params = params;
-		
+
+
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -329,14 +329,31 @@ public class ServiceEmployeeController implements ControllerIF{
 			}
 		});
 
-		
+		new Thread(()->{
+			while(true){
+				Platform.runLater(new Runnable() {
+		  		      @Override public void run() {
+		  		    	  System.out.println("calling auto update");
+		  		    	  refreshClicked(null);
+
+		  		      }
+			    	});
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 		complainsList.setOnMousePressed(new EventHandler<MouseEvent>() {
-		    @Override 
+		    @Override
 		    public void handle(MouseEvent event) {
 		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
 		            if(complainsList.getSelectionModel().getSelectedItem() == null)
 		            	return;
-		            
+
 	                // create pop-up with information about complain
 		            Platform.runLater(new Runnable() {
 	    	  		      @Override public void run() {
@@ -363,7 +380,7 @@ public class ServiceEmployeeController implements ControllerIF{
 	    	  	             System.out.println("showed dialog");
 	    	  		      }
 		  		    });
-	                
+
 		        }
 		    }
 		});

@@ -33,7 +33,7 @@ public class ClientPhysicalOrderController implements ControllerIF{
 
     @FXML
     private TextField tfParkingLot;
-    
+
     @FXML
     private Button bSubmit;
 
@@ -45,17 +45,17 @@ public class ClientPhysicalOrderController implements ControllerIF{
     void bBackClick(){
     	main.setScene("ClientPhysicalView.fxml", Params.getEmptyInstance());
     }
-    
+
     @FXML
     void bSumbitClick(ActionEvent event) {
-    	
+
     	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
     	if(isFull){
     		return;
     	}
-    	
+
     	handleClientPhysicalOrder(tfID.getText(), tfVehicleID.getText(), tfLeaveTime.getText(), tfEmail.getText(), tfParkingLot.getText(), new StrCallbackIF() {
-			
+
 			@Override
 			public void handle(String msg) {
 				System.out.println("ClientPhysicalOrderController got msg from server:" + msg);
@@ -92,10 +92,10 @@ public class ClientPhysicalOrderController implements ControllerIF{
 	    	  		      }
 		  		    	});
 	    		}
-				
+
 			}
 		});
-    	
+
     	/*
     	 System.out.println("ClientPhysicalOrderController got msg from server:" + msg);
     		Params resp = new Params(msg);
@@ -129,29 +129,29 @@ public class ClientPhysicalOrderController implements ControllerIF{
 	  		    	});
     		}
     	 */
-    	
+
     }
 
     public static void handleClientPhysicalOrder(String userID, String vehicleID, String leaveTime, String email, String parkingLot, StrCallbackIF callback) {
-    
-    	
+
+
 //    	System.out.println("isFull:" + isFull);
 //    	if(true) {
 //    		return;
 //    	}
-    	
-    	
+
+
     	Params orderParams = Params.getEmptyInstance();
     	orderParams.addParam("action", "ClientPhysicalOrder");
     	orderParams.addParam("ID", userID);
-    	orderParams.addParam("parkingLot", parkingLot); 
+    	orderParams.addParam("parkingLot", parkingLot);
     	orderParams.addParam("vehicleID", vehicleID);
     	orderParams.addParam("leaveTime", leaveTime);
     	orderParams.addParam("email", email);
     	System.out.println("sending request to server");
     	TalkToServer.getInstance().send(orderParams.toString(),callback);
     }
-	
+
 
 	@Override
 	public void init(ApplicationMain main, Params params) {

@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 
 
 public class GMController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
     private JSONArray curList;
@@ -47,22 +47,20 @@ public class GMController implements ControllerIF{
     @FXML
     private Button backButton;
 
-    @FXML
-    private Button refreshButton;
 
     @FXML
     private Button rejectButton;
 
     @FXML
     private ListView<String> tableReq;
-    
+
     @FXML
     void backPressed(ActionEvent event) {
     	main.setScene("bigManagerOptions.fxml", params);
     }
 
     @FXML
-    void acceptClicked(ActionEvent event) throws JSONException { 
+    void acceptClicked(ActionEvent event) throws JSONException {
     	if(tableReq.getSelectionModel().getSelectedIndex() == -1) {
     		Platform.runLater(new Runnable() {
 	  		      @Override public void run() {
@@ -79,13 +77,13 @@ public class GMController implements ControllerIF{
 		    	});
     		return;
     	}
-    	
+
     	System.out.println("accept clicked");
-    	
+
         String newPrice = "";
         String facID = "";
         String type = "";
-        
+
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "finishChangePrice");
   		for (int i = 0; i < curList.length(); i++) {
@@ -102,9 +100,9 @@ public class GMController implements ControllerIF{
     	updateServer.addParam("type", type);
 
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
     	{ 	    		});
-    	
+
     	tableReq.getItems().remove(tableReq.getSelectionModel().getSelectedIndex());
 
     }
@@ -115,11 +113,11 @@ public class GMController implements ControllerIF{
 
     	Params refRequest = Params.getEmptyInstance();
     	refRequest.addParam("action", "requestChangePrices");
-    	
+
     	tableReq.getItems().clear();
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(refRequest.toString(), msg -> 
+    	TalkToServer.getInstance().send(refRequest.toString(), msg ->
     	{
     		Params res = new Params(msg);
 
@@ -127,7 +125,7 @@ public class GMController implements ControllerIF{
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
-    	  	    		// code here 
+    	  	    		// code here
     	  	    		String type ="";
 
     	  	    		try {
@@ -145,23 +143,23 @@ public class GMController implements ControllerIF{
 	        	  	    			type = "Routine Subscription";
 	    	  	    			tableReq.getItems().add(curList.getJSONObject(i).get("name").toString()+" new rate for "+type+": "+curList.getJSONObject(i).get("priceChangeRequest").toString());
 	    	  	    		}
-	    	  	    		
+
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-    	  	    		
+
 
     	  		      }
     	  	    });
     		}
-    		
+
     	});
 
     }
 
     @FXML
-    void rejectClicked(ActionEvent event) throws JSONException {   
-    	
+    void rejectClicked(ActionEvent event) throws JSONException {
+
     	if(tableReq.getSelectionModel().getSelectedIndex() == -1) {
     		Platform.runLater(new Runnable() {
 	  		      @Override public void run() {
@@ -178,13 +176,13 @@ public class GMController implements ControllerIF{
 		    	});
     		return;
     	}
-    				
+
     	System.out.println("reject clicked");
-    	
+
         String newPrice = "";
         String facID = "";
         String type = "";
-        
+
     	Params updateServer = Params.getEmptyInstance();
     	updateServer.addParam("action", "finishChangePrice");
   		for (int i = 0; i < curList.length(); i++) {
@@ -202,8 +200,8 @@ public class GMController implements ControllerIF{
 
 
     	// send this JSON to server
-    	TalkToServer.getInstance().send(updateServer.toString(), msg -> 
-    	{ 	    		});    
+    	TalkToServer.getInstance().send(updateServer.toString(), msg ->
+    	{ 	    		});
     	tableReq.getItems().remove(tableReq.getSelectionModel().getSelectedIndex());
 
     }
@@ -211,18 +209,38 @@ public class GMController implements ControllerIF{
     @FXML
     void initialize() {
         assert acceptButton != null : "fx:id=\"acceptButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
-        assert refreshButton != null : "fx:id=\"refreshButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         assert rejectButton != null : "fx:id=\"rejectButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         assert tableReq != null : "fx:id=\"tableReq\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         assert backButton != null : "fx:id=\"backButton\" was not injected: check your FXML file 'FacilityManager.fxml'.";
         refreshClicked(null);
     }
-    
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;
 		this.params = params;
 		this.myFacID = this.params.getParam("facID");
+
+
+
+		new Thread(()->{
+			while(true){
+				Platform.runLater(new Runnable() {
+		  		      @Override public void run() {
+		  		    	  System.out.println("calling auto update");
+		  		    	  refreshClicked(null);
+
+		  		      }
+			    	});
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 	}
 
 }

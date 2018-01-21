@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import common.ControllerIF;
 import common.Params;
 import common.StrCallbackIF;
@@ -56,16 +58,16 @@ public class ClientOneTimeOrderController implements ControllerIF{
     void bBackClick(){
     	main.setScene("ClientOnlineView.fxml", Params.getEmptyInstance());
     }
-    
+
     @FXML
     void bSumbitClick(ActionEvent event) {
-    	
+
 
     	boolean isFull = Utils.getIsFull(tfParkingLot.getText(), main.primaryStage);
     	if(isFull){
     		return;
     	}
-    	
+
     	handleClientOneTimeOrder(tfID.getText(), tfVehicleID.getText(),
     			tfParkingLot.getText(), tfEnterDate.getText(),
     			tfEnterTime.getText(), tfLeaveDate.getText(),
@@ -78,14 +80,23 @@ public class ClientOneTimeOrderController implements ControllerIF{
     	    			Platform.runLater(new Runnable() {
     	    	  		      @Override public void run() {
     	    	  	    		 final Stage dialog = new Stage();
-
+    	    	  	    		double payAmount = Double.valueOf(respParams.getParam("price"));
+    	    	  	             payAmount = Math.abs(payAmount);
+    	    	  	             String amountNiceStr = "";
+    	    	  	             try{
+    	    	  	              amountNiceStr = new DecimalFormat("#.##").format(Double.valueOf(payAmount));
+    	    	  	             }catch(Exception e){
+    	    	  	            	 e.printStackTrace();
+    	    	  	            	 amountNiceStr = respParams.getParam("price");
+    	    	  	             }
     	    	  	             dialog.initModality(Modality.APPLICATION_MODAL);
     	    	  	             dialog.initOwner(main.primaryStage);
     	    	  	             VBox dialogVbox = new VBox(20);
-    	    	  	             dialogVbox.getChildren().add(new Text("Please pay " + respParams.getParam("price")));
+    	    	  	             dialogVbox.getChildren().add(new Text("Please pay " + amountNiceStr));
     	    	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
     	    	  	             dialog.setScene(dialogScene);
     	    	  	             dialog.show();
+    	    	  	             PayDialog.show(main.primaryStage, payAmount);
     	    	  	             System.out.println("showed dialog");
     	    	  		      }
     		  		    });
@@ -110,7 +121,7 @@ public class ClientOneTimeOrderController implements ControllerIF{
     	    		}
 
     			});
-//    	
+//
 //    	Params orderParams = Params.getEmptyInstance();
 //    	orderParams.addParam("action", "clientOneTimeOrder");
 //    	orderParams.addParam("ID", tfID.getText());
@@ -163,7 +174,7 @@ public class ClientOneTimeOrderController implements ControllerIF{
     	TalkToServer.getInstance().send(orderParams.toString(),callback);
 
     }
-    
+
     @Override
  	public void init(ApplicationMain main, Params params) {
  		this.main = main;

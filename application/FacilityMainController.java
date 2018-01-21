@@ -54,6 +54,11 @@ public class FacilityMainController implements ControllerIF{
     }
 
     @FXML
+    void bLogoutClick(ActionEvent event){
+    	main.setScene("WorkerMainScene.fxml",params);
+    }
+
+    @FXML
     void complainsReportClicked(ActionEvent event) {
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "returnCosCompReports");
