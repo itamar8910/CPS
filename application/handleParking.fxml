@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.handleParkingController">
+<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.handleParkingController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text fx:id="nameOfParking" layoutX="292.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+    <Text fx:id="nameOfParking" fill="BLUE" layoutX="36.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+         <font>
+            <Font size="24.0" />
+         </font></Text>
     <!--
     <Rectangle fx:id="parkingSpot1" arcHeight="5.0" arcWidth="5.0" fill="#00ff29" height="75.0" layoutX="58.0" layoutY="86.0" stroke="BLACK" strokeType="INSIDE" width="85.0" />
     <Rectangle fx:id="parkingSpot2" arcHeight="5.0" arcWidth="5.0"            height="75.0" layoutX="181.0" layoutY="86.0" stroke="BLACK" strokeType="INSIDE" width="85.0" />
@@ -23,24 +25,27 @@
     <Rectangle fx:id="parkingSpot8" arcHeight="5.0" arcWidth="5.0" fill="$x1" height="75.0" layoutX="181.0" layoutY="292.0" stroke="BLACK" strokeType="INSIDE" width="85.0" />
     <Rectangle fx:id="parkingSpot9" arcHeight="5.0" arcWidth="5.0" fill="$x1" height="75.0" layoutX="306.0" layoutY="292.0" stroke="BLACK" strokeType="INSIDE" width="85.0" />
     -->
-    <Button fx:id="nextFloorButton" layoutX="470.0" layoutY="255.0" mnemonicParsing="false" onAction="#nextFloorClicked" prefWidth="80.0" text="Next Floor" />
-    <Text fx:id="currentFloorText" layoutX="490.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-    <HBox fx:id="Hbox1" layoutX="30.0" layoutY="295.0" prefHeight="85.0" prefWidth="364.0">
+    <Button fx:id="nextFloorButton" layoutX="486.0" layoutY="170.0" mnemonicParsing="false" onAction="#nextFloorClicked" prefHeight="52.0" prefWidth="140.0" text="Next Floor" />
+    <Text fx:id="currentFloorText" fill="BLUE" layoutX="36.0" layoutY="400.0" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+         <font>
+            <Font size="24.0" />
+         </font></Text>
+    <HBox fx:id="Hbox1" layoutX="30.0" layoutY="320.0" prefHeight="85.0" prefWidth="364.0">
       <children>
         <Label text="Label" />
       </children>
     </HBox>
-    <HBox fx:id="Hbox2" layoutX="30.0" layoutY="155.0" prefHeight="85.0" prefWidth="364.0">
+    <HBox fx:id="Hbox2" layoutX="30.0" layoutY="195.0" prefHeight="85.0" prefWidth="364.0">
       <children>
         <Label text="Label" />
       </children>
     </HBox>
-    <HBox fx:id="Hbox3" layoutX="30.0" layoutY="33.0" prefHeight="85.0" prefWidth="364.0">
+    <HBox fx:id="Hbox3" layoutX="30.0" layoutY="70.0" prefHeight="85.0" prefWidth="364.0">
       <children>
         <Label text="Label" />
       </children>
     </HBox>
-    <Button fx:id="floorDownButton" layoutX="470.0" layoutY="295.0" mnemonicParsing="false" onAction="#floorDownClicked" prefWidth="80.0" text="Prev Floor" />
-      <Button fx:id="backButton" layoutX="543.0" layoutY="33.0" mnemonicParsing="false" onAction="#backPressed" text="Back" />
+    <Button fx:id="floorDownButton" layoutX="486.0" layoutY="227.0" mnemonicParsing="false" onAction="#floorDownClicked" prefHeight="52.0" prefWidth="140.0" text="Prev Floor" />
+      <Button fx:id="backButton" layoutX="486.0" layoutY="14.0" mnemonicParsing="false" onAction="#backPressed" prefWidth="140.0" text="Back" />
   </children>
 </AnchorPane>

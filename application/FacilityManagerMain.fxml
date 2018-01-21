@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FacilityMainController">
   <!-- TODO Add Nodes -->
   <children>
-    <Text layoutX="242.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Facility Manager Main Screen" />
-    <Button fx:id="ordersReportButton" layoutX="201.0" layoutY="141.0" mnemonicParsing="false" onAction="#ordersReportClicked" prefHeight="56.0" prefWidth="274.0" text="Orders Report" />
-    <Button id="ordersReportButton" fx:id="complainsReportButton" layoutX="201.0" layoutY="209.0" mnemonicParsing="false" onAction="#complainsReportClicked" prefHeight="56.0" prefWidth="274.0" text="Complains Report" />
-    <Button id="ordersReportButton" fx:id="parkingDownReport" layoutX="201.0" layoutY="285.0" mnemonicParsing="false" onAction="#parikingReportClicked" prefHeight="56.0" prefWidth="274.0" text="Parkings down Report" />
-    <Button id="ordersReportButton" fx:id="RateChangeButton" layoutX="201.0" layoutY="350.0" mnemonicParsing="false" onAction="#RateChangeClicked" prefHeight="56.0" prefWidth="274.0" text="Request Rate Chnage" />
-    <Text fx:id="parkingNameText" layoutX="39.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-    <Button fx:id="perfReportButton" layoutX="201.0" layoutY="419.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="274.0" text="Performance Report" />
-      <Button layoutX="561.0" layoutY="24.0" mnemonicParsing="false" onAction="#bLogoutClick" text="Logout" />
+    <Text fill="BLUE" layoutX="55.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Facility Manager Panel -">
+         <font>
+            <Font size="24.0" />
+         </font></Text>
+    <Button fx:id="ordersReportButton" layoutX="55.0" layoutY="228.0" mnemonicParsing="false" onAction="#ordersReportClicked" prefHeight="60.0" prefWidth="265.0" text="Orders Report" />
+    <Button id="ordersReportButton" fx:id="complainsReportButton" layoutX="55.0" layoutY="294.0" mnemonicParsing="false" onAction="#complainsReportClicked" prefHeight="60.0" prefWidth="265.0" text="Complains Report" />
+    <Button id="ordersReportButton" fx:id="parkingDownReport" layoutX="328.0" layoutY="228.0" mnemonicParsing="false" onAction="#parikingReportClicked" prefHeight="60.0" prefWidth="265.0" text="Parkings down Report" />
+    <Button id="ordersReportButton" fx:id="RateChangeButton" layoutX="55.0" layoutY="362.0" mnemonicParsing="false" onAction="#RateChangeClicked" prefHeight="60.0" prefWidth="539.0" text="Request Rate Chnage" />
+    <Text fx:id="parkingNameText" fill="BLUE" layoutX="325.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="253.69921922683716">
+         <font>
+            <Font size="24.0" />
+         </font></Text>
+    <Button fx:id="perfReportButton" layoutX="328.0" layoutY="294.0" mnemonicParsing="false" onAction="#performanceClicked" prefHeight="60.0" prefWidth="265.0" text="Performance Report" />
+      <Button layoutX="486.0" layoutY="14.0" mnemonicParsing="false" onAction="#bLogoutClick" prefWidth="140.0" text="Logout" />
+      <TextArea layoutX="55.0" layoutY="107.0" prefHeight="107.0" prefWidth="539.0" text="Welcome Facility Manager, you can:&#10;1. Produce reports:&#10;    - orders report / performance report&#10;    - parking down report / comlaints report&#10;2. Request rate change" />
   </children>
 </AnchorPane>

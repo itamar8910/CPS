@@ -60,10 +60,12 @@ public class facilityWorkerMainController implements ControllerIF{
     		updateServer.addParam("isDisabled", "0");
     		facilityDownButton.setText("Facility Disabled");
     		this.parkingDisabled = false;
+    		updateFacilityButton.setDisable(false);
     	}
     	else {
     		updateServer.addParam("isDisabled", "1");
     		facilityDownButton.setText("Facility Not Disabled");
+    		updateFacilityButton.setDisable(true);
     		this.parkingDisabled = true;
     	}
 
@@ -81,11 +83,13 @@ public class facilityWorkerMainController implements ControllerIF{
     	if(this.parkingFull) {
     		updateServer.addParam("isFull", "0");
     		facilityFullButton.setText("Facility Full");
+    		updateFacilityButton.setDisable(false);
     		this.parkingFull = false;
     	}
     	else {
     		updateServer.addParam("isFull", "1");
     		facilityFullButton.setText("Facility Not Full");
+    		updateFacilityButton.setDisable(true);
     		this.parkingFull = true;
     	}
 
