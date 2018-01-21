@@ -22,13 +22,13 @@ import javax.mail.internet.*;
 import javax.activation.*;
 
 /**
- * 
+ *
  * @author ~~ Etgar ~~ team, Software Engineering, course 2018
  * @version 1.0
  * @since 10.1.18
  */
 public class backEndLogic {
-	
+
 	/**
 	 * function returns a params describes whether the specific park is full, and if so gives an alternative park
 	 * @param params the data
@@ -51,7 +51,7 @@ public class backEndLogic {
 		String vehicleID = params.getParam("vehicleID");
 		if(DBHandler.getInstance().getUserIDByVehicleID(vehicleID).equals("")) { // if vehicle doesnlt exist
 			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Vehicle doesn't exist");
-			
+
 		}
 		boolean isParked = DBHandler.getInstance().getIsVehicleInParking(vehicleID);
 		if(!isParked) {
@@ -278,7 +278,7 @@ public class backEndLogic {
 		}
 
 	  }
-	 
+
 	  /**
 	   * function of ordering a spot in a park
 	   * @param parkingLot some data of the park
@@ -308,7 +308,7 @@ public class backEndLogic {
 			e.printStackTrace();
 		}
 	 }
-	 
+
 	 /**
 	  * function to eject car
 	  * @param parkingLot some data of the park
@@ -337,7 +337,7 @@ public class backEndLogic {
 			e.printStackTrace();
 		}
 	 }
-	
+
 	 /**
 	  * creates park
 	  * @param name name of the park
@@ -348,7 +348,7 @@ public class backEndLogic {
 		 DBHandler.getInstance().addParkingLot(name, width, location);
 		 initParkingLotData(name);
 	 }
-	 
+
 	 /**
 	  * function to delete a lot
 	  * @param name name of the lot
@@ -356,7 +356,7 @@ public class backEndLogic {
 	 public static void deleteParkingLot(String name) {
 		 DBHandler.getInstance().removeParkingLot(name);
 	 }
-	 
+
 	 /**
 	  * function intiates the lot
 	  * @param parkingLotName name of the park
@@ -475,7 +475,7 @@ public class backEndLogic {
 				  resp.addParam("status", "BAD").addParam("message", "User with same vehicle already ordered parking");
 				  return resp;
 			  }
-			  
+
 		  }
 		  if(!Utils.isEmailValid(params.getParam("email"))) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
@@ -545,15 +545,15 @@ public class backEndLogic {
 //			  resp.addParam("status", "BAD");
 //			  return resp;
 //		  }
-		  
+
 		  if(Utils.dateAndTimeToMillis(params.getParam("enterDate"), params.getParam("enterTime")) == -1 || Utils.dateAndTimeToMillis(params.getParam("leaveDate"), params.getParam("leaveTime")) == -1) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "time is invalid");
 		  }
-		 
+
 		  if(!Utils.isEmailValid(params.getParam("email"))) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
 		  }
-		  
+
 
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "orderedOneTimeParking");
@@ -598,7 +598,7 @@ public class backEndLogic {
 //			  resp.addParam("status", "BAD");
 //			  return resp;
 //		  }
-		  
+
 		  if(Utils.todayTimeToMillis(params.getParam("enterTime")) == -1l || Utils.todayTimeToMillis(params.getParam("leaveTime")) == -1l) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "invalid enter/exit time");
 		  }
@@ -606,7 +606,7 @@ public class backEndLogic {
 		  if(!Utils.isEmailValid(params.getParam("email"))) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
 		  }
-		  
+
 		  Params typeParams = Params.getEmptyInstance();
 		  typeParams.addParam("type", "routineSubscription");
 		  typeParams.addParam("subscriptionStartMS", String.valueOf(Utils.dateToMillis(params.getParam("startDate"))));
@@ -697,7 +697,7 @@ public class backEndLogic {
 		return 0;
 	}
 
-	
+
 	/**
 	 * function handles case of full subscription
 	 * @param params some data about the subscription
@@ -712,15 +712,15 @@ public class backEndLogic {
 //			  resp.addParam("status", "BAD");
 //			  return resp;
 //		  }
-		
+
 		if(Utils.dateToMillis(params.getParam("startDate")) == -1l){
 			return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid start date");
 		}
-		  
+
 		if(!Utils.isEmailValid(params.getParam("email"))) {
 			  return Params.getEmptyInstance().addParam("status", "BAD").addParam("message", "Invalid email address");
 		}
-		
+
 		  //TODO: handle max park time is 14 days
 		  //TODO: can't park more than subscription unless the subscription is renewed
 		  //TODO: system reminds user a week before subscription is over
@@ -774,7 +774,7 @@ public class backEndLogic {
 	public static void addToUserMoney(String userID, double amount) {
 		DBHandler.getInstance().addToUserMoney(userID, (amount));
 	}
-	
+
 	/**
 	 * function returns list of the prices of the park
 	 * @param parkingLot name of the park
@@ -783,7 +783,7 @@ public class backEndLogic {
 	public static List<Integer> getPrices(String parkingLot){
 		return DBHandler.getInstance().getPrices(parkingLot);
 	}
-	
+
 	/**
 	 * function updates the data in the database
 	 * @param userID identifier of the user
@@ -927,7 +927,7 @@ public class backEndLogic {
 			//check if arrived in time
 			//TODO: handle case where user is late
 			//check if time matches
-			if((Utils.isCurrentTimeAfter(subscriptionParams.getParam("enterTimeMS")) && !Utils.isCurrentTimeAfter(subscriptionParams.getParam("leaveTimeMS")))){
+			if(!((Utils.isCurrentTimeAfter(subscriptionParams.getParam("enterTimeMS")) && !Utils.isCurrentTimeAfter(subscriptionParams.getParam("leaveTimeMS"))))){
 				return "Time doesn't match";
 			}
 			return "OK";
@@ -1180,7 +1180,7 @@ public class backEndLogic {
 		return Params.getEmptyInstance().addParam("name", parkingName).addParam("monthly", respNumSubs.getParam("num")).addParam("monthlyWithMoreCars", resNumsSubsMoreThanOneVehicle.getParam("num"));
 
 	}
-	
+
 	/**
 	 * function toggle the disabled spot
 	 * @param params some data about the spot

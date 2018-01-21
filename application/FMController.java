@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 
 public class FMController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
 
@@ -41,20 +41,20 @@ public class FMController implements ControllerIF{
 
     @FXML
     private Text grantedText;
-    
+
     @FXML
     private Text deniedText;
-    
+
     @FXML
     void backPressed(ActionEvent event) {
     	main.setScene("FacilityManagerMain.fxml", params);
     }
-    
+
     @FXML
     private ComboBox<String> dropDown;
 
     @FXML
-    void newRateRequest(ActionEvent event) 
+    void newRateRequest(ActionEvent event)
     {
     	if(dropDown.getValue() == null) {
     		Platform.runLater(new Runnable() {
@@ -72,7 +72,7 @@ public class FMController implements ControllerIF{
 		    	});
     		return;
     	}
-    	
+
     	if(newRate.getText().equals("price")) {
     		Platform.runLater(new Runnable() {
 	  		      @Override public void run() {
@@ -105,20 +105,20 @@ public class FMController implements ControllerIF{
     		type = "3";
     	if(dropDown.getValue().equals("Routine Subscription"))
     		type = "4";
-    	
+
     	loginParams.addParam("type", type);
-    	
+
     	// send this JSON to server
-    	TalkToServer.getInstance().send(loginParams.toString(), msg -> 
+    	TalkToServer.getInstance().send(loginParams.toString(), msg ->
     	{
     		Params res = new Params(msg);
-    		
+
     		if(true || res.getParam("status").equals("OK")){ //TODO: remove true ||, this is for dbg
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
-    	  	    		
-    	  	    		// code here 
+
+    	  	    		// code here
     	  	    		int requestAnswer = Integer.parseInt(res.getParam("res"));
     	  	    		if(requestAnswer == 0) {
     	  	    			System.out.println("Something went wrong");
@@ -126,11 +126,11 @@ public class FMController implements ControllerIF{
     	  	    		if(requestAnswer == 1) {
     	  	    			System.out.println("Request Sent!");
     	  	    		}
-    	  	    			
+
     	  		      }
     	  	    });
     		}
-    		
+
     	});
     }
 
@@ -145,7 +145,7 @@ public class FMController implements ControllerIF{
         dropDown.getItems().clear();
     	dropDown.getItems().addAll("One Time Parking","Ordered One Time Parking","Routine Subscription - One Vehicle","Full Subscription","Routine Subscription");
     }
-    
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;

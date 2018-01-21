@@ -23,7 +23,7 @@ public class TalkToServer implements ChatIF{
 	boolean wait;
 	//StrCallbackIF currentCallback;
 	Queue<StrCallbackIF> callbacks;
-	
+
 	/**
 	* returns instance of TalkToServre corresponding to given params
 	* @param ip Ip of sever
@@ -33,6 +33,7 @@ public class TalkToServer implements ChatIF{
 		if(instance == null){
 			instance = new TalkToServer(ip, port);
 		}
+
         return instance;
 	}
 
@@ -45,7 +46,7 @@ public class TalkToServer implements ChatIF{
 		}
         return instance;
 	}
-	
+
 	/**
 	* Constructor - constructs new object with given params
 	* @param ip Server's ip
@@ -71,7 +72,7 @@ public class TalkToServer implements ChatIF{
 		callbacks.poll().handle(message);
 		wait = false;
 	}
-	
+
 	/**
 	* Send a message to server, with corresponding callback
 	* @param message Message to be sent to server
@@ -89,7 +90,7 @@ public class TalkToServer implements ChatIF{
 		}
 
 	}
-	
+
 	/**
 	* Send a message to server, with corresponding callback, wait for ans
 	* @param message Message to be sent to server
@@ -100,7 +101,7 @@ public class TalkToServer implements ChatIF{
 		try {
 			this.client.sendToServer(message);
 			callbacks.add(callback);
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

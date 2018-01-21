@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import common.Params;
 import common.TalkToServer;
 import javafx.application.Platform;
@@ -21,7 +23,9 @@ public class PayDialog {
 	             dialog.initOwner(stage);
 	             VBox dialogVbox = new VBox(20);
 	             if(payAmount != 0) {
-	            	 dialogVbox.getChildren().add(new Text("Please pay:" + payAmount));	            	 
+	            	 String amountNiceStr = new DecimalFormat("#.##").format(payAmount);
+
+	            	 dialogVbox.getChildren().add(new Text("Please pay:" + amountNiceStr));
 	             }
 	             TextField tfCreditCard = new TextField("Credit card #");
 	             TextField tfUserID = new TextField("User ID");
@@ -52,7 +56,7 @@ public class PayDialog {
 	          	  	             System.out.println("showed dialog");
 	          	  		      }
 	      	  		    	});
-	            		
+
 	            	 });
 	             });
 	             Scene dialogScene = new Scene(dialogVbox, 300, 200);

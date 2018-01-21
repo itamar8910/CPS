@@ -17,15 +17,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class FacilityMainController implements ControllerIF{
-	
+
     private ApplicationMain main;
     private Params params;
     private JSONArray curList;
     private String parkingName;
-	
+
     @FXML
     private ResourceBundle resources;
-    
+
     @FXML
     private Text parkingNameText;
 
@@ -46,18 +46,11 @@ public class FacilityMainController implements ControllerIF{
 
     @FXML
     private Button parkingDownReport;
-    
-    @FXML
-    private Button logoutButton;
+
 
     @FXML
     void RateChangeClicked(ActionEvent event) {
   		main.setScene("SniffManager.fxml",params);
-    }
-    
-    @FXML
-    void logoutPressed(ActionEvent event) {
-    	main.setScene("WorkerMainScene.fxml", params);
     }
 
     @FXML
@@ -65,20 +58,20 @@ public class FacilityMainController implements ControllerIF{
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "returnCosCompReports");
     	serverRequest.addParam("facID", params.getParam("facID").toString());
-    	
+
     	final Params temp = Params.getEmptyInstance();
 
     	// send this JSON to server
     	TalkToServer.getInstance().send(serverRequest.toString(), msg -> {
     		Params res = new Params(msg);
 
-    		if(true || res.getParam("status").equals("OK")){ 
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
     	  	    		temp.addParam("data", res.getParam("data").toString());
     	  	    		temp.addParam("name", res.getParam("name").toString());
-    	  	    		
+
     	  	    		try {
     	  	 			 PDFstatus pdf = new PDFstatus();
     	  	 	    	 JSONArray gil;
@@ -87,11 +80,11 @@ public class FacilityMainController implements ControllerIF{
     	  	 		} catch (JSONException e) {
     	  	 			e.printStackTrace();
     	  	 		}
-    	  	    		
+
     	  		      }});}});
-    	
-    	
-		
+
+
+
     }
 
     @FXML
@@ -99,20 +92,20 @@ public class FacilityMainController implements ControllerIF{
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "returnOrdersReport");
     	serverRequest.addParam("facID", params.getParam("facID").toString());
-    	
+
     	final Params temp = Params.getEmptyInstance();
 
     	// send this JSON to server
     	TalkToServer.getInstance().send(serverRequest.toString(), msg -> {
     		Params res = new Params(msg);
 
-    		if(true || res.getParam("status").equals("OK")){ 
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
     	  	    		temp.addParam("data", res.getParam("data").toString());
     	  	    		temp.addParam("name", res.getParam("name").toString());
-    	  	    		
+
     	  	    		try {
     	  	 			 PDFstatus pdf = new PDFstatus();
     	  	 	    	 JSONArray gil;
@@ -121,7 +114,7 @@ public class FacilityMainController implements ControllerIF{
     	  	 		} catch (JSONException e) {
     	  	 			e.printStackTrace();
     	  	 		}
-    	  	    		
+
     	  		      }});}});
     }
 
@@ -130,20 +123,20 @@ public class FacilityMainController implements ControllerIF{
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "returnProbLotsReport");
     	serverRequest.addParam("facID", params.getParam("facID").toString());
-    	
+
     	final Params temp = Params.getEmptyInstance();
 
     	// send this JSON to server
     	TalkToServer.getInstance().send(serverRequest.toString(), msg -> {
     		Params res = new Params(msg);
 
-    		if(true || res.getParam("status").equals("OK")){ 
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
     	  	    		temp.addParam("data", res.getParam("data").toString());
     	  	    		temp.addParam("name", res.getParam("name").toString());
-    	  	    		
+
     	  	    		try {
     	  	 			 PDFstatus pdf = new PDFstatus();
     	  	 	    	 JSONArray gil;
@@ -152,8 +145,8 @@ public class FacilityMainController implements ControllerIF{
     	  	 		} catch (JSONException e) {
     	  	 			e.printStackTrace();
     	  	 		}
-    	  	    		
-    	  		      }});}});    
+
+    	  		      }});}});
     	}
 
     @FXML
@@ -161,27 +154,27 @@ public class FacilityMainController implements ControllerIF{
     	Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "getSubscriptionStats");
     	serverRequest.addParam("name", parkingName);
-    	
+
     	final Params temp = Params.getEmptyInstance();
 
     	// send this JSON to server
     	TalkToServer.getInstance().send(serverRequest.toString(), msg -> {
     		Params res = new Params(msg);
 
-    		if(true || res.getParam("status").equals("OK")){ 
+    		if(true || res.getParam("status").equals("OK")){
     			Platform.runLater(new Runnable() {
     	  		      @Override public void run() {
     	  	    		final Stage dialog = new Stage();
     	  	    		temp.addParam("monthly", res.getParam("monthly").toString());
     	  	    		temp.addParam("monthlyWithMoreCars", res.getParam("monthlyWithMoreCars").toString());
-    	  	    		
+
     	  	 			PDFstatus pdf = new PDFstatus();
        	  	 	    	pdf.createCurrentReport(res.getParam("name").toString(),temp);
 
     	  		      }});
-    			}});  
+    			}});
     }
-    
+
     @FXML
     void initialize() {
         assert RateChangeButton != null : "fx:id=\"RateChangeButton\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
@@ -190,14 +183,13 @@ public class FacilityMainController implements ControllerIF{
         assert parkingDownReport != null : "fx:id=\"parkingDownReport\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
         assert parkingNameText != null : "fx:id=\"parkingNameText\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
         assert perfReportButton != null : "fx:id=\"perfReportButton\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
-        assert logoutButton != null : "fx:id=\"logoutButton\" was not injected: check your FXML file 'FacilityManagerMain.fxml'.";
     }
-    
+
 	@Override
 	public void init(ApplicationMain main, Params params) {
 		this.main = main;
 		this.params = params;
-				
+
 		Params serverRequest = Params.getEmptyInstance();
     	serverRequest.addParam("action", "requestParkingStatusData");
     	serverRequest.addParam("facID", this.params.getParam("facID").toString());
@@ -206,8 +198,8 @@ public class FacilityMainController implements ControllerIF{
     		Params res = new Params(msg);
     		parkingName = res.getParam("name").toString();
         	parkingNameText.setText(parkingName);
-    	});  
-    	
+    	});
+
 	}
 
 

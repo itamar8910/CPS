@@ -1,5 +1,7 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import common.ControllerIF;
 import common.Params;
 import common.TalkToServer;
@@ -21,7 +23,7 @@ public class ClientPhysicalLeaveController implements ControllerIF{
 
     @FXML
     private TextField tfParkingLot;
-    
+
     @FXML
     private Button bSubmit;
 
@@ -32,7 +34,7 @@ public class ClientPhysicalLeaveController implements ControllerIF{
     void bBackClick(){
     	main.setScene("ClientPhysicalView.fxml", Params.getEmptyInstance());
     }
-    
+
     @FXML
     void bSubmitClick(ActionEvent event) {
        	Params orderParams = Params.getEmptyInstance();
@@ -53,11 +55,20 @@ public class ClientPhysicalLeaveController implements ControllerIF{
     	  	             dialog.initModality(Modality.APPLICATION_MODAL);
     	  	             dialog.initOwner(main.primaryStage);
     	  	             VBox dialogVbox = new VBox(20);
-    	  	             dialogVbox.getChildren().add(new Text("Thanks for using CPS, you bill is: " + respParams.getParam("payAmount") + "$"));
+    	  	             double payAmount = Double.valueOf(respParams.getParam("payAmount"));
+    	  	             payAmount = Math.abs(payAmount);
+    	  	             String amountNiceStr = "";
+    	  	             try{
+    	  	              amountNiceStr = new DecimalFormat("#.##").format(Double.valueOf(payAmount));
+    	  	             }catch(Exception e){
+    	  	            	 e.printStackTrace();
+    	  	            	 amountNiceStr = respParams.getParam("payAmount");
+    	  	             }
+    	  	             dialogVbox.getChildren().add(new Text("Thanks for using CPS, you bill is: " + amountNiceStr));
     	  	             Scene dialogScene = new Scene(dialogVbox, 300, 200);
     	  	             dialog.setScene(dialogScene);
     	  	             dialog.show();
-    	  	             PayDialog.show(main.primaryStage, Double.parseDouble(respParams.getParam("payAmount")));
+    	  	             PayDialog.show(main.primaryStage, payAmount);
     	  	             System.out.println("showed dialog");
     	  		      }
 	  		    });
